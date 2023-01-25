@@ -16,8 +16,9 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("start", "./assets/start.png");
         this.load.image("credits", "./assets/credits.png");
         this.load.image("background", "./assets/background.jpg");
+        this.load.image("arrow", "./assets/arrow.png")
 
-        this.load.audio("soundtrack", "./assets/draw.mp3");
+        this.load.audio("soundtrack", "./assets/soundtrack.mp3");
 
         let loadingBar = this.add.graphics({
             fillStyle: {
