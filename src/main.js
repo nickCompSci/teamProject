@@ -2,8 +2,8 @@ import {LoadScene} from "./scenes/LoadScene";
 import {MenuScene} from "./scenes/MenuScene";
 
 let game = new Phaser.Game({
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
     scene:[
         LoadScene, MenuScene
     ],
