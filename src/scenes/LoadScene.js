@@ -1,4 +1,5 @@
 import { CST } from "../CST";
+import { MenuScene } from "./MenuScene";
 export class LoadScene extends Phaser.Scene{
     constructor(){
         super({
