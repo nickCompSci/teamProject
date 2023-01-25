@@ -15,7 +15,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("options", "./assets/options.png");
         this.load.image("start", "./assets/start.png");
         this.load.image("credits", "./assets/credits.png");
-        this.load.image("minigun-golden-3d-model-low-poly-obj-fbx-blend", "./assets/minigun-golden-3d-model-low-poly-obj-fbx-blend.jpg");
+        this.load.image("background", "./assets/background.jpg");
 
         this.load.audio("soundtrack", "./assets/draw.mp3");
 
@@ -33,7 +33,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Simulate load times
         for(let i = 0; i < 100; i++){
-            this.load.image("minigun-golden-3d-model-low-poly-obj-fbx-blend" + i, "./assets/minigun-golden-3d-model-low-poly-obj-fbx-blend.jpg");
+            this.load.image("background" + i, "./assets/background");
         }
 
         this.load.on("progress", (percent)=>{
