@@ -1,7 +1,6 @@
 /**
 This file is used to load all the assets for the game.
 */
-
 import { CST } from "../CST";
 import { MenuScene } from "./MenuScene";
 
@@ -60,7 +59,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU, "Hello from load scene");
+            this.scene.start(CST.SCENES.MENU);
         })
     }
 }

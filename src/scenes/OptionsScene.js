@@ -28,6 +28,7 @@ export class OptionsScene extends Phaser.Scene{
             arrowSprite.setVisible(true);
             arrowSprite.x = backButton.x - backButton.width + 60;
             arrowSprite.y = backButton.y;
+            console.log("hover")
         })
         backButton.on("pointerout", ()=>{
             console.log("no hover")
