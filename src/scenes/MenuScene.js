@@ -17,17 +17,21 @@ export class MenuScene extends Phaser.Scene{
 
         let startButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, "start").setDepth(2)
 
-        let optionsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "options").setDepth(3)
+        let accountButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "account").setDepth(2)
 
-        let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "credits").setDepth(4)
+        let optionsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "options").setDepth(3)
+
+        let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, "credits").setDepth(4)
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
-        this.sound.pauseOnBlur = false;
-        this.sound.play("soundtrack", {
-            loop: true
-        })
+        // Fix music from repeating when moving from one scene to another and then back
+
+        // this.sound.pauseOnBlur = false;
+        // this.sound.play("soundtrack", {
+            // loop: true
+        // })
 
         /*
             Pointer Events:
@@ -46,6 +50,22 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.setVisible(true);
             arrowSprite.x = startButton.x - startButton.width +135;
             arrowSprite.y = startButton.y;
+        })
+        startButton.on("pointerout", ()=>{
+            console.log("no hover")
+        })
+        startButton.on("pointerup", ()=>{
+            console.log("click")
+        })
+
+        // Account Button
+
+        accountButton.setInteractive();
+
+        accountButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = accountButton.x - accountButton.width +100;
+            arrowSprite.y = accountButton.y;
         })
         startButton.on("pointerout", ()=>{
             console.log("no hover")
