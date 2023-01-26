@@ -66,6 +66,7 @@ export class MenuScene extends Phaser.Scene{
             console.log("no hover")
         })
         optionsButton.on("pointerup", ()=>{
+            this.scene.start(CST.SCENES.OPTIONS);
             console.log("click")
         })
 
