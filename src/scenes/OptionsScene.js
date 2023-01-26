@@ -21,7 +21,7 @@ export class OptionsScene extends Phaser.Scene{
 
         backButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = backButton.x - backButton.width +100;
+            arrowSprite.x = backButton.x - backButton.width + 60;
             arrowSprite.y = backButton.y;
         })
         backButton.on("pointerout", ()=>{
