@@ -1,3 +1,6 @@
+/**
+This file is used to create the main menu scene.
+*/
 import { CST } from "../CST";
 export class MenuScene extends Phaser.Scene{
     constructor(){
@@ -5,16 +8,16 @@ export class MenuScene extends Phaser.Scene{
             key: CST.SCENES.MENU
         })
     }
-    init(data){
-        console.log(data);
-        console.log("I got it")
-    }
+
+    // Used to create our buttons, images, and text
     create(){
 
+        // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "logo").setDepth(1)
 
         //this.add.image(0,0, "background").setOrigin(0).setDepth(0);
 
+        // Adds a button to the scene - (x, y, image)
         let startButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, "start").setDepth(2)
 
         let accountButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "account").setDepth(2)
@@ -23,43 +26,48 @@ export class MenuScene extends Phaser.Scene{
 
         let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, "credits").setDepth(4)
 
+        // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
+
+        // Sets the arrow to not be visible until hovering over a button
         arrowSprite.setVisible(false);
 
         // Fix music from repeating when moving from one scene to another and then back
-
         // this.sound.pauseOnBlur = false;
         // this.sound.play("soundtrack", {
             // loop: true
         // })
 
         /*
-            Pointer Events:
-                pointerover - hovering
-                pointerout - not hovering
-                pointerup - click and release
-                pointerdown - just click
-
+        The following code is used to make the buttons interactive
+        Pointer Events:
+            pointerover - hovering
+            pointerout - not hovering
+            pointerup - click and release
+            pointerdown - just click
         */
 
-        // Start Button
-
+        // Allows the start button to be interactive
         startButton.setInteractive();
 
+        // When the pointer is over the button, the arrow will appear
         startButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = startButton.x - startButton.width +135;
             arrowSprite.y = startButton.y;
         })
+
+        // Signals when the pointer is not hovering over the button
         startButton.on("pointerout", ()=>{
             console.log("no hover")
         })
+
+        // Signals when the pointer is clicked and released
         startButton.on("pointerup", ()=>{
             console.log("click")
         })
 
         // Account Button
-
         accountButton.setInteractive();
 
         accountButton.on("pointerover", ()=>{
@@ -67,9 +75,11 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.x = accountButton.x - accountButton.width +100;
             arrowSprite.y = accountButton.y;
         })
+
         startButton.on("pointerout", ()=>{
             console.log("no hover")
         })
+
         startButton.on("pointerup", ()=>{
             console.log("click")
         })
@@ -86,6 +96,7 @@ export class MenuScene extends Phaser.Scene{
             console.log("no hover")
         })
         optionsButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
             this.scene.start(CST.SCENES.OPTIONS);
             console.log("click")
         })
