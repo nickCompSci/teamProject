@@ -18,13 +18,17 @@ export class MenuScene extends Phaser.Scene{
         //this.add.image(0,0, "background").setOrigin(0).setDepth(0);
 
         // Adds a button to the scene - (x, y, image)
-        let startButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, "start").setDepth(2)
+        // let startButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, "start").setDepth(2)
+        let startButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Start', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let accountButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "account").setDepth(2)
+        //let accountButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "account").setDepth(2)
+        let accountButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Account', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let optionsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "options").setDepth(3)
+        //let optionsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "options").setDepth(3)
+        let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, "credits").setDepth(4)
+        //let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, "credits").setDepth(4)
+        let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
