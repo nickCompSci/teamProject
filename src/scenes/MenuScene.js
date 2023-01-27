@@ -33,10 +33,11 @@ export class MenuScene extends Phaser.Scene{
         arrowSprite.setVisible(false);
 
         // Fix music from repeating when moving from one scene to another and then back
-        // this.sound.pauseOnBlur = false;
-        // this.sound.play("soundtrack", {
-            // loop: true
-        // })
+        if (!this.isMusicPlaying) {
+            this.isMusicPlaying = true;
+            this.sound.pauseOnBlur = false;
+            this.sound.play("soundtrack", { loop: true });
+        }
 
         /*
         The following code is used to make the buttons interactive
