@@ -27,7 +27,7 @@ export class CreditsScene extends Phaser.Scene{
         backButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = backButton.x - backButton.width + 60;
-            arrowSprite.y = backButton.y;
+            arrowSprite.y = backButton.y + backButton.height / 4;
             console.log("hover")
         })
         backButton.on("pointerout", ()=>{

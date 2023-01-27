@@ -12,16 +12,16 @@ export class MenuScene extends Phaser.Scene{
     // Used to create our buttons, images, and text
     create(){
 
-        // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
-        // this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "logo").setDepth(1)
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Dual Ascent: Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        // Adds background image to the scene - (x, y, image)
+        // this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
-        //this.add.image(0,0, "background").setOrigin(0).setDepth(0);
+        // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Dual Ascent: Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Adds a button to the scene - (x, y, image)
         let startButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let accountButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -56,7 +56,7 @@ export class MenuScene extends Phaser.Scene{
         startButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = startButton.x - startButton.width +135;
-            arrowSprite.y = startButton.y;
+            arrowSprite.y = startButton.y + startButton.height / 4;
         })
 
         // Signals when the pointer is not hovering over the button
@@ -69,13 +69,13 @@ export class MenuScene extends Phaser.Scene{
             console.log("click")
         })
 
-        // Account Button
-        accountButton.setInteractive();
+        // Profile Button
+        profileButton.setInteractive();
 
-        accountButton.on("pointerover", ()=>{
+        profileButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = accountButton.x - accountButton.width +100;
-            arrowSprite.y = accountButton.y;
+            arrowSprite.x = profileButton.x - profileButton.width +100;
+            arrowSprite.y = profileButton.y + profileButton.height / 4;
         })
 
         startButton.on("pointerout", ()=>{
@@ -92,7 +92,7 @@ export class MenuScene extends Phaser.Scene{
         optionsButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = optionsButton.x - optionsButton.width +100;
-            arrowSprite.y = optionsButton.y;
+            arrowSprite.y = optionsButton.y + optionsButton.height / 4;
         })
         optionsButton.on("pointerout", ()=>{
             console.log("no hover")
@@ -109,7 +109,7 @@ export class MenuScene extends Phaser.Scene{
         creditsButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = creditsButton.x - creditsButton.width +100;
-            arrowSprite.y = creditsButton.y;
+            arrowSprite.y = creditsButton.y + creditsButton.height / 4;
         })
         creditsButton.on("pointerout", ()=>{
             console.log("no hover")

@@ -4,6 +4,7 @@ This file is used to load all the assets for the game.
 import { CST } from "../CST";
 import { MenuScene } from "./MenuScene";
 import { OptionsScene } from "./OptionsScene";
+import { CreditsScene } from "./CreditsScene";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -20,13 +21,7 @@ export class LoadScene extends Phaser.Scene{
     // Used to load all the assets
     preload(){
 
-        // Load mages
-        this.load.image("logo", "./assets/logo.png");
-        this.load.image("options", "./assets/options.png");
-        this.load.image("start", "./assets/start.png");
-        this.load.image("back", "./assets/back.png")
-        this.load.image("account", "./assets/account.png")
-        this.load.image("credits", "./assets/credits.png");
+        // Load images
         this.load.image("background", "./assets/background.jpg");
         this.load.image("arrow", "./assets/arrow.png")
 
