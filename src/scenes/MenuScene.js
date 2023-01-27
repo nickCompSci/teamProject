@@ -13,21 +13,18 @@ export class MenuScene extends Phaser.Scene{
     create(){
 
         // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "logo").setDepth(1)
+        // this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "logo").setDepth(1)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Dual Ascent: Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         //this.add.image(0,0, "background").setOrigin(0).setDepth(0);
 
         // Adds a button to the scene - (x, y, image)
-        // let startButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, "start").setDepth(2)
-        let startButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Start', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let startButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        //let accountButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "account").setDepth(2)
-        let accountButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Account', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let accountButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        //let optionsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "options").setDepth(3)
         let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        //let creditsButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, "credits").setDepth(4)
         let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Adds the hover arrow that will appear when hovering over a button
