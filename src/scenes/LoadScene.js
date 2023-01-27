@@ -3,6 +3,7 @@ This file is used to load all the assets for the game.
 */
 import { CST } from "../CST";
 import { MenuScene } from "./MenuScene";
+import { OptionsScene } from "./OptionsScene";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{

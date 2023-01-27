@@ -114,6 +114,8 @@ export class MenuScene extends Phaser.Scene{
             console.log("no hover")
         })
         creditsButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.CREDITS)
             console.log("click")
         })
     }

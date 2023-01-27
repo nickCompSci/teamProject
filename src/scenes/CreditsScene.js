@@ -1,19 +1,19 @@
 /**
-This file is used to create the options scene.
+This file is used to create the credits scene
 */
 import { CST } from "../CST";
-export class OptionsScene extends Phaser.Scene{
+export class CreditsScene extends Phaser.Scene{
     constructor(){
         super({
-            key: CST.SCENES.OPTIONS
+            key: CST.SCENES.CREDITS
         })
     }
 
     // Creates any images, text, etc.
     create(){
 
-        // Options title
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "options").setDepth(1)
+        // Credits title
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.20, "credits").setDepth(1)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.image(this.game.renderer.width / 2, this.game.renderer.height /2 + 300, "back").setDepth(2)
