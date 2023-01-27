@@ -59,11 +59,6 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.y = startButton.y + startButton.height / 4;
         })
 
-        // Signals when the pointer is not hovering over the button
-        startButton.on("pointerout", ()=>{
-            console.log("no hover")
-        })
-
         // Signals when the pointer is clicked and released
         startButton.on("pointerup", ()=>{
             console.log("click")
@@ -78,10 +73,6 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.y = profileButton.y + profileButton.height / 4;
         })
 
-        startButton.on("pointerout", ()=>{
-            console.log("no hover")
-        })
-
         startButton.on("pointerup", ()=>{
             console.log("click")
         })
@@ -94,9 +85,7 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.x = optionsButton.x - optionsButton.width +100;
             arrowSprite.y = optionsButton.y + optionsButton.height / 4;
         })
-        optionsButton.on("pointerout", ()=>{
-            console.log("no hover")
-        })
+
         optionsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
             this.scene.start(CST.SCENES.OPTIONS);
@@ -111,9 +100,7 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.x = creditsButton.x - creditsButton.width +100;
             arrowSprite.y = creditsButton.y + creditsButton.height / 4;
         })
-        creditsButton.on("pointerout", ()=>{
-            console.log("no hover")
-        })
+
         creditsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
             this.scene.start(CST.SCENES.CREDITS)
