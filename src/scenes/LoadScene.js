@@ -22,7 +22,7 @@ export class LoadScene extends Phaser.Scene{
     preload(){
 
         // Load images
-        this.load.image("background", "./assets/background.jpg");
+        this.load.image("background", "./assets/tower2.jpg");
         this.load.image("arrow", "./assets/arrow.png")
 
         // Load audio
