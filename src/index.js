@@ -13,4 +13,5 @@ var config = {
 };
 
 let game = new Phaser.Game(config);
+console.log(5/2);
 

@@ -1,12 +1,15 @@
 import { CST } from "../CST.js";
+// https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
 
 let gameOptions = {
     startCards: 5,
     cardWidth: 260,
     cardHeight: 410,
-    cardDistance: 50,
-    cardAngle: 5
+    cardDistance: 100,
+    cardAngle: 3,
+    cardYOffset: 8
 }
+
 let handArray;
 
 export class BattleScene extends Phaser.Scene {
@@ -30,38 +33,31 @@ export class BattleScene extends Phaser.Scene {
         let gameHeight = this.game.config.height;
         bg.setPosition(gameWidth/2, gameHeight/2);
         
-        let startAngle =- gameOptions.cardAngle
+        let startAngle = gameOptions.cardAngle;
         handArray = [];
         let graveYardArray = [];
         for (let i = 0; i < gameOptions.startCards; i ++) {
 
             // creates cards from spritesheet and makes them draggable
-            let card = this.add.sprite(this.game.config.width/2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i).setInteractive();
+            let card = this.add.sprite(this.game.config.width/2 - i * gameOptions.cardDistance, this.game.config.height - 100, 'cards', i).setInteractive();
             this.input.setDraggable(card);
             
-            // Angles and minimises the cards initial display size
+            // Minimises the cards initial display size
             handArray.push(card);
             card.setOrigin(0.5, 1);
             card.displayWidth = gameOptions.cardWidth / 2;
-            card.displayHeight = gameOptions.cardHeight / 2;
+            card.displayHeight = gameOptions.cardHeight / 2 ;
             card.setDepth(gameOptions.startCards - i);
-            card.angle = startAngle;
 
-            // Settings angles for the cards in hand
-            if (i > 0) {
-                card.angle = handArray[i - 1].angle+startAngle;
-                startAngle *= 0.9;
-                let cardTop = card.getBounds().top;
-                let previousCardTop = handArray[i-1].getBounds().top;
-                card.y += (previousCardTop-cardTop) * 1.6;
-            }
-            
             card.startPosition = {
                 angle: card.angle,
                 x: card.x,
                 y: card.y
             }
         }
+
+        // Calls angling function for cards
+        this.angleCardsInHand(handArray);
 
         let dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
         let normalZone = 0xffff00; // yellow
@@ -195,5 +191,26 @@ export class BattleScene extends Phaser.Scene {
                 duration: 150
             });
         }, this);
+    }
+
+    // angling cards from center card
+    angleCardsInHand(handArray) {
+        let middleCard = Math.floor(handArray.length / 2);
+        let j = middleCard - 1;
+        let l = middleCard + 1;
+        let i = 1;
+        for (j; j >= 0; j--) {
+            handArray[j].angle += gameOptions.cardAngle * i;
+            handArray[j].y += gameOptions.cardYOffset * i;
+            handArray[l].angle -= gameOptions.cardAngle * i;
+            handArray[l].y += gameOptions.cardYOffset * i;
+            i++; 
+
+            // if even number, then it won't increment l for error.
+            if (l != handArray.length-1) {
+                l++;
+            }
+        }   
+       
     }
 }

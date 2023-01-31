@@ -151,12 +151,15 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+// https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
+
 var gameOptions = {
   startCards: 5,
   cardWidth: 260,
   cardHeight: 410,
-  cardDistance: 50,
-  cardAngle: 5
+  cardDistance: 100,
+  cardAngle: 3,
+  cardYOffset: 8
 };
 var handArray;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
@@ -184,36 +187,29 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
       bg.setPosition(gameWidth / 2, gameHeight / 2);
-      var startAngle = -gameOptions.cardAngle;
+      var startAngle = gameOptions.cardAngle;
       handArray = [];
       var graveYardArray = [];
       for (var i = 0; i < gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
-        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i).setInteractive();
+        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height - 100, 'cards', i).setInteractive();
         this.input.setDraggable(card);
 
-        // Angles and minimises the cards initial display size
+        // Minimises the cards initial display size
         handArray.push(card);
         card.setOrigin(0.5, 1);
         card.displayWidth = gameOptions.cardWidth / 2;
         card.displayHeight = gameOptions.cardHeight / 2;
         card.setDepth(gameOptions.startCards - i);
-        card.angle = startAngle;
-
-        // Settings angles for the cards in hand
-        if (i > 0) {
-          card.angle = handArray[i - 1].angle + startAngle;
-          startAngle *= 0.9;
-          var cardTop = card.getBounds().top;
-          var previousCardTop = handArray[i - 1].getBounds().top;
-          card.y += (previousCardTop - cardTop) * 1.6;
-        }
         card.startPosition = {
           angle: card.angle,
           x: card.x,
           y: card.y
         };
       }
+
+      // Calls angling function for cards
+      this.angleCardsInHand(handArray);
       var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
       var normalZone = 0xffff00; // yellow
       var activeZone = 0x00ffff; // lightblue / turquoise 
@@ -341,6 +337,28 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         });
       }, this);
     }
+
+    // angling cards from center card
+  }, {
+    key: "angleCardsInHand",
+    value: function angleCardsInHand(handArray) {
+      var middleCard = Math.floor(handArray.length / 2);
+      var j = middleCard - 1;
+      var l = middleCard + 1;
+      var i = 1;
+      for (j; j >= 0; j--) {
+        handArray[j].angle += gameOptions.cardAngle * i;
+        handArray[j].y += gameOptions.cardYOffset * i;
+        handArray[l].angle -= gameOptions.cardAngle * i;
+        handArray[l].y += gameOptions.cardYOffset * i;
+        i++;
+
+        // if even number, then it won't increment l for error.
+        if (l != handArray.length - 1) {
+          l++;
+        }
+      }
+    }
   }]);
   return BattleScene;
 }(Phaser.Scene);
@@ -360,6 +378,7 @@ var config = {
   scene: [_BattleScene.BattleScene]
 };
 var game = new Phaser.Game(config);
+console.log(5 / 2);
 },{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -385,7 +404,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56915" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52315" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
