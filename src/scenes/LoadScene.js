@@ -5,6 +5,7 @@ import { CST } from "../CST";
 import { MenuScene } from "./MenuScene";
 import { OptionsScene } from "./OptionsScene";
 import { CreditsScene } from "./CreditsScene";
+import { JoinGameScene } from "./JoinGameScene"
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -27,6 +28,14 @@ export class LoadScene extends Phaser.Scene{
 
         // Load audio
         this.load.audio("soundtrack", "./assets/soundtrack.mp3");
+
+        // Load plugins
+        this.load.scenePlugin({
+            key: 'rexuiplugin',
+		    url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+		    sceneKey: 'rexUI'
+        });
+        this.load.plugin('rextexteditplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js', true)
 
         // Progress Bar
         let loadingBar = this.add.graphics({
