@@ -159,7 +159,7 @@ var gameOptions = {
   cardHeight: 410,
   cardDistance: 100,
   cardAngle: 3,
-  cardYOffset: 8
+  cardYOffset: 12
 };
 var handArray;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
@@ -192,15 +192,15 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var graveYardArray = [];
       for (var i = 0; i < gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
-        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height - 100, 'cards', i).setInteractive();
+        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height + gameOptions.cardHeight / 10, 'cards', i).setInteractive();
         this.input.setDraggable(card);
-
         // Minimises the cards initial display size
         handArray.push(card);
         card.setOrigin(0.5, 1);
         card.displayWidth = gameOptions.cardWidth / 2;
         card.displayHeight = gameOptions.cardHeight / 2;
         card.setDepth(gameOptions.startCards - i);
+        this.organiseCardsInCenter(card);
         card.startPosition = {
           angle: card.angle,
           x: card.x,
@@ -337,14 +337,33 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         });
       }, this);
     }
+  }, {
+    key: "organiseCardsInCenter",
+    value: function organiseCardsInCenter(card) {
+      // offset the cards back to the middle
+
+      var xOffset = Math.floor(gameOptions.startCards / 2);
+      card.x += gameOptions.cardDistance * xOffset;
+
+      // if even number of cards, then offset the x slighly for centering
+      if (gameOptions.startCards % 2 == 0) {
+        card.x -= gameOptions.cardDistance / 2;
+      }
+    }
 
     // angling cards from center card
   }, {
     key: "angleCardsInHand",
     value: function angleCardsInHand(handArray) {
-      var middleCard = Math.floor(handArray.length / 2);
+      var lengthArray = handArray.length;
+      var middleCard = Math.floor(lengthArray / 2);
       var j = middleCard - 1;
-      var l = middleCard + 1;
+      var l;
+      if (lengthArray % 2 === 0) {
+        l = middleCard;
+      } else {
+        l = middleCard + 1;
+      }
       var i = 1;
       for (j; j >= 0; j--) {
         handArray[j].angle += gameOptions.cardAngle * i;
@@ -378,7 +397,6 @@ var config = {
   scene: [_BattleScene.BattleScene]
 };
 var game = new Phaser.Game(config);
-console.log(5 / 2);
 },{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

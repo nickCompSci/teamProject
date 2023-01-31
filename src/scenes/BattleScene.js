@@ -7,7 +7,7 @@ let gameOptions = {
     cardHeight: 410,
     cardDistance: 100,
     cardAngle: 3,
-    cardYOffset: 8
+    cardYOffset: 12
 }
 
 let handArray;
@@ -36,18 +36,20 @@ export class BattleScene extends Phaser.Scene {
         let startAngle = gameOptions.cardAngle;
         handArray = [];
         let graveYardArray = [];
+
         for (let i = 0; i < gameOptions.startCards; i ++) {
 
             // creates cards from spritesheet and makes them draggable
-            let card = this.add.sprite(this.game.config.width/2 - i * gameOptions.cardDistance, this.game.config.height - 100, 'cards', i).setInteractive();
+            let card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height + gameOptions.cardHeight/10, 'cards', i).setInteractive();
             this.input.setDraggable(card);
-            
             // Minimises the cards initial display size
             handArray.push(card);
             card.setOrigin(0.5, 1);
             card.displayWidth = gameOptions.cardWidth / 2;
             card.displayHeight = gameOptions.cardHeight / 2 ;
             card.setDepth(gameOptions.startCards - i);
+            
+            this.organiseCardsInCenter(card);
 
             card.startPosition = {
                 angle: card.angle,
@@ -58,6 +60,7 @@ export class BattleScene extends Phaser.Scene {
 
         // Calls angling function for cards
         this.angleCardsInHand(handArray);
+
 
         let dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
         let normalZone = 0xffff00; // yellow
@@ -193,12 +196,31 @@ export class BattleScene extends Phaser.Scene {
         }, this);
     }
 
+    organiseCardsInCenter(card) {
+        // offset the cards back to the middle
+
+        let xOffset = Math.floor(gameOptions.startCards / 2);
+        card.x += gameOptions.cardDistance * xOffset;
+
+        // if even number of cards, then offset the x slighly for centering
+        if (gameOptions.startCards % 2 == 0) {
+            card.x -= gameOptions.cardDistance / 2;
+        }
+    }
+
     // angling cards from center card
     angleCardsInHand(handArray) {
-        let middleCard = Math.floor(handArray.length / 2);
+        let lengthArray = handArray.length
+        let middleCard = Math.floor(lengthArray / 2);
         let j = middleCard - 1;
-        let l = middleCard + 1;
+        let l;
+        if (lengthArray % 2 === 0) {
+            l = middleCard;
+        } else {
+            l = middleCard + 1;
+        }
         let i = 1;
+
         for (j; j >= 0; j--) {
             handArray[j].angle += gameOptions.cardAngle * i;
             handArray[j].y += gameOptions.cardYOffset * i;
