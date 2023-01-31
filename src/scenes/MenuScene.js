@@ -20,11 +20,13 @@ export class MenuScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Adds a button to the scene - (x, y, image)
-        let startButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let createButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Create Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let joinButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 75, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 150, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
+        let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 225, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -51,17 +53,32 @@ export class MenuScene extends Phaser.Scene{
         */
 
         // Allows the start button to be interactive
-        startButton.setInteractive();
+        createButton.setInteractive();
 
         // When the pointer is over the button, the arrow will appear
-        startButton.on("pointerover", ()=>{
+        createButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = startButton.x - startButton.width +135;
-            arrowSprite.y = startButton.y + startButton.height / 4;
+            arrowSprite.x = createButton.x - createButton.width +150;
+            arrowSprite.y = createButton.y + createButton.height / 4;
         })
 
         // Signals when the pointer is clicked and released
-        startButton.on("pointerup", ()=>{
+        createButton.on("pointerup", ()=>{
+            console.log("click")
+        })
+
+        // Allows the start button to be interactive
+        joinButton.setInteractive();
+
+        // When the pointer is over the button, the arrow will appear
+        joinButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = joinButton.x - joinButton.width +125;
+            arrowSprite.y = joinButton.y + joinButton.height / 4;
+        })
+
+        // Signals when the pointer is clicked and released
+        joinButton.on("pointerup", ()=>{
             console.log("click")
         })
 
@@ -74,7 +91,7 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.y = profileButton.y + profileButton.height / 4;
         })
 
-        startButton.on("pointerup", ()=>{
+        profileButton.on("pointerup", ()=>{
             console.log("click")
         })
 
