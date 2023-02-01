@@ -7,7 +7,7 @@ let gameOptions = {
     cardHeight: 410,
     cardDistance: 100,
     cardAngle: 3,
-    cardYOffset: 12
+    cardYOffset: 20
 }
 
 let handArray;
@@ -33,14 +33,13 @@ export class BattleScene extends Phaser.Scene {
         let gameHeight = this.game.config.height;
         bg.setPosition(gameWidth/2, gameHeight/2);
         
-        let startAngle = gameOptions.cardAngle;
         handArray = [];
         let graveYardArray = [];
 
         for (let i = 0; i < gameOptions.startCards; i ++) {
 
             // creates cards from spritesheet and makes them draggable
-            let card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height + gameOptions.cardHeight/10, 'cards', i).setInteractive();
+            let card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i).setInteractive();
             this.input.setDraggable(card);
             // Minimises the cards initial display size
             handArray.push(card);
@@ -48,8 +47,6 @@ export class BattleScene extends Phaser.Scene {
             card.displayWidth = gameOptions.cardWidth / 2;
             card.displayHeight = gameOptions.cardHeight / 2 ;
             card.setDepth(gameOptions.startCards - i);
-            
-            this.organiseCardsInCenter(card);
 
             card.startPosition = {
                 angle: card.angle,
@@ -58,9 +55,7 @@ export class BattleScene extends Phaser.Scene {
             }
         }
 
-        // Calls angling function for cards
-        this.angleCardsInHand(handArray);
-
+        this.arrangeCardsInCenter(handArray);
 
         let dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
         let normalZone = 0xffff00; // yellow
@@ -91,7 +86,8 @@ export class BattleScene extends Phaser.Scene {
                 handArray.splice(index, 1);
             }
 
-            this.arrangeCardsInHand();
+            this.arrangeCardsInCenter(handArray);
+
         }, this);
 
         this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
@@ -148,7 +144,7 @@ export class BattleScene extends Phaser.Scene {
             graveYardArray.push(gameObject);
 
             // remove the card from the scene after 500ms
-            setTimeout(function() { gameObject.destroy(); }, 500);
+            // setTimeout(function() { gameObject.destroy(); }, 500);
 
             graphics.clear();
             graphics.lineStyle(2, normalZone);
@@ -161,78 +157,34 @@ export class BattleScene extends Phaser.Scene {
         
             if (!dropped) {
                 handArray.push(gameObject);
-                this.arrangeCardsInHand();
+                gameObject.displayHeight = gameOptions.cardHeight / 2;
+                gameObject.displayWidth = gameOptions.cardWidth / 2;
+                this.arrangeCardsInCenter(handArray);
             }
         }, this);
     }
 
-    // method to set card in hand coordinates
-    // n = card number
-    // totalCards = amount of cards on hand
-    setHandCoordinates(n, totalCards) {
-        let rotation = Math.PI / 4 / totalCards * (totalCards - n - 1);
-        let xPosition = this.game.config.width / 2 + 200 * Math.cos(rotation + Math.PI / 2);
-        let yPosition = this.game.config.height + 200 - 200 * Math.sin(rotation + Math.PI / 2);
-        return {
-            x: xPosition,
-            y: yPosition,
-            r: -rotation
-        }
-    }
+    arrangeCardsInCenter(handArray) {
+        let bottomOfScreen = this.game.config.height;
+        let screenCenterX = this.game.config.width / 2;
+        let yDelta = gameOptions.cardYOffset * (Math.floor(handArray.length / 2));
 
-    arrangeCardsInHand() {
-        handArray.forEach(function(card, i) {
+        for (let i=0; i < handArray.length; i++) {
+            let card = handArray[i];
+            let cardX = screenCenterX + (i - (handArray.length - 1) / 2) * gameOptions.cardDistance;
+            let cardAngle = (i - (handArray.length - 1) / 2) * gameOptions.cardAngle;
+
+            card.x = cardX;
+            card.y = bottomOfScreen + yDelta;
+            card.angle = cardAngle;
+            if (i > handArray.length / 2 - 1) {
+                yDelta += gameOptions.cardYOffset;
+            } else {
+                yDelta -= gameOptions.cardYOffset;
+            }
+
+            // sets card to the right in front
             card.setDepth(i);
-            let coordinates = this.setHandCoordinates(i, handArray.length);
-            this.tweens.add({
-                targets: card,
-                rotation: coordinates.r,
-                x: coordinates.x,
-                y: coordinates.y,
-                displayWidth: gameOptions.cardWidth / 2,
-                displayHeight: gameOptions.cardHeight / 2, 
-                duration: 150
-            });
-        }, this);
-    }
-
-    organiseCardsInCenter(card) {
-        // offset the cards back to the middle
-
-        let xOffset = Math.floor(gameOptions.startCards / 2);
-        card.x += gameOptions.cardDistance * xOffset;
-
-        // if even number of cards, then offset the x slighly for centering
-        if (gameOptions.startCards % 2 == 0) {
-            card.x -= gameOptions.cardDistance / 2;
         }
-    }
-
-    // angling cards from center card
-    angleCardsInHand(handArray) {
-        let lengthArray = handArray.length
-        let middleCard = Math.floor(lengthArray / 2);
-        let j = middleCard - 1;
-        let l;
-        if (lengthArray % 2 === 0) {
-            l = middleCard;
-        } else {
-            l = middleCard + 1;
-        }
-        let i = 1;
-
-        for (j; j >= 0; j--) {
-            handArray[j].angle += gameOptions.cardAngle * i;
-            handArray[j].y += gameOptions.cardYOffset * i;
-            handArray[l].angle -= gameOptions.cardAngle * i;
-            handArray[l].y += gameOptions.cardYOffset * i;
-            i++; 
-
-            // if even number, then it won't increment l for error.
-            if (l != handArray.length-1) {
-                l++;
-            }
-        }   
-       
     }
 }

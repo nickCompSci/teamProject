@@ -159,7 +159,7 @@ var gameOptions = {
   cardHeight: 410,
   cardDistance: 100,
   cardAngle: 3,
-  cardYOffset: 12
+  cardYOffset: 20
 };
 var handArray;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
@@ -187,12 +187,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
       bg.setPosition(gameWidth / 2, gameHeight / 2);
-      var startAngle = gameOptions.cardAngle;
       handArray = [];
       var graveYardArray = [];
       for (var i = 0; i < gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
-        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height + gameOptions.cardHeight / 10, 'cards', i).setInteractive();
+        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i).setInteractive();
         this.input.setDraggable(card);
         // Minimises the cards initial display size
         handArray.push(card);
@@ -200,16 +199,13 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         card.displayWidth = gameOptions.cardWidth / 2;
         card.displayHeight = gameOptions.cardHeight / 2;
         card.setDepth(gameOptions.startCards - i);
-        this.organiseCardsInCenter(card);
         card.startPosition = {
           angle: card.angle,
           x: card.x,
           y: card.y
         };
       }
-
-      // Calls angling function for cards
-      this.angleCardsInHand(handArray);
+      this.arrangeCardsInCenter(handArray);
       var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
       var normalZone = 0xffff00; // yellow
       var activeZone = 0x00ffff; // lightblue / turquoise 
@@ -236,7 +232,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         if (index !== -1) {
           handArray.splice(index, 1);
         }
-        this.arrangeCardsInHand();
+        this.arrangeCardsInCenter(handArray);
       }, this);
       this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
         gameObject.x = dragX;
@@ -289,9 +285,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         graveYardArray.push(gameObject);
 
         // remove the card from the scene after 500ms
-        setTimeout(function () {
-          gameObject.destroy();
-        }, 500);
+        // setTimeout(function() { gameObject.destroy(); }, 500);
+
         graphics.clear();
         graphics.lineStyle(2, normalZone);
         graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
@@ -300,82 +295,33 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.input.on("dragend", function (pointer, gameObject, dropped) {
         if (!dropped) {
           handArray.push(gameObject);
-          this.arrangeCardsInHand();
+          gameObject.displayHeight = gameOptions.cardHeight / 2;
+          gameObject.displayWidth = gameOptions.cardWidth / 2;
+          this.arrangeCardsInCenter(handArray);
         }
       }, this);
     }
+  }, {
+    key: "arrangeCardsInCenter",
+    value: function arrangeCardsInCenter(handArray) {
+      var bottomOfScreen = this.game.config.height;
+      var screenCenterX = this.game.config.width / 2;
+      var yDelta = gameOptions.cardYOffset * Math.floor(handArray.length / 2);
+      for (var i = 0; i < handArray.length; i++) {
+        var card = handArray[i];
+        var cardX = screenCenterX + (i - (handArray.length - 1) / 2) * gameOptions.cardDistance;
+        var cardAngle = (i - (handArray.length - 1) / 2) * gameOptions.cardAngle;
+        card.x = cardX;
+        card.y = bottomOfScreen + yDelta;
+        card.angle = cardAngle;
+        if (i > handArray.length / 2 - 1) {
+          yDelta += gameOptions.cardYOffset;
+        } else {
+          yDelta -= gameOptions.cardYOffset;
+        }
 
-    // method to set card in hand coordinates
-    // n = card number
-    // totalCards = amount of cards on hand
-  }, {
-    key: "setHandCoordinates",
-    value: function setHandCoordinates(n, totalCards) {
-      var rotation = Math.PI / 4 / totalCards * (totalCards - n - 1);
-      var xPosition = this.game.config.width / 2 + 200 * Math.cos(rotation + Math.PI / 2);
-      var yPosition = this.game.config.height + 200 - 200 * Math.sin(rotation + Math.PI / 2);
-      return {
-        x: xPosition,
-        y: yPosition,
-        r: -rotation
-      };
-    }
-  }, {
-    key: "arrangeCardsInHand",
-    value: function arrangeCardsInHand() {
-      handArray.forEach(function (card, i) {
+        // sets card to the right in front
         card.setDepth(i);
-        var coordinates = this.setHandCoordinates(i, handArray.length);
-        this.tweens.add({
-          targets: card,
-          rotation: coordinates.r,
-          x: coordinates.x,
-          y: coordinates.y,
-          displayWidth: gameOptions.cardWidth / 2,
-          displayHeight: gameOptions.cardHeight / 2,
-          duration: 150
-        });
-      }, this);
-    }
-  }, {
-    key: "organiseCardsInCenter",
-    value: function organiseCardsInCenter(card) {
-      // offset the cards back to the middle
-
-      var xOffset = Math.floor(gameOptions.startCards / 2);
-      card.x += gameOptions.cardDistance * xOffset;
-
-      // if even number of cards, then offset the x slighly for centering
-      if (gameOptions.startCards % 2 == 0) {
-        card.x -= gameOptions.cardDistance / 2;
-      }
-    }
-
-    // angling cards from center card
-  }, {
-    key: "angleCardsInHand",
-    value: function angleCardsInHand(handArray) {
-      var lengthArray = handArray.length;
-      var middleCard = Math.floor(lengthArray / 2);
-      var j = middleCard - 1;
-      var l;
-      if (lengthArray % 2 === 0) {
-        l = middleCard;
-      } else {
-        l = middleCard + 1;
-      }
-      var i = 1;
-      for (j; j >= 0; j--) {
-        handArray[j].angle += gameOptions.cardAngle * i;
-        handArray[j].y += gameOptions.cardYOffset * i;
-        handArray[l].angle -= gameOptions.cardAngle * i;
-        handArray[l].y += gameOptions.cardYOffset * i;
-        i++;
-
-        // if even number, then it won't increment l for error.
-        if (l != handArray.length - 1) {
-          l++;
-        }
       }
     }
   }]);
@@ -422,7 +368,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52315" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61878" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
