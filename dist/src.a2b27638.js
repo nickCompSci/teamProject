@@ -130,7 +130,48 @@ var CST = {
   }
 };
 exports.CST = CST;
-},{}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{}],"src/helpers/font.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loadFont = loadFont;
+function loadFont(name, url) {
+  var newFont = new FontFace(name, 'url(${url})');
+  newFont.load().then(function (loaded) {
+    document.fonts.add(loaded);
+  }).catch(function (error) {
+    return error;
+  });
+}
+},{}],"src/helpers/button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _font = require("./font");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+// loadFont("font1", "./assets/PixelboyFont.ttf");
+var Button = /*#__PURE__*/_createClass(function Button(x, y, label, scene, callback) {
+  _classCallCheck(this, Button);
+  var button = scene.add.text(x, y, label).setOrigin(0.5, 1).setPadding(15).setStyle({
+    backgroundColor: '#202529'
+  }).setInteractive({
+    useHandCursor: true
+  }).on('pointerdown', function () {
+    return callback();
+  });
+});
+exports.default = Button;
+},{"./font":"src/helpers/font.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -138,6 +179,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BattleScene = void 0;
 var _CST = require("../CST.js");
+var _button = _interopRequireDefault(require("../helpers/button"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -154,14 +197,23 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 // https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
 
 var gameOptions = {
+  deck: 6,
   startCards: 5,
   cardWidth: 260,
   cardHeight: 410,
   cardDistance: 100,
   cardAngle: 3,
-  cardYOffset: 20
+  cardYOffset: 10
+};
+var cardBackDimensions = {
+  backWidth: 130,
+  backHeight: 205
 };
 var handArray;
+var deckArray;
+var deckTrackerArray;
+var graveYardArray;
+var deckObj;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(BattleScene, _Phaser$Scene);
   var _super = _createSuper(BattleScene);
@@ -179,6 +231,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         frameWidth: gameOptions.cardWidth,
         frameHeight: gameOptions.cardHeight
       });
+      this.load.image("cardBack", "./assets/cardBack.png");
+      this.load.image("sword", "./assets/sword.png");
     }
   }, {
     key: "create",
@@ -187,25 +241,22 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
       bg.setPosition(gameWidth / 2, gameHeight / 2);
+      deckArray = [];
+      deckTrackerArray = [];
       handArray = [];
-      var graveYardArray = [];
+      graveYardArray = [];
       for (var i = 0; i < gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
-        var card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i).setInteractive();
-        this.input.setDraggable(card);
-        // Minimises the cards initial display size
-        handArray.push(card);
-        card.setOrigin(0.5, 1);
-        card.displayWidth = gameOptions.cardWidth / 2;
-        card.displayHeight = gameOptions.cardHeight / 2;
-        card.setDepth(gameOptions.startCards - i);
-        card.startPosition = {
-          angle: card.angle,
-          x: card.x,
-          y: card.y
-        };
+        var _card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i);
+        this.cardInHand(_card);
+        deckArray.push(_card);
       }
-      this.arrangeCardsInCenter(handArray);
+      var card = this.add.sprite(this.game.config.width / 2 - gameOptions.cardDistance, this.game.config.height, 'sword');
+      this.cardInHand(card);
+      deckArray.push(card);
+      this.shuffle();
+      this.deckSetUp();
+      var button = new _button.default(this.game.config.width, this.game.config.height / 2, 'End Turn', this, this.endTurn.bind(this));
       var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
       var normalZone = 0xffff00; // yellow
       var activeZone = 0x00ffff; // lightblue / turquoise 
@@ -302,6 +353,23 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       }, this);
     }
   }, {
+    key: "cardInHand",
+    value: function cardInHand(card) {
+      card.visible = !card.visible;
+      card.setInteractive();
+      this.input.setDraggable(card);
+      card.setOrigin(0.5, 1);
+
+      // Minimises the cards initial display size
+      card.displayWidth = gameOptions.cardWidth / 2;
+      card.displayHeight = gameOptions.cardHeight / 2;
+      card.startPosition = {
+        angle: card.angle,
+        x: card.x,
+        y: card.y
+      };
+    }
+  }, {
     key: "arrangeCardsInCenter",
     value: function arrangeCardsInCenter(handArray) {
       var bottomOfScreen = this.game.config.height;
@@ -324,11 +392,50 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         card.setDepth(i);
       }
     }
+  }, {
+    key: "deckSetUp",
+    value: function deckSetUp() {
+      var x = this.game.config.width - 200;
+      var y = this.game.config.height - 50;
+      for (var i = 0; i < deckArray.length; i++) {
+        var cardBack = this.add.sprite(x, y, 'cardBack');
+        cardBack.setOrigin(0.5, 1);
+        cardBack.displayWidth = cardBackDimensions.backWidth / 2;
+        cardBack.displayHeight = cardBackDimensions.backHeight / 2;
+        cardBack.setInteractive();
+        deckTrackerArray.push(cardBack);
+        x += 4;
+      }
+    }
+
+    // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
+  }, {
+    key: "shuffle",
+    value: function shuffle() {
+      for (var i = deckArray.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var _ref = [deckArray[j], deckArray[i]];
+        deckArray[i] = _ref[0];
+        deckArray[j] = _ref[1];
+      }
+    }
+
+    // simulate a drawing feature
+  }, {
+    key: "endTurn",
+    value: function endTurn() {
+      var lastCard = deckTrackerArray.pop();
+      lastCard.destroy();
+      var drawCard = deckArray.pop();
+      handArray.push(drawCard);
+      this.cardInHand(drawCard);
+      this.arrangeCardsInCenter(handArray);
+    }
   }]);
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/button":"src/helpers/button.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 var _BattleScene = require("/src/scenes/BattleScene.js");
@@ -368,7 +475,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61878" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63833" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
