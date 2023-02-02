@@ -2,10 +2,10 @@
 This file is used to create the create game scene.
 */
 import { CST } from "../CST";
-export class JoinGameScene extends Phaser.Scene{
+export class CreateGameScene extends Phaser.Scene{
     constructor(){
         super({
-            key: CST.SCENES.JOIN
+            key: CST.SCENES.CREATE
         })
     }
 
@@ -16,31 +16,12 @@ export class JoinGameScene extends Phaser.Scene{
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Join Game title
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Create Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, 'Please enter your username:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         // Input name box
         let nameBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, "Name", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
-
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, 'Please enter a join code:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
-
-        // Input code box
-        let codeBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.60, "Code", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
-
-        // Code box
-        codeBox.setInteractive();
-
-        codeBox.on("pointerdown", ()=>{
-            this.rexUI.edit(codeBox);
-        });
-
-        /** codeBox.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = codeBox.x - codeBox.width + 40;
-            arrowSprite.y = codeBox.y + codeBox.height / 4;
-            console.log("hover")
-        }); */
 
         nameBox.setInteractive();
 
@@ -88,13 +69,9 @@ export class JoinGameScene extends Phaser.Scene{
         })
 
         submitButton.on("pointerup", ()=>{
-            // Submit username and code
-            console.log("Username:", nameBox.text);
-            console.log("Join Code:", codeBox.text);
+            // Submit username and join code to the database
 
-            // Checks to see if code matches any existing games
-            // If it does, then the scene is changed to a lobby scene that shows the other players in the game
-            // If it doesn't, then an error message is displayed
+            // Move to the lobby scene
             // this.scene.start(CST.SCENES.LOBBY);
         })
     }

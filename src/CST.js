@@ -7,6 +7,7 @@ export const CST = {
         MENU: "MENU",
         OPTIONS: "OPTIONS",
         CREDITS: "CREDITS",
-        JOIN: "JOIN"
+        JOIN: "JOIN",
+        CREATE: "CREATE"
     }
 }

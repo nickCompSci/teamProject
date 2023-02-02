@@ -8,6 +8,7 @@ import {MenuScene} from "./scenes/MenuScene";
 import {OptionsScene} from "./scenes/OptionsScene";
 import {CreditsScene} from "./scenes/CreditsScene";
 import {JoinGameScene} from "./scenes/JoinGameScene";
+import {CreateGameScene} from "./scenes/CreateGameScene";
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
 
 // Creates the game
@@ -15,7 +16,7 @@ let game = new Phaser.Game({
     width: 1000,
     height: 800,
     scene:[
-        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene
+        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene
     ],
     render:{
         pixelArt: true

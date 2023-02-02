@@ -64,7 +64,7 @@ export class MenuScene extends Phaser.Scene{
 
         // Signals when the pointer is clicked and released
         createButton.on("pointerup", ()=>{
-            //this.scene.start(CST.SCENES.CREATE);
+            this.scene.start(CST.SCENES.CREATE);
             console.log("click")
         })
 
