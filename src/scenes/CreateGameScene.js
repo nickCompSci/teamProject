@@ -36,6 +36,11 @@ export class CreateGameScene extends Phaser.Scene{
             console.log("hover")
         }); */
 
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+
+        // PLACEHOLDER - This code will be generated at a later date....
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.60, 'CODE123', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+
         // Submit button
         let submitButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Submit', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -69,10 +74,9 @@ export class CreateGameScene extends Phaser.Scene{
         })
 
         submitButton.on("pointerup", ()=>{
-            // Submit username and join code to the database
-
+            // Submit username to the database
             // Move to the lobby scene
-            // this.scene.start(CST.SCENES.LOBBY);
+            this.scene.start(CST.SCENES.LOBBY);
         })
     }
 }

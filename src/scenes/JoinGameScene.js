@@ -95,7 +95,7 @@ export class JoinGameScene extends Phaser.Scene{
             // Checks to see if code matches any existing games
             // If it does, then the scene is changed to a lobby scene that shows the other players in the game
             // If it doesn't, then an error message is displayed
-            // this.scene.start(CST.SCENES.LOBBY);
+            this.scene.start(CST.SCENES.LOBBY);
         })
     }
 }

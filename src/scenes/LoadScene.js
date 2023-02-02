@@ -5,7 +5,9 @@ import { CST } from "../CST";
 import { MenuScene } from "./MenuScene";
 import { OptionsScene } from "./OptionsScene";
 import { CreditsScene } from "./CreditsScene";
-import { JoinGameScene } from "./JoinGameScene"
+import { JoinGameScene } from "./JoinGameScene";
+import { CreateGameScene } from "./CreateGameScene";
+import { LobbyScene } from "./LobbyScene";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{

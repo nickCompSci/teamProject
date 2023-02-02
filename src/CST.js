@@ -8,6 +8,7 @@ export const CST = {
         OPTIONS: "OPTIONS",
         CREDITS: "CREDITS",
         JOIN: "JOIN",
-        CREATE: "CREATE"
+        CREATE: "CREATE",
+        LOBBY: "LOBBY"
     }
 }
