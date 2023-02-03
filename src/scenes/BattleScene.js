@@ -21,7 +21,6 @@ let handArray;
 let deckArray;
 let deckTrackerArray;
 let graveYardArray;
-let deckObj;
 
 export class BattleScene extends Phaser.Scene {
     constructor(){
@@ -32,12 +31,12 @@ export class BattleScene extends Phaser.Scene {
 
     preload() {
         this.load.image("background", "./assets/background.jpg");
-        this.load.spritesheet("cards", "./assets/spritesheet.png", {
+        this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
             frameWidth: gameOptions.cardWidth,
             frameHeight: gameOptions.cardHeight
         });
-        this.load.image("cardBack", "./assets/cardBack.png");
-        this.load.image("sword", "./assets/sword.png");
+        this.load.image("cardBack", "./assets/sprites/cardBack.png");
+        this.load.image("sword", "./assets/sprites/sword.png");
     }
 
     create() {
@@ -82,8 +81,6 @@ export class BattleScene extends Phaser.Scene {
                 angle: 0,
                 x: pointer.x,
                 y: pointer.y,
-                displayWidth: gameOptions.cardWidth,
-                displayHeight: gameOptions.cardHeight,
                 duration: 50
             });
             this.tweens.add({
@@ -106,30 +103,37 @@ export class BattleScene extends Phaser.Scene {
             gameObject.y = dragY;
         });
 
-        // this.input.on('pointerover', function(pointer, gameObject) {
-        //     this.tweens.add({
-        //         targets: gameObject,
-        //         angle: 0,
-        //         x: pointer.x,
-        //         y: pointer.y,
-        //         displayWidth: gameOptions.cardWidth,
-        //         displayHeight: gameOptions.cardHeight,
-        //         duration: 50
-        //     });
-            
-        // }, this);
+        // hover over listener
+        this.input.on('gameobjectover', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+                this.tweens.add({
+                    targets: gameObject,
+                    angle: 0,
+                    displayWidth: gameOptions.cardWidth,
+                    displayHeight: gameOptions.cardHeight,
+                    depth: 100,
+                    duration: 50
+                });
+                gameObject.startPosition = {
+                    angle: gameObject.angle,
+                    depth: gameObject.depth
+                }
+            }
+        }, this);
 
-        // this.input.on('pointerout', function(pointer, gameObject) {
-        //     this.tweens.add({
-        //         targets: gameObject,
-        //         angle: gameObject.startPosition.angle,
-        //         x: gameObject.startPosition.x,
-        //         y: gameObject.startPosition.y,
-        //         displayWidth: gameOptions.cardWidth/2,
-        //         displayHeight: gameOptions.cardHeight/2,
-        //         duration: 50
-        //     });
-        // }, this);
+        // hover out listener
+        this.input.on('gameobjectout', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+                this.tweens.add({
+                    targets: gameObject,
+                    angle: gameObject.startPosition.angle,
+                    displayWidth: gameOptions.cardWidth/2,
+                    displayHeight: gameOptions.cardHeight/2,
+                    depth: gameObject.startPosition.depth,
+                    duration: 50,
+                });
+            }
+       }, this);
 
         this.input.on('dragenter', function(pointer, gameObject, dropZone) {
             graphics.clear();
@@ -155,7 +159,7 @@ export class BattleScene extends Phaser.Scene {
             graveYardArray.push(gameObject);
 
             // remove the card from the scene after 500ms
-            // setTimeout(function() { gameObject.destroy(); }, 500);
+            setTimeout(function() { gameObject.destroy(); }, 500);
 
             graphics.clear();
             graphics.lineStyle(2, normalZone);
@@ -184,12 +188,6 @@ export class BattleScene extends Phaser.Scene {
         // Minimises the cards initial display size
         card.displayWidth = gameOptions.cardWidth / 2;
         card.displayHeight = gameOptions.cardHeight / 2 ;
-
-        card.startPosition = {
-            angle: card.angle,
-            x: card.x,
-            y: card.y
-        }
     }
 
     arrangeCardsInCenter(handArray) {
@@ -230,8 +228,6 @@ export class BattleScene extends Phaser.Scene {
             deckTrackerArray.push(cardBack);
             x += 4;
         }
-
-    
     }
 
     // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
@@ -252,8 +248,5 @@ export class BattleScene extends Phaser.Scene {
         this.cardInHand(drawCard);
         this.arrangeCardsInCenter(handArray);
 
-
     }
-    
-
 }

@@ -213,7 +213,6 @@ var handArray;
 var deckArray;
 var deckTrackerArray;
 var graveYardArray;
-var deckObj;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(BattleScene, _Phaser$Scene);
   var _super = _createSuper(BattleScene);
@@ -227,12 +226,12 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     key: "preload",
     value: function preload() {
       this.load.image("background", "./assets/background.jpg");
-      this.load.spritesheet("cards", "./assets/spritesheet.png", {
+      this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
         frameWidth: gameOptions.cardWidth,
         frameHeight: gameOptions.cardHeight
       });
-      this.load.image("cardBack", "./assets/cardBack.png");
-      this.load.image("sword", "./assets/sword.png");
+      this.load.image("cardBack", "./assets/sprites/cardBack.png");
+      this.load.image("sword", "./assets/sprites/sword.png");
     }
   }, {
     key: "create",
@@ -270,8 +269,6 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           angle: 0,
           x: pointer.x,
           y: pointer.y,
-          displayWidth: gameOptions.cardWidth,
-          displayHeight: gameOptions.cardHeight,
           duration: 50
         });
         this.tweens.add({
@@ -290,31 +287,37 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         gameObject.y = dragY;
       });
 
-      // this.input.on('pointerover', function(pointer, gameObject) {
-      //     this.tweens.add({
-      //         targets: gameObject,
-      //         angle: 0,
-      //         x: pointer.x,
-      //         y: pointer.y,
-      //         displayWidth: gameOptions.cardWidth,
-      //         displayHeight: gameOptions.cardHeight,
-      //         duration: 50
-      //     });
+      // hover over listener
+      this.input.on('gameobjectover', function (pointer, gameObject) {
+        if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+          this.tweens.add({
+            targets: gameObject,
+            angle: 0,
+            displayWidth: gameOptions.cardWidth,
+            displayHeight: gameOptions.cardHeight,
+            depth: 100,
+            duration: 50
+          });
+          gameObject.startPosition = {
+            angle: gameObject.angle,
+            depth: gameObject.depth
+          };
+        }
+      }, this);
 
-      // }, this);
-
-      // this.input.on('pointerout', function(pointer, gameObject) {
-      //     this.tweens.add({
-      //         targets: gameObject,
-      //         angle: gameObject.startPosition.angle,
-      //         x: gameObject.startPosition.x,
-      //         y: gameObject.startPosition.y,
-      //         displayWidth: gameOptions.cardWidth/2,
-      //         displayHeight: gameOptions.cardHeight/2,
-      //         duration: 50
-      //     });
-      // }, this);
-
+      // hover out listener
+      this.input.on('gameobjectout', function (pointer, gameObject) {
+        if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+          this.tweens.add({
+            targets: gameObject,
+            angle: gameObject.startPosition.angle,
+            displayWidth: gameOptions.cardWidth / 2,
+            displayHeight: gameOptions.cardHeight / 2,
+            depth: gameObject.startPosition.depth,
+            duration: 50
+          });
+        }
+      }, this);
       this.input.on('dragenter', function (pointer, gameObject, dropZone) {
         graphics.clear();
         graphics.lineStyle(2, activeZone);
@@ -336,8 +339,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         graveYardArray.push(gameObject);
 
         // remove the card from the scene after 500ms
-        // setTimeout(function() { gameObject.destroy(); }, 500);
-
+        setTimeout(function () {
+          gameObject.destroy();
+        }, 500);
         graphics.clear();
         graphics.lineStyle(2, normalZone);
         graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
@@ -363,11 +367,6 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // Minimises the cards initial display size
       card.displayWidth = gameOptions.cardWidth / 2;
       card.displayHeight = gameOptions.cardHeight / 2;
-      card.startPosition = {
-        angle: card.angle,
-        x: card.x,
-        y: card.y
-      };
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -475,7 +474,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63833" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52114" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
