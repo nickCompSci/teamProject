@@ -598,8 +598,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     key: "create",
     value: function create() {
       var _this = this;
+      // adds player sprites
       this.add.sprite(this.game.renderer.width / 2 - 200, this.game.renderer.height / 2 + 70, 'player').setDepth(1).setScale(3);
       var player2 = this.add.sprite(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 + 70, 'player2').setDepth(1).setScale(3);
+
+      // adds background
       this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2 - 120, 'background').setSize(50, 50).setDepth(0).setScale(0.7);
 
       // Back Button for navigating back to the main menu
@@ -665,6 +668,7 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
     key: "create",
     value: function create() {
       var _this = this;
+      // Loads background
       this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'map').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0);
 
       // Back Button for navigating back to the main menu
@@ -689,6 +693,8 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
         _this.scene.start(_CST.CST.SCENES.MENU);
         console.log("click");
       });
+
+      // adds icons for map
       var battle = this.add.image(this.game.renderer.width / 2 - 215, this.game.renderer.height / 2 - 70, 'cards').setDepth(0);
       var shop = this.add.image(this.game.renderer.width / 2 - 55, this.game.renderer.height / 2 - 150, 'shop').setDepth(0);
       var random = this.add.image(this.game.renderer.width / 2 - 75, this.game.renderer.height / 2 - 20, 'random').setDepth(0);
@@ -700,6 +706,8 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
       var battle6 = this.add.image(this.game.renderer.width / 2 + 120, this.game.renderer.height / 2 + 230, 'cards').setDepth(0);
       var battle7 = this.add.image(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 - 60, 'cards').setDepth(0);
       var encounters = [battle, battle2, battle3, battle4, battle5, battle6, battle7, shop, random, random2];
+
+      // function for randomly shuffling the array - https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
       function shuffle(array) {
         var currentIndex = array.length,
           randomIndex;
@@ -719,6 +727,8 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
       }
       shuffle(encounters);
       console.log(encounters);
+
+      // room positions for encounter icons
       var positions = [{
         x: this.game.renderer.width / 2 - 215,
         y: this.game.renderer.height / 2 - 70
@@ -750,17 +760,19 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
         x: this.game.renderer.width / 2 + 200,
         y: this.game.renderer.height / 2 - 60
       }];
+
+      // for assigning the positions to the icons
       for (var i = 0; i < encounters.length; i++) {
         console.log(positions[i].x);
         encounters[i].x = positions[i].x;
         encounters[i].y = positions[i].y;
+        encounters[i].setInteractive();
+        encounters[i].on("pointerup", function () {
+          // Moves back to the main menu when the back button is clicked
+          _this.scene.start(_CST.CST.SCENES.BATTLE);
+          console.log("click");
+        });
       }
-      battle.setInteractive();
-      battle.on("pointerup", function () {
-        // Moves back to the main menu when the back button is clicked
-        _this.scene.start(_CST.CST.SCENES.BATTLE);
-        console.log("click");
-      });
     }
   }]);
   return MapScene;
@@ -921,7 +933,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55218" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49399" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

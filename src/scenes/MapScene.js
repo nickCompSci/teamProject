@@ -90,20 +90,22 @@ export class MapScene extends Phaser.Scene{
             {x : this.game.renderer.width / 2+200, y : this.game.renderer.height / 2-60}
         ]
 
-        // for assigning the positions to the icons
+        // for assigning the positions to the icons and sets all icons to lead to battle scene when clicked
         for (let i=0; i<encounters.length; i++) {
             console.log(positions[i].x)
             encounters[i].x = positions[i].x;
             encounters[i].y = positions[i].y;
+
+            encounters[i].setInteractive();
+        
+            encounters[i].on("pointerup", ()=>{
+                // Moves back to the main menu when the back button is clicked
+                this.scene.start(CST.SCENES.BATTLE);
+                console.log("click")
+            })
         }
 
-        battle.setInteractive();
-        
-        battle.on("pointerup", ()=>{
-            // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.BATTLE);
-            console.log("click")
-        })
+
 
     }
 }
