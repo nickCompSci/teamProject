@@ -13,7 +13,7 @@ export class MenuScene extends Phaser.Scene{
     create(){
 
         // Adds background image to the scene - (x, y, image)
-        // this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'tower').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Dual Ascent: Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
@@ -26,6 +26,9 @@ export class MenuScene extends Phaser.Scene{
         let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
+        let battleButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 350, 'Battle', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let mapButton = this.add.text(this.game.renderer.width/ 2 + 200 , this.game.renderer.height / 2 + 350, 'Map', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
@@ -104,6 +107,36 @@ export class MenuScene extends Phaser.Scene{
         creditsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
             this.scene.start(CST.SCENES.CREDITS)
+            console.log("click")
+        })
+
+        // Battle Button
+        battleButton.setInteractive();
+
+        battleButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = battleButton.x - battleButton.width +100;
+            arrowSprite.y = battleButton.y + battleButton.height / 4;
+        })
+
+        battleButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.BATTLE)
+            console.log("click")
+        })
+
+        // Map Button
+        mapButton.setInteractive();
+
+        mapButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = mapButton.x - mapButton.width +50;
+            arrowSprite.y = mapButton.y + mapButton.height / 4 ;
+        })
+
+        mapButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.MAP)
             console.log("click")
         })
     }
