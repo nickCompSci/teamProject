@@ -12,6 +12,7 @@ export class MapScene extends Phaser.Scene{
     // Creates any images, text, etc.
     create(){
 
+        // Loads background
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'map').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Back Button for navigating back to the main menu
@@ -36,6 +37,7 @@ export class MapScene extends Phaser.Scene{
             console.log("click")
         })
 
+        // adds icons for map
         let battle = this.add.image(this.game.renderer.width / 2-215, this.game.renderer.height / 2-70, 'cards').setDepth(0)
         let shop = this.add.image(this.game.renderer.width / 2-55, this.game.renderer.height / 2-150, 'shop').setDepth(0)
         let random = this.add.image(this.game.renderer.width / 2-75, this.game.renderer.height / 2-20, 'random').setDepth(0)
@@ -49,6 +51,8 @@ export class MapScene extends Phaser.Scene{
 
         let encounters = [battle, battle2, battle3, battle4, battle5, battle6, battle7, shop, random, random2];
 
+
+        // function for randomly shuffling the array - https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
         function shuffle(array) {
             let currentIndex = array.length,  randomIndex;
           
@@ -71,6 +75,8 @@ export class MapScene extends Phaser.Scene{
 
         console.log(encounters)
 
+
+        // room positions for encounter icons
         let positions = [
             {x : this.game.renderer.width / 2-215, y : this.game.renderer.height / 2-70},
             {x : this.game.renderer.width / 2-55, y : this.game.renderer.height / 2-150},
@@ -84,6 +90,7 @@ export class MapScene extends Phaser.Scene{
             {x : this.game.renderer.width / 2+200, y : this.game.renderer.height / 2-60}
         ]
 
+        // for assigning the positions to the icons
         for (let i=0; i<encounters.length; i++) {
             console.log(positions[i].x)
             encounters[i].x = positions[i].x;

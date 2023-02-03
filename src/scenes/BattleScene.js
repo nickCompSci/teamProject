@@ -12,10 +12,11 @@ export class BattleScene extends Phaser.Scene{
     // Creates any images, text, etc.
     create(){
 
+        // adds player sprites
         this.add.sprite(this.game.renderer.width / 2 -200, this.game.renderer.height / 2+70, 'player').setDepth(1).setScale(3);
         let player2 = this.add.sprite(this.game.renderer.width / 2 +200, this.game.renderer.height / 2+70, 'player2').setDepth(1).setScale(3);
 
-
+        // adds background
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2-120, 'background').setSize(50, 50).setDepth(0).setScale(0.7);
 
         // Back Button for navigating back to the main menu
