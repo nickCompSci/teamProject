@@ -33,6 +33,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("HUD", "./assets/hud_bg.png");
         this.load.image("background", "./assets/background.png");
         this.load.image("card_holder", "./assets/card_holder.jpg");
+        this.load.image("guy", "./assets/sprites/player_green_glasses.png");
         this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
             frameWidth: gameOptions.cardWidth,
             frameHeight: gameOptions.cardHeight
@@ -53,6 +54,10 @@ export class BattleScene extends Phaser.Scene {
         card_bg.setScale(0.325);
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
+        
+        let player = this.add.image(0, 0, "guy"); 
+        player.setPosition(gameWidth/4, gameHeight/1.65);       
+        player.setScale(3);
         
         
         deckArray = [];
