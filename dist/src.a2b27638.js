@@ -259,6 +259,14 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       heartext.setPosition(-18, -18);
       var health = this.add.container(0, 0, [heart, heartext]);
       health.setPosition(gameWidth / 20, gameHeight / 2.2);
+      var chamber = this.add.circle(0, 0, 30, 0xffcc00);
+      var actiontext = this.add.text(0, 0, 6, {
+        color: "black",
+        fontSize: "30px"
+      });
+      actiontext.setPosition(-10, -18);
+      var actions = this.add.container(0, 0, [chamber, actiontext]);
+      actions.setPosition(gameWidth / 20, gameHeight / 1.75);
       var player = this.add.image(0, 0, "guy");
       player.setPosition(gameWidth / 4, gameHeight / 1.65);
       player.setScale(3);

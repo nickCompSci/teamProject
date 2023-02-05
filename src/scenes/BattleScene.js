@@ -62,7 +62,13 @@ export class BattleScene extends Phaser.Scene {
         heartext.setPosition(-18, -18);
         let health = this.add.container(0, 0, [heart, heartext]);
         health.setPosition(gameWidth/20, gameHeight/2.2);
-        
+
+        let chamber = this.add.circle(0, 0, 30, 0xffcc00);
+        let actiontext = this.add.text(0,0, 6, {color: "black", fontSize: "30px"});
+        actiontext.setPosition(-10, -18);
+        let actions = this.add.container(0, 0, [chamber, actiontext]);
+        actions.setPosition(gameWidth/20, gameHeight/1.75);
+
         let player = this.add.image(0, 0, "guy"); 
         player.setPosition(gameWidth/4, gameHeight/1.65);       
         player.setScale(3);
