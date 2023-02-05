@@ -162,7 +162,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // loadFont("font1", "./assets/PixelboyFont.ttf");
 var Button = /*#__PURE__*/_createClass(function Button(x, y, label, scene, callback) {
   _classCallCheck(this, Button);
-  var button = scene.add.text(x, y, label).setOrigin(0.5, 1).setPadding(15).setStyle({
+  var button = scene.add.text(x, y, label).setOrigin(0, 0).setPadding(8, 15).setStyle({
     backgroundColor: '#202529'
   }).setInteractive({
     useHandCursor: true
@@ -263,7 +263,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       deckArray.push(card);
       this.shuffle();
       this.deckSetUp();
-      var button = new _button.default(this.game.config.width, this.game.config.height / 2, 'End Turn', this, this.endTurn.bind(this));
+      var button = new _button.default(0, gameHeight / 3, 'End Turn', this, this.endTurn.bind(this));
       var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
       var normalZone = 0xffff00; // yellow
       var activeZone = 0x00ffff; // lightblue / turquoise 

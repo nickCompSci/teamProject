@@ -75,7 +75,7 @@ export class BattleScene extends Phaser.Scene {
         this.shuffle();
         this.deckSetUp();
 
-        const button = new Button(this.game.config.width, this.game.config.height/2, 'End Turn', this, this.endTurn.bind(this));
+        const button = new Button(0, gameHeight/3, 'End Turn', this, this.endTurn.bind(this));
 
         let dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
         let normalZone = 0xffff00; // yellow
