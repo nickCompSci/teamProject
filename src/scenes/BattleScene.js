@@ -1,21 +1,9 @@
 import { CST } from "../CST.js";
-import Button from '../helpers/button';
-// https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
-
-let gameOptions = {
-    deck: 6,
-    startCards: 5,
-    cardWidth: 260,
-    cardHeight: 410,
-    cardDistance: 100,
-    cardAngle: 3,
-    cardYOffset: 10
-}
-
-let cardBackDimensions = {
-    backWidth: 130,
-    backHeight: 205
-}
+import Button from '../helpers/classes/button.js';
+import VisualCard from "../helpers/classes/VisualCard.js"
+import { gameOptions, cardBackDimensions } from "../helpers/config.js";
+import Card from "../helpers/classes/card.js"
+import Zone from "../helpers/classes/Zone.js";
 
 let handArray;
 let deckArray;
@@ -49,31 +37,24 @@ export class BattleScene extends Phaser.Scene {
         deckTrackerArray = [];
         handArray = [];
         graveYardArray = [];
-
+        
         for (let i = 0; i < gameOptions.startCards; i ++) {
             // creates cards from spritesheet and makes them draggable
-            let card = this.add.sprite(this.game.config.width / 2 - i * gameOptions.cardDistance, this.game.config.height, 'cards', i);
-            this.cardInHand(card);
+            let card = new VisualCard(this.game.config.width / 2 - gameOptions.cardDistance,
+            this.game.config.height, this, 'cards', i, i, 2);
             deckArray.push(card);
         }
 
-        let card = this.add.sprite(this.game.config.width / 2 - gameOptions.cardDistance,
-        this.game.config.height, 'sword');
-        this.cardInHand(card);
-        deckArray.push(card);
+        let card1 = new VisualCard(this.game.config.width / 2 - gameOptions.cardDistance,
+        this.game.config.height, this, 'cards', 0, 6, 2);
+        deckArray.push(card1);
 
         this.shuffle();
         this.deckSetUp();
 
-        const button = new Button(this.game.config.width, this.game.config.height/2, 'End Turn', this, this.endTurn.bind(this));
-
-        let dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
-        let normalZone = 0xffff00; // yellow
-        let activeZone = 0x00ffff; // lightblue / turquoise 
-        
-        let graphics = this.add.graphics();
-        graphics.lineStyle(2, normalZone);
-        graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+        let endTurnButton = new Button(this.game.config.width, this.game.config.height/2, 'End Turn', this, this.endTurn.bind(this));
+        // zone where cards can be dropped and activated
+        let dropZone = new Zone(this, 500, 300, 300, 300);
 
         this.input.on('dragstart', function (pointer, gameObject) {
             this.tweens.add({
@@ -112,12 +93,8 @@ export class BattleScene extends Phaser.Scene {
                     displayWidth: gameOptions.cardWidth,
                     displayHeight: gameOptions.cardHeight,
                     depth: 100,
-                    duration: 50
+                    duration: 10
                 });
-                gameObject.startPosition = {
-                    angle: gameObject.angle,
-                    depth: gameObject.depth
-                }
             }
         }, this);
 
@@ -130,21 +107,17 @@ export class BattleScene extends Phaser.Scene {
                     displayWidth: gameOptions.cardWidth/2,
                     displayHeight: gameOptions.cardHeight/2,
                     depth: gameObject.startPosition.depth,
-                    duration: 50,
+                    duration: 10,
                 });
             }
        }, this);
 
         this.input.on('dragenter', function(pointer, gameObject, dropZone) {
-            graphics.clear();
-            graphics.lineStyle(2, activeZone);
-            graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+            dropZone.renderActiveOutline();
         });
 
         this.input.on('dragleave', function(pointer, gameObject, dropZone) {
-            graphics.clear();
-            graphics.lineStyle(2, normalZone);
-            graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+            dropZone.renderNormalOutline();
         }); 
 
         this.input.on('drop', function(pointer, gameObject, dropZone) {
@@ -161,9 +134,7 @@ export class BattleScene extends Phaser.Scene {
             // remove the card from the scene after 500ms
             setTimeout(function() { gameObject.destroy(); }, 500);
 
-            graphics.clear();
-            graphics.lineStyle(2, normalZone);
-            graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+            dropZone.renderNormalOutline(this);
 
             this.cameras.main.shake(100, 0.02);
         });
@@ -177,17 +148,6 @@ export class BattleScene extends Phaser.Scene {
                 this.arrangeCardsInCenter(handArray);
             }
         }, this);
-    }
-
-    cardInHand(card) {
-        card.visible = !card.visible;
-        card.setInteractive();
-        this.input.setDraggable(card);
-        card.setOrigin(0.5, 1);
-
-        // Minimises the cards initial display size
-        card.displayWidth = gameOptions.cardWidth / 2;
-        card.displayHeight = gameOptions.cardHeight / 2 ;
     }
 
     arrangeCardsInCenter(handArray) {
@@ -209,6 +169,11 @@ export class BattleScene extends Phaser.Scene {
                 yDelta -= gameOptions.cardYOffset;
             }
 
+            card.startPosition = {
+                angle: card.angle,
+                depth: card.depth
+            }
+
             // sets card to the right in front
             card.setDepth(i);
         }
@@ -223,7 +188,6 @@ export class BattleScene extends Phaser.Scene {
             cardBack.setOrigin(0.5, 1);
             cardBack.displayWidth = cardBackDimensions.backWidth / 2;
             cardBack.displayHeight = cardBackDimensions.backHeight / 2;
-            cardBack.setInteractive();
             
             deckTrackerArray.push(cardBack);
             x += 4;
@@ -240,13 +204,15 @@ export class BattleScene extends Phaser.Scene {
 
     // simulate a drawing feature
     endTurn() {
-        let lastCard = deckTrackerArray.pop();
-        lastCard.destroy();
+        if (deckArray.length > 0) {
+            let lastCard = deckTrackerArray.pop();
+            lastCard.destroy();
 
-        let drawCard = deckArray.pop();
-        handArray.push(drawCard);
-        this.cardInHand(drawCard);
-        this.arrangeCardsInCenter(handArray);
+            let drawCard = deckArray.pop();
+            handArray.push(drawCard);
+            drawCard.cardInHand(this);
+            this.arrangeCardsInCenter(handArray);
+        }
 
     }
 }
