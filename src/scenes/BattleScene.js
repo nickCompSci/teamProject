@@ -30,7 +30,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("background", "./assets/background.jpg");
+        this.load.image("HUD", "./assets/hud_bg.png");
+        this.load.image("background", "./assets/background.png");
         this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
             frameWidth: gameOptions.cardWidth,
             frameHeight: gameOptions.cardHeight
@@ -40,10 +41,14 @@ export class BattleScene extends Phaser.Scene {
     }
 
     create() {
-        let bg = this.add.sprite(0, 0, "background");
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
-        bg.setPosition(gameWidth/2, gameHeight/2);
+
+        let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+        let bg = this.add.sprite(0, 0, "background");
+        hud_bg.setScale(2);
+        bg.setPosition(gameWidth/2, gameHeight/2.6);
+        bg.setScale(0.65);
         
         deckArray = [];
         deckTrackerArray = [];

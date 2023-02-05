@@ -225,7 +225,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _createClass(BattleScene, [{
     key: "preload",
     value: function preload() {
-      this.load.image("background", "./assets/background.jpg");
+      this.load.image("HUD", "./assets/hud_bg.png");
+      this.load.image("background", "./assets/background.png");
       this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
         frameWidth: gameOptions.cardWidth,
         frameHeight: gameOptions.cardHeight
@@ -236,10 +237,13 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
-      var bg = this.add.sprite(0, 0, "background");
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
-      bg.setPosition(gameWidth / 2, gameHeight / 2);
+      var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+      var bg = this.add.sprite(0, 0, "background");
+      hud_bg.setScale(2);
+      bg.setPosition(gameWidth / 2, gameHeight / 2.6);
+      bg.setScale(0.65);
       deckArray = [];
       deckTrackerArray = [];
       handArray = [];
@@ -444,12 +448,12 @@ var _BattleScene = require("/src/scenes/BattleScene.js");
 
 var config = {
   type: Phaser.AUTO,
-  width: 1280,
-  height: 740,
+  width: 850,
+  height: 800,
   scene: [_BattleScene.BattleScene]
 };
 var game = new Phaser.Game(config);
-},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -474,7 +478,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52114" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42775" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -618,5 +622,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
+},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
 //# sourceMappingURL=/src.a2b27638.js.map
