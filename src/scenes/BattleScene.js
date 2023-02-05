@@ -7,7 +7,7 @@ let gameOptions = {
     startCards: 5,
     cardWidth: 260,
     cardHeight: 410,
-    cardDistance: 100,
+    cardDistance: 75,
     cardAngle: 3,
     cardYOffset: 10
 }
@@ -140,7 +140,7 @@ export class BattleScene extends Phaser.Scene {
                     displayWidth: gameOptions.cardWidth/2,
                     displayHeight: gameOptions.cardHeight/2,
                     depth: gameObject.startPosition.depth,
-                    duration: 50,
+                    duration: 0,
                 });
             }
        }, this);
@@ -196,8 +196,8 @@ export class BattleScene extends Phaser.Scene {
         card.setOrigin(0.5, 1);
 
         // Minimises the cards initial display size
-        card.displayWidth = gameOptions.cardWidth / 2;
-        card.displayHeight = gameOptions.cardHeight / 2 ;
+        card.displayWidth = gameOptions.cardWidth / 2.2;
+        card.displayHeight = gameOptions.cardHeight / 2.2 ;
     }
 
     arrangeCardsInCenter(handArray) {
@@ -225,8 +225,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     deckSetUp() {
-        let x = this.game.config.width - 200;
-        let y = this.game.config.height - 50;
+        let x = this.game.config.width / 25;
+        let y = this.game.config.height / 1.24;
         for (let i=0; i < deckArray.length; i++) {
             let cardBack = this.add.sprite(x,
             y, 'cardBack');

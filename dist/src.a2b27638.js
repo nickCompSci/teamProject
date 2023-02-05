@@ -201,7 +201,7 @@ var gameOptions = {
   startCards: 5,
   cardWidth: 260,
   cardHeight: 410,
-  cardDistance: 100,
+  cardDistance: 75,
   cardAngle: 3,
   cardYOffset: 10
 };
@@ -322,7 +322,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
             displayWidth: gameOptions.cardWidth / 2,
             displayHeight: gameOptions.cardHeight / 2,
             depth: gameObject.startPosition.depth,
-            duration: 50
+            duration: 0
           });
         }
       }, this);
@@ -373,8 +373,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card.setOrigin(0.5, 1);
 
       // Minimises the cards initial display size
-      card.displayWidth = gameOptions.cardWidth / 2;
-      card.displayHeight = gameOptions.cardHeight / 2;
+      card.displayWidth = gameOptions.cardWidth / 2.2;
+      card.displayHeight = gameOptions.cardHeight / 2.2;
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -402,8 +402,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "deckSetUp",
     value: function deckSetUp() {
-      var x = this.game.config.width - 200;
-      var y = this.game.config.height - 50;
+      var x = this.game.config.width / 25;
+      var y = this.game.config.height / 1.24;
       for (var i = 0; i < deckArray.length; i++) {
         var cardBack = this.add.sprite(x, y, 'cardBack');
         cardBack.setOrigin(0.5, 1);
