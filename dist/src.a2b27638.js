@@ -162,7 +162,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // loadFont("font1", "./assets/PixelboyFont.ttf");
 var Button = /*#__PURE__*/_createClass(function Button(x, y, label, scene, callback) {
   _classCallCheck(this, Button);
-  var button = scene.add.text(x, y, label).setOrigin(0.5, 1).setPadding(15).setStyle({
+  var button = scene.add.text(x, y, label).setOrigin(0, 0).setPadding(8, 15).setStyle({
     backgroundColor: '#202529'
   }).setInteractive({
     useHandCursor: true
@@ -392,6 +392,24 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+<<<<<<< HEAD
+=======
+// https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
+
+var gameOptions = {
+  deck: 6,
+  startCards: 5,
+  cardWidth: 260,
+  cardHeight: 410,
+  cardDistance: 75,
+  cardAngle: 3,
+  cardYOffset: 10
+};
+var cardBackDimensions = {
+  backWidth: 130,
+  backHeight: 205
+};
+>>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
 var handArray;
 var deckArray;
 var deckTrackerArray;
@@ -408,7 +426,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _createClass(BattleScene, [{
     key: "preload",
     value: function preload() {
-      this.load.image("background", "./assets/background.jpg");
+      this.load.image("HUD", "./assets/hud_bg.png");
+      this.load.image("background", "./assets/background.png");
+      this.load.image("card_holder", "./assets/card_holder.jpg");
+      this.load.image("guy", "./assets/sprites/player_green_glasses.png");
+      this.load.image("heart", "./assets/sprites/heart.png");
       this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
         frameWidth: _config.gameOptions.cardWidth,
         frameHeight: _config.gameOptions.cardHeight
@@ -419,10 +441,36 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
-      var bg = this.add.sprite(0, 0, "background");
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
-      bg.setPosition(gameWidth / 2, gameHeight / 2);
+      var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+      var card_bg = this.add.image(0, 0, "card_holder");
+      var bg = this.add.sprite(0, 0, "background");
+      hud_bg.setScale(2);
+      card_bg.setPosition(gameWidth / 2, gameHeight);
+      card_bg.setScale(0.325);
+      bg.setPosition(gameWidth / 2, gameHeight / 2.6);
+      bg.setScale(0.65);
+      var heart = this.add.image(0, 0, "heart");
+      var heartext = this.add.text(0, 0, 50, {
+        color: "black",
+        fontSize: "30px"
+      });
+      heart.setScale(4);
+      heartext.setPosition(-18, -18);
+      var health = this.add.container(0, 0, [heart, heartext]);
+      health.setPosition(gameWidth / 20, gameHeight / 2.2);
+      var chamber = this.add.circle(0, 0, 30, 0xffcc00);
+      var actiontext = this.add.text(0, 0, 6, {
+        color: "black",
+        fontSize: "30px"
+      });
+      actiontext.setPosition(-10, -18);
+      var actions = this.add.container(0, 0, [chamber, actiontext]);
+      actions.setPosition(gameWidth / 20, gameHeight / 1.75);
+      var player = this.add.image(0, 0, "guy");
+      player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      player.setScale(3);
       deckArray = [];
       deckTrackerArray = [];
       handArray = [];
@@ -436,9 +484,20 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       deckArray.push(card1);
       this.shuffle();
       this.deckSetUp();
+<<<<<<< HEAD
       var endTurnButton = new _button.default(this.game.config.width, this.game.config.height / 2, 'End Turn', this, this.endTurn.bind(this));
       // zone where cards can be dropped and activated
       var dropZone = new _Zone.default(this, 500, 300, 300, 300);
+=======
+      var button = new _button.default(0, gameHeight / 3, 'End Turn', this, this.endTurn.bind(this));
+      var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
+      var normalZone = 0xffff00; // yellow
+      var activeZone = 0x00ffff; // lightblue / turquoise 
+
+      var graphics = this.add.graphics();
+      graphics.lineStyle(2, normalZone);
+      graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+>>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
       this.input.on('dragstart', function (pointer, gameObject) {
         this.tweens.add({
           targets: gameObject,
@@ -486,7 +545,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
             displayWidth: _config.gameOptions.cardWidth / 2,
             displayHeight: _config.gameOptions.cardHeight / 2,
             depth: gameObject.startPosition.depth,
+<<<<<<< HEAD
             duration: 10
+=======
+            duration: 0
+>>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
           });
         }
       }, this);
@@ -523,6 +586,21 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       }, this);
     }
   }, {
+<<<<<<< HEAD
+=======
+    key: "cardInHand",
+    value: function cardInHand(card) {
+      card.visible = !card.visible;
+      card.setInteractive();
+      this.input.setDraggable(card);
+      card.setOrigin(0.5, 1);
+
+      // Minimises the cards initial display size
+      card.displayWidth = gameOptions.cardWidth / 2.2;
+      card.displayHeight = gameOptions.cardHeight / 2.2;
+    }
+  }, {
+>>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
     key: "arrangeCardsInCenter",
     value: function arrangeCardsInCenter(handArray) {
       var bottomOfScreen = this.game.config.height;
@@ -552,8 +630,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "deckSetUp",
     value: function deckSetUp() {
-      var x = this.game.config.width - 200;
-      var y = this.game.config.height - 50;
+      var x = this.game.config.width / 25;
+      var y = this.game.config.height / 1.24;
       for (var i = 0; i < deckArray.length; i++) {
         var cardBack = this.add.sprite(x, y, 'cardBack');
         cardBack.setOrigin(0.5, 1);
@@ -603,12 +681,12 @@ var _BattleScene = require("/src/scenes/BattleScene.js");
 
 var config = {
   type: Phaser.AUTO,
-  width: 1280,
-  height: 740,
+  width: 850,
+  height: 800,
   scene: [_BattleScene.BattleScene]
 };
 var game = new Phaser.Game(config);
-},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -633,7 +711,11 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+<<<<<<< HEAD
   var ws = new WebSocket(protocol + '://' + hostname + ':' + "59033" + '/');
+=======
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42775" + '/');
+>>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -777,5 +859,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
+},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
 //# sourceMappingURL=/src.a2b27638.js.map

@@ -5,8 +5,8 @@ import {BattleScene} from "/src/scenes/BattleScene.js";
 
 var config = {
     type: Phaser.AUTO,
-    width: 1280,
-    height: 740,
+    width: 850,
+    height: 800,
     scene: [
         BattleScene
     ]
