@@ -243,67 +243,7 @@ var VisualCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return VisualCard;
 }(Phaser.GameObjects.Sprite);
 exports.default = VisualCard;
-},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/card.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-var Card = /*#__PURE__*/function () {
-  function Card(name, cost, effect, type) {
-    _classCallCheck(this, Card);
-    this.name = name;
-    this.cost = cost;
-    this.effect = effect;
-    this.type = type;
-  }
-  _createClass(Card, [{
-    key: "getName",
-    value: function getName() {
-      return this.name;
-    }
-  }, {
-    key: "getCost",
-    value: function getCost() {
-      return this.cost;
-    }
-  }, {
-    key: "getEffect",
-    value: function getEffect() {
-      return this.effect;
-    }
-  }, {
-    key: "getType",
-    value: function getType() {
-      return this.type;
-    }
-  }, {
-    key: "setCost",
-    value: function setCost(cost) {
-      this.cost = cost;
-    }
-  }, {
-    key: "setEffect",
-    value: function setEffect(effect) {
-      this.effect = effect;
-    }
-  }, {
-    key: "setType",
-    value: function setType(effect) {
-      this.type = type;
-    }
-  }]);
-  return Card;
-}();
-exports.default = Card;
-},{}],"src/helpers/classes/Zone.js":[function(require,module,exports) {
+},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/Zone.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -365,19 +305,47 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/characters.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.BattleScene = void 0;
-var _CST = require("../CST.js");
-var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
-var _VisualCard = _interopRequireDefault(require("../helpers/classes/VisualCard.js"));
-var _config = require("../helpers/config.js");
-var _card = _interopRequireDefault(require("../helpers/classes/card.js"));
-var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var Character = /*#__PURE__*/function (_Phaser$GameObjects$S) {
+  _inherits(Character, _Phaser$GameObjects$S);
+  var _super = _createSuper(Character);
+  function Character(scene, x, y, sprite) {
+    var _this;
+    _classCallCheck(this, Character);
+    _this = _super.call(this, scene, x, y, sprite);
+    _this.health = 50;
+    return _this;
+  }
+  return _createClass(Character);
+}(Phaser.GameObjects.Sprite);
+exports.default = Character;
+},{}],"src/helpers/classes/player.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _characters = _interopRequireDefault(require("./characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -392,28 +360,116 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-<<<<<<< HEAD
-=======
-// https://medium.com/@leferreyra/first-blog-building-an-interactive-card-fan-with-css-c79c9cd87a14
+var Player = /*#__PURE__*/function (_Character) {
+  _inherits(Player, _Character);
+  var _super = _createSuper(Player);
+  function Player(scene, x, y, sprite, deck) {
+    var _this;
+    _classCallCheck(this, Player);
+    _this = _super.call(this, scene, x, y, sprite);
+    _this.actionPoints = 6;
+    _this.deck = deck;
+    scene.add.existing(_assertThisInitialized(_this));
+    return _this;
+  }
+  _createClass(Player, [{
+    key: "getHealth",
+    value: function getHealth() {
+      return this.health;
+    }
+  }, {
+    key: "setHealth",
+    value: function setHealth(health) {
+      this.health = health;
+    }
+  }, {
+    key: "getActionPoints",
+    value: function getActionPoints() {
+      return this.actionPoints;
+    }
+  }, {
+    key: "setActionPoints",
+    value: function setActionPoints(actionPoints) {
+      this.actionPoints = actionPoints;
+    }
+  }, {
+    key: "getDeck",
+    value: function getDeck() {
+      return this.deck;
+    }
+  }]);
+  return Player;
+}(_characters.default);
+exports.default = Player;
+},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/deck.js":[function(require,module,exports) {
+"use strict";
 
-var gameOptions = {
-  deck: 6,
-  startCards: 5,
-  cardWidth: 260,
-  cardHeight: 410,
-  cardDistance: 75,
-  cardAngle: 3,
-  cardYOffset: 10
-};
-var cardBackDimensions = {
-  backWidth: 130,
-  backHeight: 205
-};
->>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
-var handArray;
-var deckArray;
-var deckTrackerArray;
-var graveYardArray;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.deckArray = void 0;
+exports.deckSetUp = deckSetUp;
+exports.handArray = exports.graveYardArray = exports.deckTrackerArray = void 0;
+exports.shuffle = shuffle;
+var _config = require("../config.js");
+var handArray = [];
+exports.handArray = handArray;
+var deckArray = [];
+exports.deckArray = deckArray;
+var deckTrackerArray = [];
+exports.deckTrackerArray = deckTrackerArray;
+var graveYardArray = [];
+exports.graveYardArray = graveYardArray;
+function deckSetUp(scene, array, arrayTracker) {
+  var x = scene.game.config.width / 25;
+  var y = scene.game.config.height / 1.24;
+  for (var i = 0; i < array.length; i++) {
+    var cardBack = scene.add.sprite(x, y, 'cardBack');
+    cardBack.setOrigin(0.5, 1);
+    cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
+    cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
+    arrayTracker.push(cardBack);
+    x += 4;
+  }
+}
+
+// implementing Durstenfeld shffle, an optimised version of Fisher-Yates
+function shuffle(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var _ref = [array[j], array[i]];
+    array[i] = _ref[0];
+    array[j] = _ref[1];
+  }
+}
+},{"../config.js":"src/helpers/config.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BattleScene = void 0;
+var _CST = require("../CST.js");
+var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
+var _VisualCard = _interopRequireDefault(require("../helpers/classes/VisualCard.js"));
+var _config = require("../helpers/config.js");
+var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
+var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
+var _deck = require("../helpers/classes/deck.js");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(BattleScene, _Phaser$Scene);
   var _super = _createSuper(BattleScene);
@@ -451,8 +507,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
+      var player = new _player.default(this, 0, 0, "guy", _deck.handArray);
+      player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      player.setScale(3);
       var heart = this.add.image(0, 0, "heart");
-      var heartext = this.add.text(0, 0, 50, {
+      var heartext = this.add.text(0, 0, player.getHealth(), {
         color: "black",
         fontSize: "30px"
       });
@@ -461,43 +520,28 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var health = this.add.container(0, 0, [heart, heartext]);
       health.setPosition(gameWidth / 20, gameHeight / 2.2);
       var chamber = this.add.circle(0, 0, 30, 0xffcc00);
-      var actiontext = this.add.text(0, 0, 6, {
+      var actiontext = this.add.text(0, 0, player.getActionPoints(), {
         color: "black",
         fontSize: "30px"
       });
       actiontext.setPosition(-10, -18);
       var actions = this.add.container(0, 0, [chamber, actiontext]);
       actions.setPosition(gameWidth / 20, gameHeight / 1.75);
-      var player = this.add.image(0, 0, "guy");
-      player.setPosition(gameWidth / 4, gameHeight / 1.65);
-      player.setScale(3);
-      deckArray = [];
-      deckTrackerArray = [];
-      handArray = [];
-      graveYardArray = [];
       for (var i = 0; i < _config.gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
         var card = new _VisualCard.default(this.game.config.width / 2 - _config.gameOptions.cardDistance, this.game.config.height, this, 'cards', i, i, 2);
-        deckArray.push(card);
+        _deck.deckArray.push(card);
       }
       var card1 = new _VisualCard.default(this.game.config.width / 2 - _config.gameOptions.cardDistance, this.game.config.height, this, 'cards', 0, 6, 2);
-      deckArray.push(card1);
-      this.shuffle();
-      this.deckSetUp();
-<<<<<<< HEAD
+      _deck.deckArray.push(card1);
+
+      // Button to end turn
       var endTurnButton = new _button.default(this.game.config.width, this.game.config.height / 2, 'End Turn', this, this.endTurn.bind(this));
+
       // zone where cards can be dropped and activated
       var dropZone = new _Zone.default(this, 500, 300, 300, 300);
-=======
-      var button = new _button.default(0, gameHeight / 3, 'End Turn', this, this.endTurn.bind(this));
-      var dropZone = this.add.zone(500, 300, 300, 300).setRectangleDropZone(300, 300);
-      var normalZone = 0xffff00; // yellow
-      var activeZone = 0x00ffff; // lightblue / turquoise 
-
-      var graphics = this.add.graphics();
-      graphics.lineStyle(2, normalZone);
-      graphics.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
->>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
+      (0, _deck.shuffle)(_deck.deckArray);
+      (0, _deck.deckSetUp)(this, _deck.deckArray, _deck.deckTrackerArray);
       this.input.on('dragstart', function (pointer, gameObject) {
         this.tweens.add({
           targets: gameObject,
@@ -511,11 +555,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           alpha: 0.3,
           duration: 50
         });
-        var index = handArray.indexOf(gameObject);
+        var index = _deck.handArray.indexOf(gameObject);
         if (index !== -1) {
-          handArray.splice(index, 1);
+          _deck.handArray.splice(index, 1);
         }
-        this.arrangeCardsInCenter(handArray);
+        this.arrangeCardsInCenter(_deck.handArray);
       }, this);
       this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
         gameObject.x = dragX;
@@ -524,7 +568,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover over listener
       this.input.on('gameobjectover', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+        if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
           this.tweens.add({
             targets: gameObject,
             angle: 0,
@@ -538,18 +582,14 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover out listener
       this.input.on('gameobjectout', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+        if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
           this.tweens.add({
             targets: gameObject,
             angle: gameObject.startPosition.angle,
             displayWidth: _config.gameOptions.cardWidth / 2,
             displayHeight: _config.gameOptions.cardHeight / 2,
             depth: gameObject.startPosition.depth,
-<<<<<<< HEAD
             duration: 10
-=======
-            duration: 0
->>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
           });
         }
       }, this);
@@ -567,7 +607,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
         gameObject.x = dropZone.x;
         gameObject.y = dropZone.y + dropZone.y / 3;
-        graveYardArray.push(gameObject);
+        _deck.graveYardArray.push(gameObject);
 
         // remove the card from the scene after 500ms
         setTimeout(function () {
@@ -578,29 +618,14 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       });
       this.input.on("dragend", function (pointer, gameObject, dropped) {
         if (!dropped) {
-          handArray.push(gameObject);
+          _deck.handArray.push(gameObject);
           gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
           gameObject.displayWidth = _config.gameOptions.cardWidth / 2;
-          this.arrangeCardsInCenter(handArray);
+          this.arrangeCardsInCenter(_deck.handArray);
         }
       }, this);
     }
   }, {
-<<<<<<< HEAD
-=======
-    key: "cardInHand",
-    value: function cardInHand(card) {
-      card.visible = !card.visible;
-      card.setInteractive();
-      this.input.setDraggable(card);
-      card.setOrigin(0.5, 1);
-
-      // Minimises the cards initial display size
-      card.displayWidth = gameOptions.cardWidth / 2.2;
-      card.displayHeight = gameOptions.cardHeight / 2.2;
-    }
-  }, {
->>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
     key: "arrangeCardsInCenter",
     value: function arrangeCardsInCenter(handArray) {
       var bottomOfScreen = this.game.config.height;
@@ -627,51 +652,25 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         card.setDepth(i);
       }
     }
-  }, {
-    key: "deckSetUp",
-    value: function deckSetUp() {
-      var x = this.game.config.width / 25;
-      var y = this.game.config.height / 1.24;
-      for (var i = 0; i < deckArray.length; i++) {
-        var cardBack = this.add.sprite(x, y, 'cardBack');
-        cardBack.setOrigin(0.5, 1);
-        cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
-        cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
-        deckTrackerArray.push(cardBack);
-        x += 4;
-      }
-    }
-
-    // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
-  }, {
-    key: "shuffle",
-    value: function shuffle() {
-      for (var i = deckArray.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var _ref = [deckArray[j], deckArray[i]];
-        deckArray[i] = _ref[0];
-        deckArray[j] = _ref[1];
-      }
-    }
 
     // simulate a drawing feature
   }, {
     key: "endTurn",
     value: function endTurn() {
-      if (deckArray.length > 0) {
-        var lastCard = deckTrackerArray.pop();
+      if (_deck.deckArray.length > 0) {
+        var lastCard = _deck.deckTrackerArray.pop();
         lastCard.destroy();
-        var drawCard = deckArray.pop();
-        handArray.push(drawCard);
+        var drawCard = _deck.deckArray.pop();
+        _deck.handArray.push(drawCard);
         drawCard.cardInHand(this);
-        this.arrangeCardsInCenter(handArray);
+        this.arrangeCardsInCenter(_deck.handArray);
       }
     }
   }]);
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/classes/VisualCard.js":"src/helpers/classes/VisualCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/card.js":"src/helpers/classes/card.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/classes/VisualCard.js":"src/helpers/classes/VisualCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/deck.js":"src/helpers/classes/deck.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 var _BattleScene = require("/src/scenes/BattleScene.js");
@@ -686,7 +685,7 @@ var config = {
   scene: [_BattleScene.BattleScene]
 };
 var game = new Phaser.Game(config);
-},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -711,11 +710,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-<<<<<<< HEAD
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59033" + '/');
-=======
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42775" + '/');
->>>>>>> 4c475d2e2caa4f5904fc433782050dfe80aee121
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55150" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -859,5 +854,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
+},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
 //# sourceMappingURL=/src.a2b27638.js.map

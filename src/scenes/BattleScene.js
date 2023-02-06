@@ -2,13 +2,10 @@ import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
 import VisualCard from "../helpers/classes/VisualCard.js"
 import { gameOptions, cardBackDimensions } from "../helpers/config.js";
-import Card from "../helpers/classes/card.js"
 import Zone from "../helpers/classes/Zone.js";
+import Player from "../helpers/classes/player.js";
+import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/deck.js";
 
-let handArray;
-let deckArray;
-let deckTrackerArray;
-let graveYardArray;
 
 export class BattleScene extends Phaser.Scene {
     constructor(){
@@ -39,34 +36,29 @@ export class BattleScene extends Phaser.Scene {
         let card_bg = this.add.image(0, 0, "card_holder");
         let bg = this.add.sprite(0, 0, "background");
         hud_bg.setScale(2);
+
         card_bg.setPosition(gameWidth/2, gameHeight);
         card_bg.setScale(0.325);
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
+        
+        let player = new Player(this, 0, 0, "guy", handArray);
+        player.setPosition(gameWidth/4, gameHeight/1.65);
+        player.setScale(3);
 
         let heart = this.add.image(0, 0, "heart");
-        let heartext = this.add.text(0,0, 50, {color: "black", fontSize: "30px"});
+        let heartext = this.add.text(0,0, player.getHealth(), {color: "black", fontSize: "30px"});
         heart.setScale(4);
         heartext.setPosition(-18, -18);
         let health = this.add.container(0, 0, [heart, heartext]);
         health.setPosition(gameWidth/20, gameHeight/2.2);
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
-        let actiontext = this.add.text(0,0, 6, {color: "black", fontSize: "30px"});
+        let actiontext = this.add.text(0,0, player.getActionPoints(), {color: "black", fontSize: "30px"});
         actiontext.setPosition(-10, -18);
         let actions = this.add.container(0, 0, [chamber, actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
-
-        let player = this.add.image(0, 0, "guy"); 
-        player.setPosition(gameWidth/4, gameHeight/1.65);       
-        player.setScale(3);
-        
-        
-        deckArray = [];
-        deckTrackerArray = [];
-        handArray = [];
-        graveYardArray = [];
-        
+         
         for (let i = 0; i < gameOptions.startCards; i ++) {
             // creates cards from spritesheet and makes them draggable
             let card = new VisualCard(this.game.config.width / 2 - gameOptions.cardDistance,
@@ -78,12 +70,14 @@ export class BattleScene extends Phaser.Scene {
         this.game.config.height, this, 'cards', 0, 6, 2);
         deckArray.push(card1);
 
-        this.shuffle();
-        this.deckSetUp();
-
+        // Button to end turn
         let endTurnButton = new Button(this.game.config.width, this.game.config.height/2, 'End Turn', this, this.endTurn.bind(this));
+
         // zone where cards can be dropped and activated
         let dropZone = new Zone(this, 500, 300, 300, 300);
+
+        shuffle(deckArray);
+        deckSetUp(this, deckArray, deckTrackerArray);
 
         this.input.on('dragstart', function (pointer, gameObject) {
             this.tweens.add({
@@ -208,30 +202,7 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
-    deckSetUp() {
-        let x = this.game.config.width / 25;
-        let y = this.game.config.height / 1.24;
-        for (let i=0; i < deckArray.length; i++) {
-            let cardBack = this.add.sprite(x,
-            y, 'cardBack');
-            cardBack.setOrigin(0.5, 1);
-            cardBack.displayWidth = cardBackDimensions.backWidth / 2;
-            cardBack.displayHeight = cardBackDimensions.backHeight / 2;
-            
-            deckTrackerArray.push(cardBack);
-            x += 4;
-        }
-    }
-
-    // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
-    shuffle() {
-        for (let i = deckArray.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i+1));
-            [deckArray[i], deckArray[j]] = [deckArray[j], deckArray[i]]
-        }
-    }
-
-    // simulate a drawing feature
+   // simulate a drawing feature
     endTurn() {
         if (deckArray.length > 0) {
             let lastCard = deckTrackerArray.pop();
