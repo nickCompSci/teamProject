@@ -18,11 +18,33 @@ export class LobbyScene extends Phaser.Scene{
         // Join Game title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Lobby', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, 'Players:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+
+        // Networking!
+        // PLACEHOLDER - Lists current players connected to game
+        let playerList = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Player 1 (You)', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+
+        let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.80, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
+
+        // Start Game Button
+        startGameButton.setInteractive();
+
+        startGameButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = startGameButton.x - startGameButton.width + 130;
+            arrowSprite.y = startGameButton.y + startGameButton.height / 4;
+        })
+
+        startGameButton.on("pointerup", ()=>{
+            // Moves to the game scene when the start game button is clicked
+            this.scene.start(CST.SCENES.GAME);
+        })
 
         // Back Button
         backButton.setInteractive();

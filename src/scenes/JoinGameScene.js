@@ -56,7 +56,7 @@ export class JoinGameScene extends Phaser.Scene{
         }); */
 
         // Submit button
-        let submitButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Submit', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let submitButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Submit', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
@@ -74,7 +74,6 @@ export class JoinGameScene extends Phaser.Scene{
         })
 
         backButton.on("pointerup", ()=>{
-            // Moves back to the main menu when the back button is clicked
             this.scene.start(CST.SCENES.MENU);
         })
 
@@ -92,6 +91,7 @@ export class JoinGameScene extends Phaser.Scene{
             console.log("Username:", nameBox.text);
             console.log("Join Code:", codeBox.text);
 
+            // Networking!
             // Checks to see if code matches any existing games
             // If it does, then the scene is changed to a lobby scene that shows the other players in the game
             // If it doesn't, then an error message is displayed
