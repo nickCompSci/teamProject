@@ -71,7 +71,8 @@ export class BattleScene extends Phaser.Scene {
         deckArray.push(card1);
 
         // Button to end turn
-        let endTurnButton = new Button(this.game.config.width, this.game.config.height/2, 'End Turn', this, this.endTurn.bind(this));
+        let endTurnButton = new Button(gameWidth, gameHeight/2, 'End Turn', this, this.endTurn.bind(this), '#202529');
+        endTurnButton.changeCursor();
 
         // zone where cards can be dropped and activated
         let dropZone = new Zone(this, 500, 300, 300, 300);
