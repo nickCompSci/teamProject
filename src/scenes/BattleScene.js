@@ -1,10 +1,11 @@
 import { CST } from "../CST.js";
-import Button from '../helpers/classes/button.js';
-import VisualCard from "../helpers/classes/VisualCard.js"
-import { gameOptions, cardBackDimensions } from "../helpers/config.js";
+import Button from '../helpers/classes/Button.js';
+import HandCard from "../helpers/classes/cards/HandCard";
+import { gameOptions } from "../helpers/config.js";
 import Zone from "../helpers/classes/Zone.js";
-import Player from "../helpers/classes/player.js";
-import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/deck.js";
+import Player from "../helpers/classes/Player.js";
+import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/Deck.js";
+import InteractHandler from "../helpers/classes/InteractHandler.js";
 
 
 export class BattleScene extends Phaser.Scene {
@@ -31,6 +32,8 @@ export class BattleScene extends Phaser.Scene {
     create() {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
+
+        let interactiveHandler = new InteractHandler(this);
 
         let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
         let card_bg = this.add.image(0, 0, "card_holder");
@@ -59,15 +62,13 @@ export class BattleScene extends Phaser.Scene {
         let actions = this.add.container(0, 0, [chamber, actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
          
-        for (let i = 0; i < gameOptions.startCards; i ++) {
+        for (let i = 0; i < gameOptions.startCards; i++) {
             // creates cards from spritesheet and makes them draggable
-            let card = new VisualCard(this.game.config.width / 2 - gameOptions.cardDistance,
-            this.game.config.height, this, 'cards', i, i, 2);
+            let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
             deckArray.push(card);
         }
 
-        let card1 = new VisualCard(this.game.config.width / 2 - gameOptions.cardDistance,
-        this.game.config.height, this, 'cards', 0, 6, 2);
+        let card1 = new HandCard(this, gameWidth/2, gameHeight/2, 'sword', 0);
         deckArray.push(card1);
 
         // Button to end turn
@@ -75,103 +76,11 @@ export class BattleScene extends Phaser.Scene {
         endTurnButton.changeCursor();
 
         // zone where cards can be dropped and activated
-        let dropZone = new Zone(this, 500, 300, 300, 300);
+        let dropZone = new Zone(this, 500, 400, 300, 600);
 
         shuffle(deckArray);
         deckSetUp(this, deckArray, deckTrackerArray);
-
-        this.input.on('dragstart', function (pointer, gameObject) {
-            this.tweens.add({
-                targets: gameObject,
-                angle: 0,
-                x: pointer.x,
-                y: pointer.y,
-                duration: 50
-            });
-            this.tweens.add({
-                targets: this.background,
-                alpha: 0.3,
-                duration: 50
-            });
-            
-            let index = handArray.indexOf(gameObject);
-            if (index !== -1) {
-                handArray.splice(index, 1);
-            }
-
-            this.arrangeCardsInCenter(handArray);
-
-        }, this);
-
-        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-        });
-
-        // hover over listener
-        this.input.on('gameobjectover', function(pointer, gameObject) {
-            if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
-                this.tweens.add({
-                    targets: gameObject,
-                    angle: 0,
-                    displayWidth: gameOptions.cardWidth,
-                    displayHeight: gameOptions.cardHeight,
-                    depth: 100,
-                    duration: 10
-                });
-            }
-        }, this);
-
-        // hover out listener
-        this.input.on('gameobjectout', function(pointer, gameObject) {
-            if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
-                this.tweens.add({
-                    targets: gameObject,
-                    angle: gameObject.startPosition.angle,
-                    displayWidth: gameOptions.cardWidth/2,
-                    displayHeight: gameOptions.cardHeight/2,
-                    depth: gameObject.startPosition.depth,
-                    duration: 10,
-                });
-            }
-       }, this);
-
-        this.input.on('dragenter', function(pointer, gameObject, dropZone) {
-            dropZone.renderActiveOutline();
-        });
-
-        this.input.on('dragleave', function(pointer, gameObject, dropZone) {
-            dropZone.renderNormalOutline();
-        }); 
-
-        this.input.on('drop', function(pointer, gameObject, dropZone) {
-            gameObject.input.enabled = false;
-
-            // setting card in the middle 
-            gameObject.displayWidth = gameOptions.cardWidth / 2;
-            gameObject.displayHeight = gameOptions.cardHeight / 2;
-            gameObject.x = dropZone.x;
-            gameObject.y = dropZone.y + dropZone.y / 3;
-            
-            graveYardArray.push(gameObject);
-
-            // remove the card from the scene after 500ms
-            setTimeout(function() { gameObject.destroy(); }, 500);
-
-            dropZone.renderNormalOutline(this);
-
-            this.cameras.main.shake(100, 0.02);
-        });
-
-        this.input.on("dragend", function(pointer, gameObject, dropped) {
         
-            if (!dropped) {
-                handArray.push(gameObject);
-                gameObject.displayHeight = gameOptions.cardHeight / 2;
-                gameObject.displayWidth = gameOptions.cardWidth / 2;
-                this.arrangeCardsInCenter(handArray);
-            }
-        }, this);
     }
 
     arrangeCardsInCenter(handArray) {
@@ -199,11 +108,12 @@ export class BattleScene extends Phaser.Scene {
             }
 
             // sets card to the right in front
-            card.setDepth(i);
+            card.setDepth(50);
         }
+
     }
 
-   // simulate a drawing feature
+    // simulate a drawing feature
     endTurn() {
         if (deckArray.length > 0) {
             let lastCard = deckTrackerArray.pop();

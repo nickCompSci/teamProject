@@ -145,7 +145,7 @@ function loadFont(name, url) {
     return error;
   });
 }
-},{}],"src/helpers/classes/button.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/Button.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -173,12 +173,6 @@ var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   function Button(x, y, label, scene, callback, bgColour) {
     var _this;
     _classCallCheck(this, Button);
-    // const button = scene.add.text(x, y, label)
-    //     .setOrigin(0, 0)
-    //     .setPadding(8, 15)
-    //     .setStyle({ backgroundColor: '#202529'})
-    //     .setInteractive({ useHandCursor: true })
-    //     .on('pointerdown', () => callback())
     _this = _super.call(this, scene, x, y, label);
     _this.padding = {
       x: 8,
@@ -244,14 +238,14 @@ var cardBackDimensions = {
   backHeight: 205
 };
 exports.cardBackDimensions = cardBackDimensions;
-},{}],"src/helpers/classes/VisualCard.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _config = require("../config.js");
+var _config = require("../../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -265,20 +259,18 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var VisualCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
-  _inherits(VisualCard, _Phaser$GameObjects$S);
-  var _super = _createSuper(VisualCard);
-  function VisualCard(x, y, scene, sprite, frame, id, cost) {
+var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
+  _inherits(HandCard, _Phaser$GameObjects$S);
+  var _super = _createSuper(HandCard);
+  function HandCard(scene, x, y, sprite, frame) {
     var _this;
-    _classCallCheck(this, VisualCard);
+    _classCallCheck(this, HandCard);
     _this = _super.call(this, scene, x, y, sprite, frame);
-    _this.id = id;
-    _this.cost = cost;
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
   }
-  _createClass(VisualCard, [{
+  _createClass(HandCard, [{
     key: "cardInHand",
     value: function cardInHand(scene) {
       this.visible = !this.visible;
@@ -291,9 +283,50 @@ var VisualCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       this.displayHeight = _config.gameOptions.cardHeight / 2;
     }
   }]);
-  return VisualCard;
+  return HandCard;
 }(Phaser.GameObjects.Sprite);
-exports.default = VisualCard;
+exports.default = HandCard;
+},{"../../config":"src/helpers/config.js"}],"src/helpers/classes/Deck.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.deckArray = void 0;
+exports.deckSetUp = deckSetUp;
+exports.handArray = exports.graveYardArray = exports.deckTrackerArray = void 0;
+exports.shuffle = shuffle;
+var _config = require("../config.js");
+var handArray = [];
+exports.handArray = handArray;
+var deckArray = [];
+exports.deckArray = deckArray;
+var deckTrackerArray = [];
+exports.deckTrackerArray = deckTrackerArray;
+var graveYardArray = [];
+exports.graveYardArray = graveYardArray;
+function deckSetUp(scene, array, arrayTracker) {
+  var x = scene.game.config.width / 25;
+  var y = scene.game.config.height / 1.24;
+  for (var i = 0; i < array.length; i++) {
+    var cardBack = scene.add.sprite(x, y, 'cardBack');
+    cardBack.setOrigin(0.5, 1);
+    cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
+    cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
+    arrayTracker.push(cardBack);
+    x += 4;
+  }
+}
+
+// implementing Durstenfeld shffle, an optimised version of Fisher-Yates
+function shuffle(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var _ref = [array[j], array[i]];
+    array[i] = _ref[0];
+    array[j] = _ref[1];
+  }
+}
 },{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/Zone.js":[function(require,module,exports) {
 "use strict";
 
@@ -301,6 +334,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _Deck = require("./Deck");
+var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -317,25 +352,17 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   _inherits(Zone, _Phaser$GameObjects$Z);
   var _super = _createSuper(Zone);
-  function Zone(scene, width, height, x, y) {
+  function Zone(scene, x, y, width, height) {
     var _this;
     _classCallCheck(this, Zone);
     (_this = _super.call(this, scene, x, y, width, height)).setRectangleDropZone(x, y);
+    _this.setOrigin(0, 0);
     scene.add.existing(_assertThisInitialized(_this));
     _this.normalZone = 0xffff00; // yellow
     _this.activeZone = 0x00ffff; // lightblue / turquoise 
 
     _this.zoneOutline = scene.add.graphics();
     _this.renderNormalOutline(scene);
-
-    // scene.input.on('dragenter', function(pointer, gameObject, dropZone) {
-    //     console.log(this);
-    //     this.renderActiveOutline();
-    // });
-
-    // scene.input.on('dragleave', function(pointer, gameObject, dropZone) {
-    //     this.renderNormalOutline();
-    // }); 
     return _this;
   }
   _createClass(Zone, [{
@@ -356,7 +383,7 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{}],"src/helpers/classes/characters.js":[function(require,module,exports) {
+},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/Characters.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -389,14 +416,14 @@ var Character = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return _createClass(Character);
 }(Phaser.GameObjects.Sprite);
 exports.default = Character;
-},{}],"src/helpers/classes/player.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/Player.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _characters = _interopRequireDefault(require("./characters"));
+var _Characters = _interopRequireDefault(require("./Characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -450,50 +477,110 @@ var Player = /*#__PURE__*/function (_Character) {
     }
   }]);
   return Player;
-}(_characters.default);
+}(_Characters.default);
 exports.default = Player;
-},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/deck.js":[function(require,module,exports) {
+},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/InteractHandler.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deckArray = void 0;
-exports.deckSetUp = deckSetUp;
-exports.handArray = exports.graveYardArray = exports.deckTrackerArray = void 0;
-exports.shuffle = shuffle;
-var _config = require("../config.js");
-var handArray = [];
-exports.handArray = handArray;
-var deckArray = [];
-exports.deckArray = deckArray;
-var deckTrackerArray = [];
-exports.deckTrackerArray = deckTrackerArray;
-var graveYardArray = [];
-exports.graveYardArray = graveYardArray;
-function deckSetUp(scene, array, arrayTracker) {
-  var x = scene.game.config.width / 25;
-  var y = scene.game.config.height / 1.24;
-  for (var i = 0; i < array.length; i++) {
-    var cardBack = scene.add.sprite(x, y, 'cardBack');
-    cardBack.setOrigin(0.5, 1);
-    cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
-    cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
-    arrayTracker.push(cardBack);
-    x += 4;
-  }
-}
+exports.default = void 0;
+var _Deck = require("./Deck");
+var _config = require("../config");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) {
+  _classCallCheck(this, InteractHandler);
+  scene.input.on('dragstart', function (pointer, gameObject) {
+    scene.tweens.add({
+      targets: gameObject,
+      angle: 0,
+      x: pointer.x,
+      y: pointer.y,
+      duration: 50
+    });
+    scene.tweens.add({
+      targets: scene.background,
+      alpha: 0.3,
+      duration: 50
+    });
+    var index = _Deck.handArray.indexOf(gameObject);
+    if (index !== -1) {
+      _Deck.handArray.splice(index, 1);
+    }
+    scene.arrangeCardsInCenter(_Deck.handArray);
+  }, scene);
+  scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+    gameObject.x = dragX;
+    gameObject.y = dragY;
+  });
 
-// implementing Durstenfeld shffle, an optimised version of Fisher-Yates
-function shuffle(array) {
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var _ref = [array[j], array[i]];
-    array[i] = _ref[0];
-    array[j] = _ref[1];
-  }
-}
-},{"../config.js":"src/helpers/config.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+  // hover over listener
+  scene.input.on('gameobjectover', function (pointer, gameObject) {
+    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+      scene.tweens.add({
+        targets: gameObject,
+        angle: 0,
+        displayWidth: _config.gameOptions.cardWidth,
+        displayHeight: _config.gameOptions.cardHeight,
+        depth: 100,
+        duration: 10
+      });
+    }
+  }, scene);
+
+  // hover out listener
+  scene.input.on('gameobjectout', function (pointer, gameObject) {
+    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+      scene.tweens.add({
+        targets: gameObject,
+        angle: gameObject.startPosition.angle,
+        displayWidth: _config.gameOptions.cardWidth / 2,
+        displayHeight: _config.gameOptions.cardHeight / 2,
+        depth: gameObject.startPosition.depth,
+        duration: 10
+      });
+    }
+  }, scene);
+  scene.input.on('dragenter', function (pointer, gameObject, dropZone) {
+    dropZone.renderActiveOutline();
+  });
+  scene.input.on('dragleave', function (pointer, gameObject, dropZone) {
+    dropZone.renderNormalOutline();
+  });
+  scene.input.on('drop', function (pointer, gameObject, dropZone) {
+    gameObject.input.enabled = false;
+
+    // setting card in the middle 
+    gameObject.displayWidth = _config.gameOptions.cardWidth / 2;
+    gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
+    gameObject.x = dropZone.x;
+    gameObject.y = dropZone.y + dropZone.y / 3;
+    _Deck.graveYardArray.push(gameObject);
+
+    // remove the card from the scene after 500ms
+    setTimeout(function () {
+      gameObject.destroy();
+    }, 500);
+    dropZone.renderNormalOutline(scene);
+    scene.cameras.main.shake(100, 0.02);
+  });
+  scene.input.on("dragend", function (pointer, gameObject, dropped) {
+    if (!dropped) {
+      _Deck.handArray.push(gameObject);
+      gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
+      gameObject.displayWidth = _config.gameOptions.cardWidth / 2;
+      scene.arrangeCardsInCenter(_Deck.handArray);
+    }
+  }, scene);
+});
+exports.default = InteractHandler;
+},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -501,12 +588,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BattleScene = void 0;
 var _CST = require("../CST.js");
-var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
-var _VisualCard = _interopRequireDefault(require("../helpers/classes/VisualCard.js"));
+var _Button = _interopRequireDefault(require("../helpers/classes/Button.js"));
+var _HandCard = _interopRequireDefault(require("../helpers/classes/cards/HandCard"));
 var _config = require("../helpers/config.js");
 var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
-var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
-var _deck = require("../helpers/classes/deck.js");
+var _Player = _interopRequireDefault(require("../helpers/classes/Player.js"));
+var _Deck = require("../helpers/classes/Deck.js");
+var _InteractHandler = _interopRequireDefault(require("../helpers/classes/InteractHandler.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -550,6 +638,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function create() {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
+      var interactiveHandler = new _InteractHandler.default(this);
       var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
       var card_bg = this.add.image(0, 0, "card_holder");
       var bg = this.add.sprite(0, 0, "background");
@@ -558,7 +647,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      var player = new _player.default(this, 0, 0, "guy", _deck.handArray);
+      var player = new _Player.default(this, 0, 0, "guy", _Deck.handArray);
       player.setPosition(gameWidth / 4, gameHeight / 1.65);
       player.setScale(3);
       var heart = this.add.image(0, 0, "heart");
@@ -580,102 +669,20 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       actions.setPosition(gameWidth / 20, gameHeight / 1.75);
       for (var i = 0; i < _config.gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
-        var card = new _VisualCard.default(this.game.config.width / 2 - _config.gameOptions.cardDistance, this.game.config.height, this, 'cards', i, i, 2);
-        _deck.deckArray.push(card);
+        var card = new _HandCard.default(this, gameWidth / 2, gameHeight / 2, 'cards', i);
+        _Deck.deckArray.push(card);
       }
-      var card1 = new _VisualCard.default(this.game.config.width / 2 - _config.gameOptions.cardDistance, this.game.config.height, this, 'cards', 0, 6, 2);
-      _deck.deckArray.push(card1);
+      var card1 = new _HandCard.default(this, gameWidth / 2, gameHeight / 2, 'sword', 0);
+      _Deck.deckArray.push(card1);
 
       // Button to end turn
-      var endTurnButton = new _button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
+      var endTurnButton = new _Button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
       endTurnButton.changeCursor();
 
       // zone where cards can be dropped and activated
-      var dropZone = new _Zone.default(this, 500, 300, 300, 300);
-      (0, _deck.shuffle)(_deck.deckArray);
-      (0, _deck.deckSetUp)(this, _deck.deckArray, _deck.deckTrackerArray);
-      this.input.on('dragstart', function (pointer, gameObject) {
-        this.tweens.add({
-          targets: gameObject,
-          angle: 0,
-          x: pointer.x,
-          y: pointer.y,
-          duration: 50
-        });
-        this.tweens.add({
-          targets: this.background,
-          alpha: 0.3,
-          duration: 50
-        });
-        var index = _deck.handArray.indexOf(gameObject);
-        if (index !== -1) {
-          _deck.handArray.splice(index, 1);
-        }
-        this.arrangeCardsInCenter(_deck.handArray);
-      }, this);
-      this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-        gameObject.x = dragX;
-        gameObject.y = dragY;
-      });
-
-      // hover over listener
-      this.input.on('gameobjectover', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
-          this.tweens.add({
-            targets: gameObject,
-            angle: 0,
-            displayWidth: _config.gameOptions.cardWidth,
-            displayHeight: _config.gameOptions.cardHeight,
-            depth: 100,
-            duration: 10
-          });
-        }
-      }, this);
-
-      // hover out listener
-      this.input.on('gameobjectout', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
-          this.tweens.add({
-            targets: gameObject,
-            angle: gameObject.startPosition.angle,
-            displayWidth: _config.gameOptions.cardWidth / 2,
-            displayHeight: _config.gameOptions.cardHeight / 2,
-            depth: gameObject.startPosition.depth,
-            duration: 10
-          });
-        }
-      }, this);
-      this.input.on('dragenter', function (pointer, gameObject, dropZone) {
-        dropZone.renderActiveOutline();
-      });
-      this.input.on('dragleave', function (pointer, gameObject, dropZone) {
-        dropZone.renderNormalOutline();
-      });
-      this.input.on('drop', function (pointer, gameObject, dropZone) {
-        gameObject.input.enabled = false;
-
-        // setting card in the middle 
-        gameObject.displayWidth = _config.gameOptions.cardWidth / 2;
-        gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
-        gameObject.x = dropZone.x;
-        gameObject.y = dropZone.y + dropZone.y / 3;
-        _deck.graveYardArray.push(gameObject);
-
-        // remove the card from the scene after 500ms
-        setTimeout(function () {
-          gameObject.destroy();
-        }, 500);
-        dropZone.renderNormalOutline(this);
-        this.cameras.main.shake(100, 0.02);
-      });
-      this.input.on("dragend", function (pointer, gameObject, dropped) {
-        if (!dropped) {
-          _deck.handArray.push(gameObject);
-          gameObject.displayHeight = _config.gameOptions.cardHeight / 2;
-          gameObject.displayWidth = _config.gameOptions.cardWidth / 2;
-          this.arrangeCardsInCenter(_deck.handArray);
-        }
-      }, this);
+      var dropZone = new _Zone.default(this, 500, 400, 300, 600);
+      (0, _Deck.shuffle)(_Deck.deckArray);
+      (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -701,7 +708,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         };
 
         // sets card to the right in front
-        card.setDepth(i);
+        card.setDepth(50);
       }
     }
 
@@ -709,22 +716,26 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      if (_deck.deckArray.length > 0) {
-        var lastCard = _deck.deckTrackerArray.pop();
+      if (_Deck.deckArray.length > 0) {
+        var lastCard = _Deck.deckTrackerArray.pop();
         lastCard.destroy();
-        var drawCard = _deck.deckArray.pop();
-        _deck.handArray.push(drawCard);
+        var drawCard = _Deck.deckArray.pop();
+        _Deck.handArray.push(drawCard);
         drawCard.cardInHand(this);
-        this.arrangeCardsInCenter(_deck.handArray);
+        this.arrangeCardsInCenter(_Deck.handArray);
       }
     }
   }]);
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/classes/VisualCard.js":"src/helpers/classes/VisualCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/deck.js":"src/helpers/classes/deck.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.config = void 0;
 var _BattleScene = require("/src/scenes/BattleScene.js");
 /** @type {import("../typings/*")} */
 
@@ -736,6 +747,7 @@ var config = {
   height: 800,
   scene: [_BattleScene.BattleScene]
 };
+exports.config = config;
 var game = new Phaser.Game(config);
 },{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -762,7 +774,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55150" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65307" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

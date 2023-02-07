@@ -1,4 +1,4 @@
-import Character from "./characters";
+import Character from "./Characters";
 
 export default class Player extends Character {
 

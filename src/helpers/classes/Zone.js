@@ -1,6 +1,10 @@
+import { graveYardArray } from "./Deck";
+import { gameOptions } from "../config";
+
 export default class Zone extends Phaser.GameObjects.Zone {
-    constructor(scene, width, height, x, y) {
+    constructor(scene, x, y, width, height) {
         super(scene, x, y, width, height).setRectangleDropZone(x, y);
+        this.setOrigin(0, 0);
         scene.add.existing(this);
         this.normalZone = 0xffff00; // yellow
         this.activeZone = 0x00ffff; // lightblue / turquoise 
@@ -8,15 +12,6 @@ export default class Zone extends Phaser.GameObjects.Zone {
         this.zoneOutline = scene.add.graphics()
         this.renderNormalOutline(scene);
         
-        // scene.input.on('dragenter', function(pointer, gameObject, dropZone) {
-        //     console.log(this);
-        //     this.renderActiveOutline();
-        // });
-
-        // scene.input.on('dragleave', function(pointer, gameObject, dropZone) {
-        //     this.renderNormalOutline();
-        // }); 
-
     }
 
     renderNormalOutline() {

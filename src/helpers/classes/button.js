@@ -4,13 +4,7 @@ import { loadFont } from "../font"
 export default class Button extends Phaser.GameObjects.Text {
 
     constructor(x, y, label, scene, callback, bgColour) {
-        // const button = scene.add.text(x, y, label)
-        //     .setOrigin(0, 0)
-        //     .setPadding(8, 15)
-        //     .setStyle({ backgroundColor: '#202529'})
-        //     .setInteractive({ useHandCursor: true })
-        //     .on('pointerdown', () => callback())
-        super(scene, x, y, label);
+       super(scene, x, y, label);
         this.padding = {
             x: 8,
             y: 15

@@ -169,14 +169,12 @@ var VisualCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this = _super.call(this, scene, x, y, sprite, frame);
     _this.id = id;
     _this.cost = cost;
-    scene.add.existing(_assertThisInitialized(_this));
-    _this.cardInHand(scene);
+    // this.cardInHand(scene);
     return _this;
   }
   _createClass(VisualCard, [{
     key: "cardInHand",
     value: function cardInHand(scene) {
-      this.visible = !this.visible;
       this.setInteractive();
       scene.input.setDraggable(this);
       this.setOrigin(0.5, 1);
@@ -214,7 +212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55150" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65307" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
