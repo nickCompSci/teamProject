@@ -695,16 +695,16 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
       });
 
       // adds icons for map
-      var battle = this.add.image(this.game.renderer.width / 2 - 215, this.game.renderer.height / 2 - 70, 'cards').setDepth(0);
-      var shop = this.add.image(this.game.renderer.width / 2 - 55, this.game.renderer.height / 2 - 150, 'shop').setDepth(0);
-      var random = this.add.image(this.game.renderer.width / 2 - 75, this.game.renderer.height / 2 - 20, 'random').setDepth(0);
-      var random2 = this.add.image(this.game.renderer.width / 2 + 80, this.game.renderer.height / 2 + 110, 'random').setDepth(0);
-      var battle2 = this.add.image(this.game.renderer.width / 2 + 60, this.game.renderer.height / 2 - 20, 'cards').setDepth(0);
-      var battle3 = this.add.image(this.game.renderer.width / 2 + 90, this.game.renderer.height / 2 - 150, 'cards').setDepth(0);
-      var battle4 = this.add.image(this.game.renderer.width / 2 - 85, this.game.renderer.height / 2 + 110, 'cards').setDepth(0);
-      var battle5 = this.add.image(this.game.renderer.width / 2 - 215, this.game.renderer.height / 2 + 170, 'cards').setDepth(0);
-      var battle6 = this.add.image(this.game.renderer.width / 2 + 120, this.game.renderer.height / 2 + 230, 'cards').setDepth(0);
-      var battle7 = this.add.image(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 - 60, 'cards').setDepth(0);
+      var battle = this.add.image(0, 0, 'cards');
+      var shop = this.add.image(0, 0, 'shop');
+      var random = this.add.image(0, 0, 'random');
+      var random2 = this.add.image(0, 0, 'random');
+      var battle2 = this.add.image(0, 0, 'cards');
+      var battle3 = this.add.image(0, 0, 'cards');
+      var battle4 = this.add.image(0, 0, 'cards');
+      var battle5 = this.add.image(0, 0, 'cards');
+      var battle6 = this.add.image(0, 0, 'cards');
+      var battle7 = this.add.image(0, 0, 'cards');
       var encounters = [battle, battle2, battle3, battle4, battle5, battle6, battle7, shop, random, random2];
 
       // function for randomly shuffling the array - https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -725,16 +725,106 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
         }
         return array;
       }
+      var door1 = this.add.image(0, 0, "door");
+      var door_pos1 = [{
+        x: 280,
+        y: 383
+      }, {
+        x: 320,
+        y: 335
+      }, {
+        x: 320,
+        y: 240
+      }];
+      var door2 = this.add.image(0, 0, "door");
+      var door_pos2 = [{
+        x: 320,
+        y: 417
+      }, {
+        x: 320,
+        y: 483
+      }];
+      var door3 = this.add.image(0, 0, "door");
+      var door_pos3 = [{
+        x: 280,
+        y: 518
+      }, {
+        x: 320,
+        y: 560
+      }];
+      var door4 = this.add.image(0, 0, "door");
+      var door_pos4 = [{
+        x: 400,
+        y: 288
+      }];
+      var door5 = this.add.image(0, 0, "door");
+      var door_pos5 = [{
+        x: 450,
+        y: 450
+      }];
+      var door6 = this.add.image(0, 0, "door");
+      var door_pos6 = [{
+        x: 503,
+        y: 240
+      }, {
+        x: 503,
+        y: 335
+      }, {
+        x: 503,
+        y: 505
+      }, {
+        x: 503,
+        y: 610
+      }];
+      var door7 = this.add.image(0, 0, "door");
+      var door_pos7 = [{
+        x: 566,
+        y: 288
+      }, {
+        x: 670,
+        y: 288
+      }];
+      var door8 = this.add.image(0, 0, "door");
+      var door_pos8 = [{
+        x: 618,
+        y: 335
+      }];
+      var door9 = this.add.image(0, 0, "door");
+      var door_pos9 = [{
+        x: 566,
+        y: 450
+      }];
+      var door10 = this.add.image(0, 0, "door");
+      var door_pos10 = [{
+        x: 566,
+        y: 560
+      }, {
+        x: 730,
+        y: 560
+      }];
+      var door11 = this.add.image(0, 0, "door");
+      var door_pos11 = [{
+        x: 730,
+        y: 382
+      }, {
+        x: 680,
+        y: 500
+      }];
+      var doors = [door1, door2, door3, door4, door5, door6, door7, door8, door9, door10, door11];
       shuffle(encounters);
-      console.log(encounters);
+      var door_positions = [door_pos1, door_pos2, door_pos3, door_pos4, door_pos5, door_pos6, door_pos7, door_pos8, door_pos9, door_pos10, door_pos11];
+      for (var i = 0; i < door_positions.length; i++) {
+        shuffle(door_positions[i]);
+      }
+      door_positions = [door_pos1[0], door_pos2[0], door_pos3[0], door_pos4[0], door_pos5[0], door_pos6[0], door_pos7[0], door_pos8[0], door_pos9[0], door_pos10[0], door_pos11[0]];
 
       // room positions for encounter icons
       var positions = [{
-        x: this.game.renderer.width / 2 - 215,
+        x: this.game.renderer.width / 2 - 225,
         y: this.game.renderer.height / 2 - 70
       }, {
-        x: this.game.renderer.width / 2 - 55,
-        y: this.game.renderer.height / 2 - 150
+        x: this.game.renderer.width / 2 - 75,
+        y: this.game.renderer.height / 2 - 170
       }, {
         x: this.game.renderer.width / 2 - 75,
         y: this.game.renderer.height / 2 - 20
@@ -746,12 +836,12 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
         y: this.game.renderer.height / 2 - 20
       }, {
         x: this.game.renderer.width / 2 + 90,
-        y: this.game.renderer.height / 2 - 150
+        y: this.game.renderer.height / 2 - 165
       }, {
-        x: this.game.renderer.width / 2 - 85,
-        y: this.game.renderer.height / 2 + 110
+        x: this.game.renderer.width / 2 - 75,
+        y: this.game.renderer.height / 2 + 130
       }, {
-        x: this.game.renderer.width / 2 - 215,
+        x: this.game.renderer.width / 2 - 225,
         y: this.game.renderer.height / 2 + 170
       }, {
         x: this.game.renderer.width / 2 + 120,
@@ -762,17 +852,24 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
       }];
 
       // for assigning the positions to the icons
-      for (var i = 0; i < encounters.length; i++) {
-        console.log(positions[i].x);
-        encounters[i].x = positions[i].x;
-        encounters[i].y = positions[i].y;
-        encounters[i].setInteractive();
-        encounters[i].on("pointerup", function () {
+      function assignLocations(icon, locations) {
+        for (var _i = 0; _i < icon.length; _i++) {
+          icon[_i].x = locations[_i].x;
+          icon[_i].y = locations[_i].y;
+          icon[_i].setDepth(1);
+        }
+      }
+      for (var _i2 = 0; _i2 < encounters.length; _i2++) {
+        encounters[_i2].setInteractive();
+        encounters[_i2].setDepth(2);
+        encounters[_i2].on("pointerup", function () {
           // Moves back to the main menu when the back button is clicked
           _this.scene.start(_CST.CST.SCENES.BATTLE);
           console.log("click");
         });
       }
+      assignLocations(encounters, positions);
+      assignLocations(doors, door_positions);
     }
   }]);
   return MapScene;
@@ -831,10 +928,11 @@ var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("background", "./assets/background.png");
       this.load.image("player2", "./assets/player2.png");
       this.load.image("player", "./assets/player.png");
-      this.load.image("map", "./assets/tower_map_rooms.png");
+      this.load.image("map", "./assets/tower_floor_map.png");
       this.load.image("shop", "./assets/shop.png");
       this.load.image("random", "./assets/random.png");
       this.load.image("cards", "./assets/cards.png");
+      this.load.image("door", "./assets/doorway.png");
 
       // Load audio
       this.load.audio("soundtrack", "./assets/soundtrack.mp3");
@@ -933,7 +1031,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49399" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63977" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
