@@ -1,12 +1,14 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/Button.js';
 import HandCard from "../helpers/classes/cards/HandCard";
-import { gameOptions } from "../helpers/config.js";
+import { gameOptions, enemySprite } from "../helpers/config.js";
 import Zone from "../helpers/classes/Zone.js";
 import Player from "../helpers/classes/Player.js";
+import Enemy from "../helpers/classes/Enemy.js";
 import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/Deck.js";
 import InteractHandler from "../helpers/classes/InteractHandler.js";
 
+let enemyArray = [];
 
 export class BattleScene extends Phaser.Scene {
     constructor(){
@@ -20,13 +22,17 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("background", "./assets/background.png");
         this.load.image("card_holder", "./assets/card_holder.jpg");
         this.load.image("guy", "./assets/sprites/player_green_glasses.png");
-        this.load.image("heart", "./assets/sprites/heart.png")
+        this.load.image("heart", "./assets/sprites/heart.png");
         this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
             frameWidth: gameOptions.cardWidth,
             frameHeight: gameOptions.cardHeight
         });
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
         this.load.image("sword", "./assets/sprites/sword.png");
+        this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
+            frameWidth: enemySprite.spriteWidth,
+            frameHeight: enemySprite.spriteHeight
+        })
     }
 
     create() {
@@ -62,7 +68,7 @@ export class BattleScene extends Phaser.Scene {
         let actions = this.add.container(0, 0, [chamber, actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
          
-        for (let i = 0; i < gameOptions.startCards; i++) {
+        for (let i=0; i < gameOptions.startCards; i++) {
             // creates cards from spritesheet and makes them draggable
             let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
             deckArray.push(card);
@@ -80,7 +86,14 @@ export class BattleScene extends Phaser.Scene {
 
         shuffle(deckArray);
         deckSetUp(this, deckArray, deckTrackerArray);
+
+        for (let i=0; i < enemySprite.numberOfSprites; i++) {
+            let enemy = new Enemy(this, 0, 0, 'enemy', i);
+            enemyArray.push(enemy);
+        }
         
+        this.spawnEnemyOnScene();
+
     }
 
     arrangeCardsInCenter(handArray) {
@@ -124,6 +137,28 @@ export class BattleScene extends Phaser.Scene {
             drawCard.cardInHand(this);
             this.arrangeCardsInCenter(handArray);
         }
+    }
 
+    // spawning in enemies and their life
+    spawnEnemyOnScene() {
+        let minEnemies = 1;
+        let maxEnemies = 2;
+        let numberOfEnemies = Math.floor(Math.random() * (maxEnemies - minEnemies + 1)) + minEnemies;
+        console.log(numberOfEnemies);
+
+        let spawnEnemyDistanceX = 0;
+        let spawnHeartDistanceY = 0;
+
+        for (let i=0; i < numberOfEnemies; i++) {
+            let randomEnemy = enemyArray[Math.floor(Math.random() * enemyArray.length)];
+
+            // For some reason, enemies spawn invisible, no clue.
+            randomEnemy.enemySpawn();
+            randomEnemy.x += spawnEnemyDistanceX;
+            randomEnemy.heartText.y += spawnHeartDistanceY;
+
+            spawnEnemyDistanceX += 150;
+            spawnHeartDistanceY += 100;
+        }
     }
 }

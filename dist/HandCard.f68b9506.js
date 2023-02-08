@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameOptions = exports.cardBackDimensions = void 0;
+exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
   startCards: 5,
@@ -139,6 +139,12 @@ var cardBackDimensions = {
   backHeight: 205
 };
 exports.cardBackDimensions = cardBackDimensions;
+var enemySprite = {
+  spriteWidth: 73.3,
+  spriteHeight: 103,
+  numberOfSprites: 3
+};
+exports.enemySprite = enemySprite;
 },{}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
 "use strict";
 
@@ -212,7 +218,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65307" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59355" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

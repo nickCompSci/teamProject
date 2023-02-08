@@ -222,7 +222,7 @@ exports.default = Button;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameOptions = exports.cardBackDimensions = void 0;
+exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
   startCards: 5,
@@ -238,6 +238,12 @@ var cardBackDimensions = {
   backHeight: 205
 };
 exports.cardBackDimensions = cardBackDimensions;
+var enemySprite = {
+  spriteWidth: 73.3,
+  spriteHeight: 103,
+  numberOfSprites: 3
+};
+exports.enemySprite = enemySprite;
 },{}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
 "use strict";
 
@@ -406,10 +412,10 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var Character = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   _inherits(Character, _Phaser$GameObjects$S);
   var _super = _createSuper(Character);
-  function Character(scene, x, y, sprite) {
+  function Character(scene, x, y, sprite, frame) {
     var _this;
     _classCallCheck(this, Character);
-    _this = _super.call(this, scene, x, y, sprite);
+    _this = _super.call(this, scene, x, y, sprite, frame);
     _this.health = 50;
     return _this;
   }
@@ -479,6 +485,73 @@ var Player = /*#__PURE__*/function (_Character) {
   return Player;
 }(_Characters.default);
 exports.default = Player;
+},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/Enemy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _Characters = _interopRequireDefault(require("./Characters"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var Enemy = /*#__PURE__*/function (_Character) {
+  _inherits(Enemy, _Character);
+  var _super = _createSuper(Enemy);
+  function Enemy(scene, x, y, sprite, frame) {
+    var _this;
+    _classCallCheck(this, Enemy);
+    _this = _super.call(this, scene, x, y, sprite, frame);
+    _this.setScale(2);
+    _this.health = _this.getRandomHealth(50, 70);
+    _this.heartText = scene.add.text(scene.game.config.width - 20, 0, _this.health, {
+      color: "red",
+      fontSize: "45px"
+    });
+    _this.heartText.setOrigin(1, 0);
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.setEnemyCoordinates(scene);
+    _this.enemySpawn();
+
+    // this.heart = scene.add.image(0, 0, "heart");
+    return _this;
+  }
+
+  // generates a random number between min and max parameters
+  // min and max included
+  _createClass(Enemy, [{
+    key: "getRandomHealth",
+    value: function getRandomHealth(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+  }, {
+    key: "setEnemyCoordinates",
+    value: function setEnemyCoordinates(scene) {
+      this.y = scene.game.config.height * 0.6;
+      this.x = scene.game.config.width * 0.6;
+    }
+  }, {
+    key: "enemySpawn",
+    value: function enemySpawn() {
+      this.visible = !this.visible;
+      this.heartText.visible = !this.heartText.visible;
+    }
+  }]);
+  return Enemy;
+}(_Characters.default);
+exports.default = Enemy;
 },{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/InteractHandler.js":[function(require,module,exports) {
 "use strict";
 
@@ -593,6 +666,7 @@ var _HandCard = _interopRequireDefault(require("../helpers/classes/cards/HandCar
 var _config = require("../helpers/config.js");
 var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
 var _Player = _interopRequireDefault(require("../helpers/classes/Player.js"));
+var _Enemy = _interopRequireDefault(require("../helpers/classes/Enemy.js"));
 var _Deck = require("../helpers/classes/Deck.js");
 var _InteractHandler = _interopRequireDefault(require("../helpers/classes/InteractHandler.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -609,6 +683,7 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var enemyArray = [];
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(BattleScene, _Phaser$Scene);
   var _super = _createSuper(BattleScene);
@@ -632,6 +707,10 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       });
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("sword", "./assets/sprites/sword.png");
+      this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
+        frameWidth: _config.enemySprite.spriteWidth,
+        frameHeight: _config.enemySprite.spriteHeight
+      });
     }
   }, {
     key: "create",
@@ -683,6 +762,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var dropZone = new _Zone.default(this, 500, 400, 300, 600);
       (0, _Deck.shuffle)(_Deck.deckArray);
       (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
+      for (var _i = 0; _i < _config.enemySprite.numberOfSprites; _i++) {
+        var enemy = new _Enemy.default(this, 0, 0, 'enemy', _i);
+        enemyArray.push(enemy);
+      }
+      this.spawnEnemyOnScene();
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -725,11 +809,33 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         this.arrangeCardsInCenter(_Deck.handArray);
       }
     }
+
+    // spawning in enemies and their life
+  }, {
+    key: "spawnEnemyOnScene",
+    value: function spawnEnemyOnScene() {
+      var minEnemies = 1;
+      var maxEnemies = 2;
+      var numberOfEnemies = Math.floor(Math.random() * (maxEnemies - minEnemies + 1)) + minEnemies;
+      console.log(numberOfEnemies);
+      var spawnEnemyDistanceX = 0;
+      var spawnHeartDistanceY = 0;
+      for (var i = 0; i < numberOfEnemies; i++) {
+        var randomEnemy = enemyArray[Math.floor(Math.random() * enemyArray.length)];
+
+        // For some reason, enemies spawn invisible, no clue.
+        randomEnemy.enemySpawn();
+        randomEnemy.x += spawnEnemyDistanceX;
+        randomEnemy.heartText.y += spawnHeartDistanceY;
+        spawnEnemyDistanceX += 150;
+        spawnHeartDistanceY += 100;
+      }
+    }
   }]);
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -774,7 +880,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65307" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59355" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
