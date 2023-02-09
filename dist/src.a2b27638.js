@@ -126,11 +126,110 @@ Object.defineProperty(exports, "__esModule", {
 exports.CST = void 0;
 var CST = {
   SCENES: {
-    BATTLE: "BATTLE"
+    BATTLE: "BATTLE",
+    DISCARD_PILE: "DISCARD_PILE"
   }
 };
 exports.CST = CST;
-},{}],"src/helpers/font.js":[function(require,module,exports) {
+},{}],"src/helpers/config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
+var gameOptions = {
+  deck: 6,
+  startCards: 5,
+  cardWidth: 260,
+  cardHeight: 410,
+  cardDistance: 100,
+  cardAngle: 3,
+  cardYOffset: 10
+};
+exports.gameOptions = gameOptions;
+var cardBackDimensions = {
+  backWidth: 130,
+  backHeight: 205
+};
+exports.cardBackDimensions = cardBackDimensions;
+var enemySprite = {
+  spriteWidth: 73.3,
+  spriteHeight: 103,
+  numberOfSprites: 3
+};
+exports.enemySprite = enemySprite;
+},{}],"src/scenes/discardPileScene.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DiscardPileScene = void 0;
+var _CST = require("../CST");
+var _config = require("../helpers/config");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var graveYardArray;
+var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(DiscardPileScene, _Phaser$Scene);
+  var _super = _createSuper(DiscardPileScene);
+  function DiscardPileScene() {
+    _classCallCheck(this, DiscardPileScene);
+    return _super.call(this, {
+      key: _CST.CST.SCENES.DISCARD_PILE
+    });
+  }
+  _createClass(DiscardPileScene, [{
+    key: "init",
+    value: function init(data) {
+      graveYardArray = data;
+    }
+  }, {
+    key: "preload",
+    value: function preload() {
+      this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
+        frameWidth: _config.gameOptions.cardWidth,
+        frameHeight: _config.gameOptions.cardHeight
+      });
+      this.load.image("background", "./assets/background.png");
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      var bg = this.add.sprite(-110, 0, "background").setOrigin(0, 0);
+      bg.setScale(1);
+      bg.alpha = 0.3;
+      if (graveYardArray.length == 0) {
+        console.log("You have no discarded or used cards.");
+      } else {
+        for (var i = 0; i < graveYardArray.length; i++) {
+          graveYardArray[i].setDepth(10);
+          this.add.existing(graveYardArray[i]);
+          console.log(graveYardArray[i].x);
+          console.log(graveYardArray[i].y);
+        }
+      }
+      this.input.once("pointerdown", function () {
+        this.scene.start(_CST.CST.SCENES.BATTLE);
+      }, this);
+    }
+  }]);
+  return DiscardPileScene;
+}(Phaser.Scene);
+exports.DiscardPileScene = DiscardPileScene;
+},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/font.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -216,35 +315,7 @@ var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Button;
 }(Phaser.GameObjects.Text);
 exports.default = Button;
-},{"../font":"src/helpers/font.js"}],"src/helpers/config.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
-var gameOptions = {
-  deck: 6,
-  startCards: 5,
-  cardWidth: 260,
-  cardHeight: 410,
-  cardDistance: 100,
-  cardAngle: 3,
-  cardYOffset: 10
-};
-exports.gameOptions = gameOptions;
-var cardBackDimensions = {
-  backWidth: 130,
-  backHeight: 205
-};
-exports.cardBackDimensions = cardBackDimensions;
-var enemySprite = {
-  spriteWidth: 73.3,
-  spriteHeight: 103,
-  numberOfSprites: 3
-};
-exports.enemySprite = enemySprite;
-},{}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
+},{"../font":"src/helpers/font.js"}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -706,6 +777,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         frameHeight: _config.gameOptions.cardHeight
       });
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
+      this.load.image("discardPile", "./assets/sprites/discardPile.png");
       this.load.image("sword", "./assets/sprites/sword.png");
       this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
         frameWidth: _config.enemySprite.spriteWidth,
@@ -746,6 +818,13 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       actiontext.setPosition(-10, -18);
       var actions = this.add.container(0, 0, [chamber, actiontext]);
       actions.setPosition(gameWidth / 20, gameHeight / 1.75);
+      var discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
+      discardPile.setScale(1.5).setInteractive({
+        useHandCursor: true
+      });
+      discardPile.on('pointerdown', function (event) {
+        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _Deck.graveYardArray);
+      }, this);
       for (var i = 0; i < _config.gameOptions.startCards; i++) {
         // creates cards from spritesheet and makes them draggable
         var card = new _HandCard.default(this, gameWidth / 2, gameHeight / 2, 'cards', i);
@@ -842,6 +921,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.config = void 0;
+var _discardPileScene = require("./scenes/discardPileScene");
 var _BattleScene = require("/src/scenes/BattleScene.js");
 /** @type {import("../typings/*")} */
 
@@ -851,11 +931,11 @@ var config = {
   type: Phaser.AUTO,
   width: 850,
   height: 800,
-  scene: [_BattleScene.BattleScene]
+  scene: [_BattleScene.BattleScene, _discardPileScene.DiscardPileScene]
 };
 exports.config = config;
 var game = new Phaser.Game(config);
-},{"/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -880,7 +960,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59355" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58923" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

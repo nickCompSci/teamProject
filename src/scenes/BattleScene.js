@@ -11,7 +11,7 @@ import InteractHandler from "../helpers/classes/InteractHandler.js";
 let enemyArray = [];
 
 export class BattleScene extends Phaser.Scene {
-    constructor(){
+    constructor() {
         super({
             key: CST.SCENES.BATTLE
         })
@@ -28,6 +28,7 @@ export class BattleScene extends Phaser.Scene {
             frameHeight: gameOptions.cardHeight
         });
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
+        this.load.image("discardPile", "./assets/sprites/discardPile.png")
         this.load.image("sword", "./assets/sprites/sword.png");
         this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
             frameWidth: enemySprite.spriteWidth,
@@ -67,6 +68,12 @@ export class BattleScene extends Phaser.Scene {
         actiontext.setPosition(-10, -18);
         let actions = this.add.container(0, 0, [chamber, actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
+
+        let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
+        discardPile.setScale(1.5).setInteractive({useHandCursor: true});
+        discardPile.on('pointerdown', function (event) {
+            this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
+        }, this);
          
         for (let i=0; i < gameOptions.startCards; i++) {
             // creates cards from spritesheet and makes them draggable
@@ -91,9 +98,7 @@ export class BattleScene extends Phaser.Scene {
             let enemy = new Enemy(this, 0, 0, 'enemy', i);
             enemyArray.push(enemy);
         }
-        
         this.spawnEnemyOnScene();
-
     }
 
     arrangeCardsInCenter(handArray) {
