@@ -27,14 +27,21 @@ export class DiscardPileScene extends Phaser.Scene {
         bg.setScale(1);
         bg.alpha = 0.3;
 
+        let startX = 0;
+        let startY = 0;
+
+        
         if (graveYardArray.length == 0 ) {
             console.log("You have no discarded or used cards.")
         } else {
             for (let i=0; i < graveYardArray.length; i++) {
-                graveYardArray[i].setDepth(10);
-                this.add.existing(graveYardArray[i]);
-                console.log(graveYardArray[i].x);
-                console.log(graveYardArray[i].y);
+                graveYardArray[i].setVisible(true);
+                let discardCard = this.add.existing(graveYardArray[i]);
+                discardCard.x = startX + (i * 150);
+                discardCard.y = startY;
+                discardCard.setOrigin(0, 0);
+                discardCard.displayWidth = gameOptions.cardWidth;
+                discardCard.displayHeight = gameOptions.cardHeight;
             }
         }
 

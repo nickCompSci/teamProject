@@ -211,14 +211,19 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
       var bg = this.add.sprite(-110, 0, "background").setOrigin(0, 0);
       bg.setScale(1);
       bg.alpha = 0.3;
+      var startX = 0;
+      var startY = 0;
       if (graveYardArray.length == 0) {
         console.log("You have no discarded or used cards.");
       } else {
         for (var i = 0; i < graveYardArray.length; i++) {
-          graveYardArray[i].setDepth(10);
-          this.add.existing(graveYardArray[i]);
-          console.log(graveYardArray[i].x);
-          console.log(graveYardArray[i].y);
+          graveYardArray[i].setVisible(true);
+          var discardCard = this.add.existing(graveYardArray[i]);
+          discardCard.x = startX + i * 150;
+          discardCard.y = startY;
+          discardCard.setOrigin(0, 0);
+          discardCard.displayWidth = _config.gameOptions.cardWidth;
+          discardCard.displayHeight = _config.gameOptions.cardHeight;
         }
       }
       this.input.once("pointerdown", function () {
@@ -709,7 +714,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
     // remove the card from the scene after 500ms
     setTimeout(function () {
-      gameObject.destroy();
+      gameObject.setActive(false).setVisible(false);
     }, 500);
     dropZone.renderNormalOutline(scene);
     scene.cameras.main.shake(100, 0.02);
@@ -960,7 +965,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58923" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60991" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
