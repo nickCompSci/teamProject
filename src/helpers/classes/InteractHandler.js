@@ -80,7 +80,10 @@ export default class InteractHandler {
             graveYardArray.push(gameObject);
 
             // remove the card from the scene after 500ms
-            setTimeout(function() { gameObject.setActive(false).setVisible(false); }, 500);
+            setTimeout(function() { 
+                
+                gameObject.setActive(false).setVisible(false); 
+            }, 500);
 
             dropZone.renderNormalOutline(scene);
 

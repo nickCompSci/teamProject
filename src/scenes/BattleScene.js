@@ -23,17 +23,19 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("card_holder", "./assets/card_holder.jpg");
         this.load.image("guy", "./assets/sprites/player_green_glasses.png");
         this.load.image("heart", "./assets/sprites/heart.png");
-        this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
-            frameWidth: gameOptions.cardWidth,
-            frameHeight: gameOptions.cardHeight
-        });
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
         this.load.image("discardPile", "./assets/sprites/discardPile.png")
-        this.load.image("sword", "./assets/sprites/sword.png");
         this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
             frameWidth: enemySprite.spriteWidth,
             frameHeight: enemySprite.spriteHeight
-        })
+        });
+        this.load.image("cannon", "./assets/cards/Cannon.png");
+        this.load.image("grenade", "./assets/cards/Grenade.png");
+        this.load.image("headshot", "./assets/cards/Headshot.png");
+        this.load.image("kevlar", "./assets/cards/Kevlar.png");
+        this.load.image("medkit", "./assets/cards/Medkit.png");
+        this.load.image("overload", "./assets/cards/overload.png");
+        this.load.image("reload", "./assets/cards/reload.png");
     }
 
     create() {
@@ -75,14 +77,14 @@ export class BattleScene extends Phaser.Scene {
             this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
         }, this);
          
-        for (let i=0; i < gameOptions.startCards; i++) {
-            // creates cards from spritesheet and makes them draggable
-            let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
-            deckArray.push(card);
-        }
+        // for (let i=0; i < gameOptions.startCards; i++) {
+        //     // creates cards from spritesheet and makes them draggable
+        //     let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
+        //     deckArray.push(card);
+        // }
 
-        let card1 = new HandCard(this, gameWidth/2, gameHeight/2, 'sword', 0);
-        deckArray.push(card1);
+        // let card1 = new HandCard(this, gameWidth/2, gameHeight/2, 'sword', 0);
+        // deckArray.push(card1);
 
         // Button to end turn
         let endTurnButton = new Button(gameWidth, gameHeight/2, 'End Turn', this, this.endTurn.bind(this), '#202529');

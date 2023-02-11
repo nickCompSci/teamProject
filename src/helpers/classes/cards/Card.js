@@ -27,11 +27,4 @@ export default class Card {
         this.cost = cost;
     }
 
-    setEffect(effect) {
-        this.effect = effect;
-    }
-
-    setType(effect) {
-        this.type = type;
-    }
 }

@@ -126,6 +126,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.CST = void 0;
 var CST = {
   SCENES: {
+    LOAD: "LOAD",
     BATTLE: "BATTLE",
     DISCARD_PILE: "DISCARD_PILE"
   }
@@ -234,7 +235,57 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   return DiscardPileScene;
 }(Phaser.Scene);
 exports.DiscardPileScene = DiscardPileScene;
-},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/font.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/Card.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var Card = /*#__PURE__*/function () {
+  function Card(name, cost, effect, type) {
+    _classCallCheck(this, Card);
+    this.name = name;
+    this.cost = cost;
+    this.effect = effect;
+    this.type = type;
+  }
+  _createClass(Card, [{
+    key: "getName",
+    value: function getName() {
+      return this.name;
+    }
+  }, {
+    key: "getCost",
+    value: function getCost() {
+      return this.cost;
+    }
+  }, {
+    key: "getEffect",
+    value: function getEffect() {
+      return this.effect;
+    }
+  }, {
+    key: "getType",
+    value: function getType() {
+      return this.type;
+    }
+  }, {
+    key: "setCost",
+    value: function setCost(cost) {
+      this.cost = cost;
+    }
+  }]);
+  return Card;
+}();
+exports.default = Card;
+},{}],"src/helpers/font.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -777,17 +828,19 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("card_holder", "./assets/card_holder.jpg");
       this.load.image("guy", "./assets/sprites/player_green_glasses.png");
       this.load.image("heart", "./assets/sprites/heart.png");
-      this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
-        frameWidth: _config.gameOptions.cardWidth,
-        frameHeight: _config.gameOptions.cardHeight
-      });
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("discardPile", "./assets/sprites/discardPile.png");
-      this.load.image("sword", "./assets/sprites/sword.png");
       this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
         frameWidth: _config.enemySprite.spriteWidth,
         frameHeight: _config.enemySprite.spriteHeight
       });
+      this.load.image("cannon", "./assets/cards/Cannon.png");
+      this.load.image("grenade", "./assets/cards/Grenade.png");
+      this.load.image("headshot", "./assets/cards/Headshot.png");
+      this.load.image("kevlar", "./assets/cards/Kevlar.png");
+      this.load.image("medkit", "./assets/cards/Medkit.png");
+      this.load.image("overload", "./assets/cards/overload.png");
+      this.load.image("reload", "./assets/cards/reload.png");
     }
   }, {
     key: "create",
@@ -830,13 +883,15 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       discardPile.on('pointerdown', function (event) {
         this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _Deck.graveYardArray);
       }, this);
-      for (var i = 0; i < _config.gameOptions.startCards; i++) {
-        // creates cards from spritesheet and makes them draggable
-        var card = new _HandCard.default(this, gameWidth / 2, gameHeight / 2, 'cards', i);
-        _Deck.deckArray.push(card);
-      }
-      var card1 = new _HandCard.default(this, gameWidth / 2, gameHeight / 2, 'sword', 0);
-      _Deck.deckArray.push(card1);
+
+      // for (let i=0; i < gameOptions.startCards; i++) {
+      //     // creates cards from spritesheet and makes them draggable
+      //     let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
+      //     deckArray.push(card);
+      // }
+
+      // let card1 = new HandCard(this, gameWidth/2, gameHeight/2, 'sword', 0);
+      // deckArray.push(card1);
 
       // Button to end turn
       var endTurnButton = new _Button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
@@ -846,8 +901,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var dropZone = new _Zone.default(this, 500, 400, 300, 600);
       (0, _Deck.shuffle)(_Deck.deckArray);
       (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
-      for (var _i = 0; _i < _config.enemySprite.numberOfSprites; _i++) {
-        var enemy = new _Enemy.default(this, 0, 0, 'enemy', _i);
+      for (var i = 0; i < _config.enemySprite.numberOfSprites; i++) {
+        var enemy = new _Enemy.default(this, 0, 0, 'enemy', i);
         enemyArray.push(enemy);
       }
       this.spawnEnemyOnScene();
@@ -919,7 +974,104 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LoadScene = void 0;
+var _CST = require("../CST");
+var _Card = _interopRequireDefault(require("../helpers/classes/cards/Card"));
+var _BattleScene = require("./BattleScene");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var cards = [];
+var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(LoadScene, _Phaser$Scene);
+  var _super = _createSuper(LoadScene);
+  function LoadScene() {
+    _classCallCheck(this, LoadScene);
+    return _super.call(this, {
+      key: _CST.CST.SCENES.LOAD
+    });
+  }
+  _createClass(LoadScene, [{
+    key: "preload",
+    value: function preload() {
+      this.load.image("cannon", "./assets/cards/Cannon.png");
+      this.load.image("grenade", "./assets/cards/Grenade.png");
+      this.load.image("headshot", "./assets/cards/Headshot.png");
+      this.load.image("kevlar", "./assets/cards/Kevlar.png");
+      this.load.image("medkit", "./assets/cards/Medkit.png");
+      this.load.image("overload", "./assets/cards/overload.png");
+      this.load.image("reload", "./assets/cards/reload.png");
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      // damage cards
+      var cannon = new _Card.default("cannon", 2, "damage", {
+        damage: 3,
+        target: "all"
+      });
+      var grenade = new _Card.default("grenade", 2, "damage", {
+        damage: 6,
+        target: "single"
+      });
+
+      // combo cards
+      var headshot = new _Card.default("headshot", 1, "combo", {
+        target: "damage",
+        effect: "doubles"
+      });
+
+      // reload cards
+      var reload = new _Card.default("reload", 0, "reload", {
+        amount: 2,
+        sideEffects: null
+      });
+      var overload = new _Card.default("overload", 0, "overload", {
+        amount: 4,
+        sideEffects: -1
+      });
+
+      // healing cards
+      var medkit = new _Card.default("medkit", 1, "healing", {
+        target: "health",
+        amount: 3
+      });
+      var kevlar = new _Card.default("kevlar", 2, "healing", {
+        target: "armour",
+        amount: 6
+      });
+      cards.push(cannon);
+      cards.push(grenade);
+      cards.push(headshot);
+      cards.push(reload);
+      cards.push(overload);
+      cards.push(medkit);
+      cards.push(kevlar);
+      this.scene.add(_CST.CST.SCENES.BATTLE, _BattleScene.BattleScene, false);
+      this.scene.start(_CST.CST.SCENES.BATTLE, cards);
+    }
+  }]);
+  return LoadScene;
+}(Phaser.Scene);
+exports.LoadScene = LoadScene;
+},{"../CST":"src/CST.js","../helpers/classes/cards/Card":"src/helpers/classes/cards/Card.js","./BattleScene":"src/scenes/BattleScene.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -927,6 +1079,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.config = void 0;
 var _discardPileScene = require("./scenes/discardPileScene");
+var _loadScene = require("./scenes/loadScene");
 var _BattleScene = require("/src/scenes/BattleScene.js");
 /** @type {import("../typings/*")} */
 
@@ -934,13 +1087,18 @@ var _BattleScene = require("/src/scenes/BattleScene.js");
 
 var config = {
   type: Phaser.AUTO,
-  width: 850,
+  width: 1000,
   height: 800,
-  scene: [_BattleScene.BattleScene, _discardPileScene.DiscardPileScene]
+  scale: {
+    parent: 'phaser-container',
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  scene: [_loadScene.LoadScene, _discardPileScene.DiscardPileScene]
 };
 exports.config = config;
 var game = new Phaser.Game(config);
-},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","./scenes/loadScene":"src/scenes/loadScene.js","/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -965,7 +1123,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60991" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50079" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
