@@ -127,8 +127,8 @@ exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
   startCards: 5,
-  cardWidth: 260,
-  cardHeight: 410,
+  cardWidth: 130,
+  cardHeight: 205,
   cardDistance: 100,
   cardAngle: 3,
   cardYOffset: 10
@@ -169,10 +169,14 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   _inherits(HandCard, _Phaser$GameObjects$S);
   var _super = _createSuper(HandCard);
-  function HandCard(scene, x, y, sprite, frame) {
+  function HandCard(name, cost, effect, cardType, scene, x, y, sprite) {
     var _this;
     _classCallCheck(this, HandCard);
-    _this = _super.call(this, scene, x, y, sprite, frame);
+    _this = _super.call(this, scene, x, y, sprite);
+    _this.name = name;
+    _this.cost = cost;
+    _this.effect = effect;
+    _this.cardType = cardType;
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -186,8 +190,36 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       this.setOrigin(0.5, 1);
 
       // Minimises the cards initial display size
-      this.displayWidth = _config.gameOptions.cardWidth / 2;
-      this.displayHeight = _config.gameOptions.cardHeight / 2;
+      this.displayWidth = _config.gameOptions.cardWidth;
+      this.displayHeight = _config.gameOptions.cardHeight;
+    }
+  }, {
+    key: "activateCard",
+    value: function activateCard() {}
+  }, {
+    key: "getName",
+    value: function getName() {
+      return this.name;
+    }
+  }, {
+    key: "getCost",
+    value: function getCost() {
+      return this.cost;
+    }
+  }, {
+    key: "getEffect",
+    value: function getEffect() {
+      return this.effect;
+    }
+  }, {
+    key: "getType",
+    value: function getType() {
+      return this.cardType;
+    }
+  }, {
+    key: "setCost",
+    value: function setCost(cost) {
+      this.cost = cost;
     }
   }]);
   return HandCard;
@@ -218,7 +250,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50079" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50061" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -9,12 +9,17 @@ import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSet
 import InteractHandler from "../helpers/classes/InteractHandler.js";
 
 let enemyArray = [];
+let cards;
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.BATTLE
         })
+    }
+
+    init(data) {
+        let cards = data;
     }
 
     preload() {
@@ -29,13 +34,6 @@ export class BattleScene extends Phaser.Scene {
             frameWidth: enemySprite.spriteWidth,
             frameHeight: enemySprite.spriteHeight
         });
-        this.load.image("cannon", "./assets/cards/Cannon.png");
-        this.load.image("grenade", "./assets/cards/Grenade.png");
-        this.load.image("headshot", "./assets/cards/Headshot.png");
-        this.load.image("kevlar", "./assets/cards/Kevlar.png");
-        this.load.image("medkit", "./assets/cards/Medkit.png");
-        this.load.image("overload", "./assets/cards/overload.png");
-        this.load.image("reload", "./assets/cards/reload.png");
     }
 
     create() {
@@ -76,15 +74,8 @@ export class BattleScene extends Phaser.Scene {
         discardPile.on('pointerdown', function (event) {
             this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
         }, this);
-         
-        // for (let i=0; i < gameOptions.startCards; i++) {
-        //     // creates cards from spritesheet and makes them draggable
-        //     let card = new HandCard(this, gameWidth/2, gameHeight/2, 'cards', i);
-        //     deckArray.push(card);
-        // }
-
-        // let card1 = new HandCard(this, gameWidth/2, gameHeight/2, 'sword', 0);
-        // deckArray.push(card1);
+        
+        this.loadCards(this)
 
         // Button to end turn
         let endTurnButton = new Button(gameWidth, gameHeight/2, 'End Turn', this, this.endTurn.bind(this), '#202529');
@@ -101,6 +92,30 @@ export class BattleScene extends Phaser.Scene {
             enemyArray.push(enemy);
         }
         this.spawnEnemyOnScene();
+    }
+
+    loadCards() {
+        let cannon = new HandCard("cannon", 2, "damage", {damage: 3, target: "all"}, this, 0, 0, "cannon");
+        let grenade = new HandCard("grenade", 2, "damage", {damage: 6, target: "single"}, this, 0, 0, "grenade");
+
+        // combo cards
+        let headshot = new HandCard("headshot", 1, "combo", {target: "damage", effect: "doubles"}, this, 0, 0, "headshot");
+        
+        // reload cards
+        let reload = new HandCard("reload", 0, "reload", {amount: 2, sideEffects: null}, this, 0, 0, "reload");
+        let overload = new HandCard("overload", 0, "reload", {amount: 4, sideEffects: -1}, this, 0, 0, "overload");
+
+        // healing cards
+        let medkit = new HandCard("medkit", 1, "healing", {target: "health", amount: 3}, this, 0, 0, "medkit");
+        let kevlar = new HandCard("kevlar", 2, "healing", {target: "armour", amount: 6}, this, 0, 0, "kevlar");
+
+        deckArray.push(cannon);
+        deckArray.push(grenade);
+        deckArray.push(headshot)
+        deckArray.push(reload);
+        deckArray.push(overload);
+        deckArray.push(medkit);
+        deckArray.push(kevlar);
     }
 
     arrangeCardsInCenter(handArray) {
@@ -143,6 +158,7 @@ export class BattleScene extends Phaser.Scene {
             handArray.push(drawCard);
             drawCard.cardInHand(this);
             this.arrangeCardsInCenter(handArray);
+            console.log(handArray);
         }
     }
 
@@ -151,7 +167,6 @@ export class BattleScene extends Phaser.Scene {
         let minEnemies = 1;
         let maxEnemies = 2;
         let numberOfEnemies = Math.floor(Math.random() * (maxEnemies - minEnemies + 1)) + minEnemies;
-        console.log(numberOfEnemies);
 
         let spawnEnemyDistanceX = 0;
         let spawnHeartDistanceY = 0;

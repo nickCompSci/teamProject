@@ -38,8 +38,8 @@ export default class InteractHandler {
                 scene.tweens.add({
                     targets: gameObject,
                     angle: 0,
-                    displayWidth: gameOptions.cardWidth,
-                    displayHeight: gameOptions.cardHeight,
+                    displayWidth: gameOptions.cardWidth * 2,
+                    displayHeight: gameOptions.cardHeight * 2,
                     depth: 100,
                     duration: 10
                 });
@@ -52,10 +52,10 @@ export default class InteractHandler {
                 scene.tweens.add({
                     targets: gameObject,
                     angle: gameObject.startPosition.angle,
-                    displayWidth: gameOptions.cardWidth/2,
-                    displayHeight: gameOptions.cardHeight/2,
+                    displayWidth: gameOptions.cardWidth,
+                    displayHeight: gameOptions.cardHeight,
                     depth: gameObject.startPosition.depth,
-                    duration: 10,
+                    duration: 10
                 });
             }
        }, scene);
@@ -72,8 +72,8 @@ export default class InteractHandler {
             gameObject.input.enabled = false;
 
             // setting card in the middle 
-            gameObject.displayWidth = gameOptions.cardWidth / 2;
-            gameObject.displayHeight = gameOptions.cardHeight / 2;
+            gameObject.displayHeight = gameOptions.cardHeight;
+            gameObject.displayWidth = gameOptions.cardWidth;
             gameObject.x = dropZone.x;
             gameObject.y = dropZone.y + dropZone.y / 3;
             
@@ -81,7 +81,6 @@ export default class InteractHandler {
 
             // remove the card from the scene after 500ms
             setTimeout(function() { 
-                
                 gameObject.setActive(false).setVisible(false); 
             }, 500);
 
@@ -94,8 +93,8 @@ export default class InteractHandler {
         
             if (!dropped) {
                 handArray.push(gameObject);
-                gameObject.displayHeight = gameOptions.cardHeight / 2;
-                gameObject.displayWidth = gameOptions.cardWidth / 2;
+                gameObject.displayHeight = gameOptions.cardHeight;
+                gameObject.displayWidth = gameOptions.cardWidth;
                 scene.arrangeCardsInCenter(handArray);
             }
         }, scene);
