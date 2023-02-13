@@ -6,6 +6,7 @@ export default class Player extends Character {
         super(scene, x, y, sprite);
         this.actionPoints = 6;
         this.deck = deck;
+        this.spriteType = "player";
         scene.add.existing(this);
     }
 
@@ -27,5 +28,9 @@ export default class Player extends Character {
 
     getDeck() {
         return this.deck;
+    }
+
+    getSpriteType() {
+        return this.spriteType;
     }
 }

@@ -5,6 +5,8 @@ export default class Enemy extends Character {
         super(scene, x, y, sprite, frame);
         this.setScale(2);
         this.health = this.getRandomHealth(50, 70);
+        this.spriteType = "enemy";
+        this.setInteractive();
 
         this.heartText = scene.add.text(scene.game.config.width - 20, 0, this.health, {color: "red", fontSize: "45px"});
         this.heartText.setOrigin(1, 0);
@@ -31,5 +33,17 @@ export default class Enemy extends Character {
     enemySpawn() {
         this.visible = !this.visible;
         this.heartText.visible = !this.heartText.visible;
+    }
+
+    getSpriteType() {
+        return this.spriteType;
+    }
+
+    getHealth() {
+        return this.health;
+    }
+
+    setHealth(health) {
+        this.health = health;
     }
 }

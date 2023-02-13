@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
+exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
   startCards: 5,
@@ -139,12 +139,14 @@ var cardBackDimensions = {
   backHeight: 205
 };
 exports.cardBackDimensions = cardBackDimensions;
-var enemySprite = {
+var enemy = {
   spriteWidth: 73.3,
   spriteHeight: 103,
-  numberOfSprites: 3
+  numberOfSprites: 3,
+  enemyList: [],
+  enemyOnScene: []
 };
-exports.enemySprite = enemySprite;
+exports.enemy = enemy;
 },{}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
 "use strict";
 
@@ -169,7 +171,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   _inherits(HandCard, _Phaser$GameObjects$S);
   var _super = _createSuper(HandCard);
-  function HandCard(name, cost, effect, cardType, scene, x, y, sprite) {
+  function HandCard(name, cost, cardType, effect, scene, x, y, sprite) {
     var _this;
     _classCallCheck(this, HandCard);
     _this = _super.call(this, scene, x, y, sprite);
@@ -177,8 +179,6 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this.cost = cost;
     _this.effect = effect;
     _this.cardType = cardType;
-    scene.add.existing(_assertThisInitialized(_this));
-    _this.cardInHand(scene);
     return _this;
   }
   _createClass(HandCard, [{
@@ -193,9 +193,6 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       this.displayWidth = _config.gameOptions.cardWidth;
       this.displayHeight = _config.gameOptions.cardHeight;
     }
-  }, {
-    key: "activateCard",
-    value: function activateCard() {}
   }, {
     key: "getName",
     value: function getName() {
@@ -250,7 +247,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50061" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60548" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

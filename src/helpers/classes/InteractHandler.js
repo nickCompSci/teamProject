@@ -1,5 +1,5 @@
 import { handArray, graveYardArray } from "./Deck";
-import { gameOptions } from "../config";
+import { gameOptions, enemy } from "../config";
 
 export default class InteractHandler {
     constructor(scene) {
@@ -81,6 +81,7 @@ export default class InteractHandler {
 
             // remove the card from the scene after 500ms
             setTimeout(function() { 
+                gameObject.activateCard(scene);
                 gameObject.setActive(false).setVisible(false); 
             }, 500);
 

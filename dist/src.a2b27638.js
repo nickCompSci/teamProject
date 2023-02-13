@@ -138,7 +138,7 @@ exports.CST = CST;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameOptions = exports.enemySprite = exports.cardBackDimensions = void 0;
+exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
   startCards: 5,
@@ -154,12 +154,14 @@ var cardBackDimensions = {
   backHeight: 205
 };
 exports.cardBackDimensions = cardBackDimensions;
-var enemySprite = {
+var enemy = {
   spriteWidth: 73.3,
   spriteHeight: 103,
-  numberOfSprites: 3
+  numberOfSprites: 3,
+  enemyList: [],
+  enemyOnScene: []
 };
-exports.enemySprite = enemySprite;
+exports.enemy = enemy;
 },{}],"src/scenes/discardPileScene.js":[function(require,module,exports) {
 "use strict";
 
@@ -259,7 +261,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   _inherits(HandCard, _Phaser$GameObjects$S);
   var _super = _createSuper(HandCard);
-  function HandCard(name, cost, effect, cardType, scene, x, y, sprite) {
+  function HandCard(name, cost, cardType, effect, scene, x, y, sprite) {
     var _this;
     _classCallCheck(this, HandCard);
     _this = _super.call(this, scene, x, y, sprite);
@@ -267,8 +269,6 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this.cost = cost;
     _this.effect = effect;
     _this.cardType = cardType;
-    scene.add.existing(_assertThisInitialized(_this));
-    _this.cardInHand(scene);
     return _this;
   }
   _createClass(HandCard, [{
@@ -283,9 +283,6 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       this.displayWidth = _config.gameOptions.cardWidth;
       this.displayHeight = _config.gameOptions.cardHeight;
     }
-  }, {
-    key: "activateCard",
-    value: function activateCard() {}
   }, {
     key: "getName",
     value: function getName() {
@@ -472,6 +469,7 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
     _classCallCheck(this, Zone);
     (_this = _super.call(this, scene, x, y, width, height)).setRectangleDropZone(x, y);
     _this.setOrigin(0, 0);
+    _this.setDepth(0);
     scene.add.existing(_assertThisInitialized(_this));
     _this.normalZone = 0xffff00; // yellow
     _this.activeZone = 0x00ffff; // lightblue / turquoise 
@@ -562,6 +560,7 @@ var Player = /*#__PURE__*/function (_Character) {
     _this = _super.call(this, scene, x, y, sprite);
     _this.actionPoints = 6;
     _this.deck = deck;
+    _this.spriteType = "player";
     scene.add.existing(_assertThisInitialized(_this));
     return _this;
   }
@@ -589,6 +588,11 @@ var Player = /*#__PURE__*/function (_Character) {
     key: "getDeck",
     value: function getDeck() {
       return this.deck;
+    }
+  }, {
+    key: "getSpriteType",
+    value: function getSpriteType() {
+      return this.spriteType;
     }
   }]);
   return Player;
@@ -625,6 +629,8 @@ var Enemy = /*#__PURE__*/function (_Character) {
     _this = _super.call(this, scene, x, y, sprite, frame);
     _this.setScale(2);
     _this.health = _this.getRandomHealth(50, 70);
+    _this.spriteType = "enemy";
+    _this.setInteractive();
     _this.heartText = scene.add.text(scene.game.config.width - 20, 0, _this.health, {
       color: "red",
       fontSize: "45px"
@@ -656,6 +662,21 @@ var Enemy = /*#__PURE__*/function (_Character) {
     value: function enemySpawn() {
       this.visible = !this.visible;
       this.heartText.visible = !this.heartText.visible;
+    }
+  }, {
+    key: "getSpriteType",
+    value: function getSpriteType() {
+      return this.spriteType;
+    }
+  }, {
+    key: "getHealth",
+    value: function getHealth() {
+      return this.health;
+    }
+  }, {
+    key: "setHealth",
+    value: function setHealth(health) {
+      this.health = health;
     }
   }]);
   return Enemy;
@@ -747,6 +768,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
     // remove the card from the scene after 500ms
     setTimeout(function () {
+      gameObject.activateCard(scene);
       gameObject.setActive(false).setVisible(false);
     }, 500);
     dropZone.renderNormalOutline(scene);
@@ -762,7 +784,233 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
   }, scene);
 });
 exports.default = InteractHandler;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/DamageCard.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _config = require("../../config");
+var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var DamageCard = /*#__PURE__*/function (_HandCard) {
+  _inherits(DamageCard, _HandCard);
+  var _super = _createSuper(DamageCard);
+  function DamageCard(name, cost, cardType, effect, scene, x, y, sprite) {
+    var _this;
+    _classCallCheck(this, DamageCard);
+    _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.cardInHand(scene);
+    return _this;
+  }
+  _createClass(DamageCard, [{
+    key: "cardInHand",
+    value: function cardInHand(scene) {
+      _get(_getPrototypeOf(DamageCard.prototype), "cardInHand", this).call(this, scene);
+    }
+  }, {
+    key: "activateCard",
+    value: function activateCard(scene) {
+      var card = this;
+      if (this.effect.target == "single") {
+        for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
+          _config.enemy.enemyOnScene[i].once("pointerdown", function (pointer) {
+            console.log(this);
+            this.setHealth(this.getHealth() - card.effect.damage);
+            this.heartText.setText(this.getHealth());
+            for (var j = 0; j < _config.enemy.enemyOnScene.length; j++) {
+              _config.enemy.enemyOnScene[j].input.enabled = false;
+            }
+          });
+        }
+      } else if (this.effect.target == "all") {
+        for (var _i = 0; _i < _config.enemy.enemyOnScene.length; _i++) {
+          _config.enemy.enemyOnScene[_i].setHealth(_config.enemy.enemyOnScene[_i].getHealth() - card.effect.damage);
+          _config.enemy.enemyOnScene[_i].heartText.setText(_config.enemy.enemyOnScene[_i].getHealth());
+        }
+      }
+    }
+  }]);
+  return DamageCard;
+}(_HandCard2.default);
+exports.default = DamageCard;
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/ComboCard.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _config = require("../../config");
+var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var ComboCard = /*#__PURE__*/function (_HandCard) {
+  _inherits(ComboCard, _HandCard);
+  var _super = _createSuper(ComboCard);
+  function ComboCard(name, cost, cardType, effect, scene, x, y, sprite) {
+    var _this;
+    _classCallCheck(this, ComboCard);
+    _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.cardInHand(scene);
+    return _this;
+  }
+  _createClass(ComboCard, [{
+    key: "cardInHand",
+    value: function cardInHand(scene) {
+      _get(_getPrototypeOf(ComboCard.prototype), "cardInHand", this).call(this, scene);
+    }
+  }, {
+    key: "activateCard",
+    value: function activateCard(scene) {
+      var card = this;
+      console.log(this);
+    }
+  }]);
+  return ComboCard;
+}(_HandCard2.default);
+exports.default = ComboCard;
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/ReloadCard.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _config = require("../../config");
+var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var ReloadCard = /*#__PURE__*/function (_HandCard) {
+  _inherits(ReloadCard, _HandCard);
+  var _super = _createSuper(ReloadCard);
+  function ReloadCard(name, cost, cardType, effect, scene, x, y, sprite) {
+    var _this;
+    _classCallCheck(this, ReloadCard);
+    _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.cardInHand(scene);
+    return _this;
+  }
+  _createClass(ReloadCard, [{
+    key: "cardInHand",
+    value: function cardInHand(scene) {
+      _get(_getPrototypeOf(ReloadCard.prototype), "cardInHand", this).call(this, scene);
+    }
+
+    // nned to account for next turn side effects
+    // such as losing action points next turn
+  }, {
+    key: "activateCard",
+    value: function activateCard(scene) {
+      var card = this;
+    }
+  }]);
+  return ReloadCard;
+}(_HandCard2.default);
+exports.default = ReloadCard;
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/HealingCard.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _config = require("../../config");
+var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var HealingCard = /*#__PURE__*/function (_HandCard) {
+  _inherits(HealingCard, _HandCard);
+  var _super = _createSuper(HealingCard);
+  function HealingCard(name, cost, cardType, effect, scene, x, y, sprite) {
+    var _this;
+    _classCallCheck(this, HealingCard);
+    _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.cardInHand(scene);
+    return _this;
+  }
+  _createClass(HealingCard, [{
+    key: "cardInHand",
+    value: function cardInHand(scene) {
+      _get(_getPrototypeOf(HealingCard.prototype), "cardInHand", this).call(this, scene);
+    }
+
+    // needs to access the player's health and armour
+  }, {
+    key: "activateCard",
+    value: function activateCard(scene) {
+      var card = this;
+      if (card.effect.target == "health") {
+        console.log(this);
+      }
+    }
+  }]);
+  return HealingCard;
+}(_HandCard2.default);
+exports.default = HealingCard;
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -771,13 +1019,16 @@ Object.defineProperty(exports, "__esModule", {
 exports.BattleScene = void 0;
 var _CST = require("../CST.js");
 var _Button = _interopRequireDefault(require("../helpers/classes/Button.js"));
-var _HandCard = _interopRequireDefault(require("../helpers/classes/cards/HandCard"));
 var _config = require("../helpers/config.js");
 var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
 var _Player = _interopRequireDefault(require("../helpers/classes/Player.js"));
 var _Enemy = _interopRequireDefault(require("../helpers/classes/Enemy.js"));
 var _Deck = require("../helpers/classes/Deck.js");
 var _InteractHandler = _interopRequireDefault(require("../helpers/classes/InteractHandler.js"));
+var _DamageCard = _interopRequireDefault(require("../helpers/classes/cards/DamageCard.js"));
+var _ComboCard = _interopRequireDefault(require("../helpers/classes/cards/ComboCard.js"));
+var _ReloadCard = _interopRequireDefault(require("../helpers/classes/cards/ReloadCard.js"));
+var _HealingCard = _interopRequireDefault(require("../helpers/classes/cards/HealingCard.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -792,8 +1043,6 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var enemyArray = [];
-var cards;
 var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(BattleScene, _Phaser$Scene);
   var _super = _createSuper(BattleScene);
@@ -819,8 +1068,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("discardPile", "./assets/sprites/discardPile.png");
       this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
-        frameWidth: _config.enemySprite.spriteWidth,
-        frameHeight: _config.enemySprite.spriteHeight
+        frameWidth: _config.enemy.spriteWidth,
+        frameHeight: _config.enemy.spriteHeight
       });
     }
   }, {
@@ -864,7 +1113,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       discardPile.on('pointerdown', function (event) {
         this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _Deck.graveYardArray);
       }, this);
-      this.loadCards(this);
+
+      // load cards
+      this.loadCards();
 
       // Button to end turn
       var endTurnButton = new _Button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
@@ -874,46 +1125,49 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var dropZone = new _Zone.default(this, 500, 400, 300, 600);
       (0, _Deck.shuffle)(_Deck.deckArray);
       (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
-      for (var i = 0; i < _config.enemySprite.numberOfSprites; i++) {
-        var enemy = new _Enemy.default(this, 0, 0, 'enemy', i);
-        enemyArray.push(enemy);
+
+      // enemy
+      for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
+        var enemySprite = new _Enemy.default(this, 0, 0, 'enemy', i);
+        _config.enemy.enemyList.push(enemySprite);
       }
       this.spawnEnemyOnScene();
     }
   }, {
     key: "loadCards",
     value: function loadCards() {
-      var cannon = new _HandCard.default("cannon", 2, "damage", {
+      // damage cards
+      var cannon = new _DamageCard.default("cannon", 2, "damage", {
         damage: 3,
         target: "all"
       }, this, 0, 0, "cannon");
-      var grenade = new _HandCard.default("grenade", 2, "damage", {
+      var grenade = new _DamageCard.default("grenade", 2, "damage", {
         damage: 6,
         target: "single"
       }, this, 0, 0, "grenade");
 
       // combo cards
-      var headshot = new _HandCard.default("headshot", 1, "combo", {
+      var headshot = new _ComboCard.default("headshot", 1, "combo", {
         target: "damage",
         effect: "doubles"
       }, this, 0, 0, "headshot");
 
       // reload cards
-      var reload = new _HandCard.default("reload", 0, "reload", {
+      var reload = new _ReloadCard.default("reload", 0, "reload", {
         amount: 2,
         sideEffects: null
       }, this, 0, 0, "reload");
-      var overload = new _HandCard.default("overload", 0, "reload", {
+      var overload = new _ReloadCard.default("overload", 0, "reload", {
         amount: 4,
         sideEffects: -1
       }, this, 0, 0, "overload");
 
       // healing cards
-      var medkit = new _HandCard.default("medkit", 1, "healing", {
+      var medkit = new _HealingCard.default("medkit", 1, "healing", {
         target: "health",
         amount: 3
       }, this, 0, 0, "medkit");
-      var kevlar = new _HandCard.default("kevlar", 2, "healing", {
+      var kevlar = new _HealingCard.default("kevlar", 2, "healing", {
         target: "armour",
         amount: 6
       }, this, 0, 0, "kevlar");
@@ -964,7 +1218,6 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         _Deck.handArray.push(drawCard);
         drawCard.cardInHand(this);
         this.arrangeCardsInCenter(_Deck.handArray);
-        console.log(_Deck.handArray);
       }
     }
 
@@ -978,7 +1231,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var spawnEnemyDistanceX = 0;
       var spawnHeartDistanceY = 0;
       for (var i = 0; i < numberOfEnemies; i++) {
-        var randomEnemy = enemyArray[Math.floor(Math.random() * enemyArray.length)];
+        var randomEnemy = _config.enemy.enemyList[Math.floor(Math.random() * _config.enemy.enemyList.length)];
 
         // For some reason, enemies spawn invisible, no clue.
         randomEnemy.enemySpawn();
@@ -986,13 +1239,15 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         randomEnemy.heartText.y += spawnHeartDistanceY;
         spawnEnemyDistanceX += 150;
         spawnHeartDistanceY += 100;
+        randomEnemy.setDepth(1);
+        _config.enemy.enemyOnScene.push(randomEnemy);
       }
     }
   }]);
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js","../helpers/classes/cards/DamageCard.js":"src/helpers/classes/cards/DamageCard.js","../helpers/classes/cards/ComboCard.js":"src/helpers/classes/cards/ComboCard.js","../helpers/classes/cards/ReloadCard.js":"src/helpers/classes/cards/ReloadCard.js","../helpers/classes/cards/HealingCard.js":"src/helpers/classes/cards/HealingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1098,7 +1353,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50061" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60548" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

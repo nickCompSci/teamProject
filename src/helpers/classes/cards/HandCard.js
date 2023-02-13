@@ -1,15 +1,12 @@
 import { gameOptions } from "../../config";
 
 export default class HandCard extends Phaser.GameObjects.Sprite {
-    constructor(name, cost, effect, cardType, scene, x, y, sprite) {
+    constructor(name, cost, cardType, effect, scene, x, y, sprite) {
         super(scene, x, y, sprite);
         this.name = name;
         this.cost = cost;
         this.effect = effect;
         this.cardType = cardType;
-
-        scene.add.existing(this);
-        this.cardInHand(scene);
     }
 
     cardInHand(scene) {
@@ -21,10 +18,6 @@ export default class HandCard extends Phaser.GameObjects.Sprite {
         // Minimises the cards initial display size
         this.displayWidth = gameOptions.cardWidth;
         this.displayHeight = gameOptions.cardHeight;
-    }
-
-    activateCard() {
-        
     }
     
     getName() {
@@ -46,6 +39,4 @@ export default class HandCard extends Phaser.GameObjects.Sprite {
     setCost(cost) {
         this.cost = cost;
     }
-
-
 }
