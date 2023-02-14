@@ -35,14 +35,19 @@ export default class InteractHandler {
         // hover over listener
         scene.input.on('gameobjectover', function(pointer, gameObject) {
             if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
+                let yOffSet = 50;
                 scene.tweens.add({
                     targets: gameObject,
                     angle: 0,
+                    y: gameObject.startPosition.y - yOffSet,
                     displayWidth: gameOptions.cardWidth * 2,
                     displayHeight: gameOptions.cardHeight * 2,
                     depth: 100,
                     duration: 10
                 });
+                gameObject.tooltip.showTooltip();
+                gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
+
             }
         }, scene);
 
@@ -51,12 +56,14 @@ export default class InteractHandler {
             if (gameObject.type === "Sprite" && handArray.includes(gameObject)) {
                 scene.tweens.add({
                     targets: gameObject,
+                    y: gameObject.startPosition.y,
                     angle: gameObject.startPosition.angle,
                     displayWidth: gameOptions.cardWidth,
                     displayHeight: gameOptions.cardHeight,
                     depth: gameObject.startPosition.depth,
                     duration: 10
                 });
+                gameObject.tooltip.removeTooltip();
             }
        }, scene);
 

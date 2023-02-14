@@ -10,6 +10,7 @@ import DamageCard from "../helpers/classes/cards/DamageCard.js";
 import ComboCard from "../helpers/classes/cards/ComboCard.js";
 import ReloadCard from "../helpers/classes/cards/ReloadCard.js";
 import HealingCard from "../helpers/classes/cards/HealingCard.js";
+import { Tooltip } from "../helpers/classes/cards/Tooltip.js";
 
 
 export class BattleScene extends Phaser.Scene {
@@ -142,12 +143,14 @@ export class BattleScene extends Phaser.Scene {
             }
 
             card.startPosition = {
+                x: card.x,
+                y: card.y,
                 angle: card.angle,
                 depth: card.depth
             }
 
             // sets card to the right in front
-            card.setDepth(50);
+            card.setDepth(2);
         }
     }
 

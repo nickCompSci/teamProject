@@ -726,14 +726,18 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
   // hover over listener
   scene.input.on('gameobjectover', function (pointer, gameObject) {
     if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+      var yOffSet = 50;
       scene.tweens.add({
         targets: gameObject,
         angle: 0,
+        y: gameObject.startPosition.y - yOffSet,
         displayWidth: _config.gameOptions.cardWidth * 2,
         displayHeight: _config.gameOptions.cardHeight * 2,
         depth: 100,
         duration: 10
       });
+      gameObject.tooltip.showTooltip();
+      gameObject.tooltip.setLabelCoordinates(gameObject.x + _config.gameOptions.cardWidth, gameObject.y - _config.gameOptions.cardHeight * 2 - yOffSet + 10);
     }
   }, scene);
 
@@ -742,12 +746,14 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
     if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
       scene.tweens.add({
         targets: gameObject,
+        y: gameObject.startPosition.y,
         angle: gameObject.startPosition.angle,
         displayWidth: _config.gameOptions.cardWidth,
         displayHeight: _config.gameOptions.cardHeight,
         depth: gameObject.startPosition.depth,
         duration: 10
       });
+      gameObject.tooltip.removeTooltip();
     }
   }, scene);
   scene.input.on('dragenter', function (pointer, gameObject, dropZone) {
@@ -784,7 +790,71 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
   }, scene);
 });
 exports.default = InteractHandler;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/DamageCard.js":[function(require,module,exports) {
+},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/Tooltip.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Tooltip = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var Tooltip = /*#__PURE__*/function (_Phaser$GameObjects$T) {
+  _inherits(Tooltip, _Phaser$GameObjects$T);
+  var _super = _createSuper(Tooltip);
+  function Tooltip(scene, x, y, label) {
+    var _this;
+    _classCallCheck(this, Tooltip);
+    _this = _super.call(this, scene, x, y, label);
+    _this.padding = {
+      x: 20,
+      y: 20
+    };
+    _this.setPadding(_this.padding.x, _this.padding.y);
+    _this.setStyle({
+      backgroundColor: "#202529",
+      color: "#ffffff",
+      wordWrap: {
+        width: 150
+      }
+    });
+    scene.add.existing(_assertThisInitialized(_this));
+    _this.visible = false;
+    _this.setDepth(2);
+    return _this;
+  }
+  _createClass(Tooltip, [{
+    key: "showTooltip",
+    value: function showTooltip() {
+      this.visible = true;
+    }
+  }, {
+    key: "removeTooltip",
+    value: function removeTooltip() {
+      this.visible = false;
+    }
+  }, {
+    key: "setLabelCoordinates",
+    value: function setLabelCoordinates(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+  }]);
+  return Tooltip;
+}(Phaser.GameObjects.Text);
+exports.Tooltip = Tooltip;
+},{}],"src/helpers/classes/cards/DamageCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -793,6 +863,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _config = require("../../config");
 var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+var _Tooltip = require("./Tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -816,6 +887,7 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, DamageCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -847,11 +919,16 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
         }
       }
     }
+  }, {
+    key: "getLabel",
+    value: function getLabel() {
+      return "Damage: Inflicted damage is on the enemy's health.";
+    }
   }]);
   return DamageCard;
 }(_HandCard2.default);
 exports.default = DamageCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/ComboCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ComboCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -860,6 +937,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _config = require("../../config");
 var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+var _Tooltip = require("./Tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -883,6 +961,7 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ComboCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -898,11 +977,16 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
       var card = this;
       console.log(this);
     }
+  }, {
+    key: "getLabel",
+    value: function getLabel() {
+      return "Combo: \nAffects the next card played through amplifying the effect.";
+    }
   }]);
   return ComboCard;
 }(_HandCard2.default);
 exports.default = ComboCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/ReloadCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ReloadCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -911,6 +995,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _config = require("../../config");
 var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+var _Tooltip = require("./Tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -934,6 +1019,7 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ReloadCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -951,11 +1037,16 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     value: function activateCard(scene) {
       var card = this;
     }
+  }, {
+    key: "getLabel",
+    value: function getLabel() {
+      return "AP: \nAction Points are used when activating a card.";
+    }
   }]);
   return ReloadCard;
 }(_HandCard2.default);
 exports.default = ReloadCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/helpers/classes/cards/HealingCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/HealingCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -964,6 +1055,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _config = require("../../config");
 var _HandCard2 = _interopRequireDefault(require("./HandCard"));
+var _Tooltip = require("./Tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -987,6 +1079,7 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, HealingCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
+    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -1006,11 +1099,20 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
         console.log(this);
       }
     }
+  }, {
+    key: "getLabel",
+    value: function getLabel() {
+      if (this.effect.target == "armour") {
+        return "Armour: \nRemoved before health when receiving damage.";
+      } else if (this.effect.target == "health") {
+        return "Health: \nIf this reaches zero, you die.";
+      }
+    }
   }]);
   return HealingCard;
 }(_HandCard2.default);
 exports.default = HealingCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1029,6 +1131,7 @@ var _DamageCard = _interopRequireDefault(require("../helpers/classes/cards/Damag
 var _ComboCard = _interopRequireDefault(require("../helpers/classes/cards/ComboCard.js"));
 var _ReloadCard = _interopRequireDefault(require("../helpers/classes/cards/ReloadCard.js"));
 var _HealingCard = _interopRequireDefault(require("../helpers/classes/cards/HealingCard.js"));
+var _Tooltip = require("../helpers/classes/cards/Tooltip.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1198,12 +1301,14 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           yDelta -= _config.gameOptions.cardYOffset;
         }
         card.startPosition = {
+          x: card.x,
+          y: card.y,
           angle: card.angle,
           depth: card.depth
         };
 
         // sets card to the right in front
-        card.setDepth(50);
+        card.setDepth(2);
       }
     }
 
@@ -1247,7 +1352,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js","../helpers/classes/cards/DamageCard.js":"src/helpers/classes/cards/DamageCard.js","../helpers/classes/cards/ComboCard.js":"src/helpers/classes/cards/ComboCard.js","../helpers/classes/cards/ReloadCard.js":"src/helpers/classes/cards/ReloadCard.js","../helpers/classes/cards/HealingCard.js":"src/helpers/classes/cards/HealingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js","../helpers/classes/cards/DamageCard.js":"src/helpers/classes/cards/DamageCard.js","../helpers/classes/cards/ComboCard.js":"src/helpers/classes/cards/ComboCard.js","../helpers/classes/cards/ReloadCard.js":"src/helpers/classes/cards/ReloadCard.js","../helpers/classes/cards/HealingCard.js":"src/helpers/classes/cards/HealingCard.js","../helpers/classes/cards/Tooltip.js":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1353,7 +1458,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60548" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54594" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

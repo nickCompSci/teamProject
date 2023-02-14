@@ -4,7 +4,7 @@ import { loadFont } from "../font"
 export default class Button extends Phaser.GameObjects.Text {
 
     constructor(x, y, label, scene, callback, bgColour) {
-       super(scene, x, y, label);
+        super(scene, x, y, label);
         this.padding = {
             x: 8,
             y: 15

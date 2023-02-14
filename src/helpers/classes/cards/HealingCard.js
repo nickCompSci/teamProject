@@ -1,9 +1,11 @@
 import { gameOptions, enemy } from "../../config";
 import HandCard from "./HandCard";
+import { Tooltip } from "./Tooltip";
 
 export default class HealingCard extends HandCard {
     constructor(name, cost, cardType, effect, scene, x, y, sprite) {
         super(name, cost, cardType, effect, scene, x, y, sprite);
+        this.tooltip = new Tooltip(scene, x+this.displayWidth, y, this.getLabel());
         scene.add.existing(this);
         this.cardInHand(scene);
     }
@@ -19,5 +21,13 @@ export default class HealingCard extends HandCard {
             console.log(this);
         }
     }
+
+    getLabel() {
+        if (this.effect.target == "armour") {
+            return "Armour: \nRemoved before health when receiving damage.";
+        } else if (this.effect.target == "health") {
+            return "Health: \nIf this reaches zero, you die."
+        }
+    }    
 
 }
