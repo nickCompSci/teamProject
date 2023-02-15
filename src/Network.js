@@ -2,7 +2,6 @@ class Network{
     constructor(){
         this.peer = new Peer();
         this._addPeerListeners();
-        this.conn;
     }
 
     _addPeerListeners(){
@@ -12,8 +11,7 @@ class Network{
         });
 
         this.peer.on('connection', function(conn){
-            console.log("Printing this below:");
-            console.log(this);
+            this.conn = conn
             this.conn.on('data', function(data){
                 console.log("Data received: ", data);
             })
@@ -26,20 +24,17 @@ class Network{
     }
 
     send(data){
-        this.conn.send(data);
+        this.peer.conn.send(data);
         console.log("Data sent: ", data);
     }
 
     connect(id){
         var conn;
         conn = this.peer.connect(id);
-        this.conn = conn;
-        this.conn.on('data', function(data){
+        this.peer.conn = conn;
+        this.peer.conn.on('data', function(data){
             console.log("Data received: ", data);
         })
-        console.log('Connecting to ', this.conn.peer);
-        this.conn = conn;
-        console.log("Connected.")
     }
 }
 
