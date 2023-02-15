@@ -18,15 +18,10 @@ export class JoinGameScene extends Phaser.Scene{
         // Join Game title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, 'Please enter your username:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
-
-        // Input name box
-        let nameBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, "Name", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
-
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, 'Please enter a join code:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please enter a join code:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         // Input code box
-        let codeBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.60, "Code", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
+        let codeBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, "Code", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
 
         // Code box
         codeBox.setInteractive();
@@ -42,21 +37,8 @@ export class JoinGameScene extends Phaser.Scene{
             console.log("hover")
         }); */
 
-        nameBox.setInteractive();
-
-        nameBox.on("pointerdown", ()=>{
-            this.rexUI.edit(nameBox);
-        });
-
-        /** nameBox.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = nameBox.x - nameBox.width + 40;
-            arrowSprite.y = nameBox.y + nameBox.height / 4;
-            console.log("hover")
-        }); */
-
         // Submit button
-        let submitButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Submit', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let lobbyButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Join Lobby', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
@@ -78,19 +60,15 @@ export class JoinGameScene extends Phaser.Scene{
         })
 
         // Submit Button
-        submitButton.setInteractive();
+        lobbyButton.setInteractive();
 
-        submitButton.on("pointerover", ()=>{
+        lobbyButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = submitButton.x - submitButton.width + 90;
-            arrowSprite.y = submitButton.y + submitButton.height / 4;
+            arrowSprite.x = lobbyButton.x - lobbyButton.width + 130;
+            arrowSprite.y = lobbyButton.y + lobbyButton.height / 4;
         })
 
-        submitButton.on("pointerup", ()=>{
-            // Submit username and code
-            console.log("Username:", nameBox.text);
-            console.log("Join Code:", codeBox.text);
-
+        lobbyButton.on("pointerup", ()=>{
             // Networking!
             // Checks to see if code matches any existing games
             // If it does, then the scene is changed to a lobby scene that shows the other players in the game
