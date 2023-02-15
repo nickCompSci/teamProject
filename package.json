@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "phaser3-rex-plugins": "^1.1.81"
+  }
+}
