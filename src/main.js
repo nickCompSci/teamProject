@@ -16,6 +16,7 @@ import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
 let game = new Phaser.Game({
     width: 1000,
     height: 800,
+    scale: { parent: 'phaser-container', mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
         LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene, LobbyScene
     ],
@@ -48,3 +49,7 @@ function loadFont(name, url) {
 }
 
 loadFont("font1", "./assets/PixelboyFont.ttf");
+
+//NOTES
+// Remove username field from create game scene and join game scene
+// Update loading screen

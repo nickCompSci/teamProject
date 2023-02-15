@@ -57,13 +57,14 @@ export class LoadScene extends Phaser.Scene{
         */
 
         // Simulate load times (for testing)
-        for(let i = 0; i < 100; i++){
+        for(let i = 0; i < 200; i++){
             this.load.image("background" + i, "./assets/background");
         }
 
         // Used to create the progress bar
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.45, 'Loading game...', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
         this.load.on("progress", (percent)=>{
-            loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 50);
+            loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 40);
             console.log(percent);
             })
 
