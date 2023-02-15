@@ -1,5 +1,29 @@
 {
   "dependencies": {
+    "body-parser": "^1.20.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "phaser3-rex-plugins": "^1.1.81"
-  }
+  },
+  "name": "teamproject",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickCompSci/teamProject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickCompSci/teamProject/issues"
+  },
+  "homepage": "https://github.com/nickCompSci/teamProject#readme"
 }
