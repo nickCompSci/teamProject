@@ -18,31 +18,14 @@ export class CreateGameScene extends Phaser.Scene{
         // Join Game title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Create Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, 'Please enter your username:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
-        // Input name box
-        let nameBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, "Name", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
+        let joinCode = Math.random().toString(36).substring(2, 8);
 
-        nameBox.setInteractive();
-
-        nameBox.on("pointerdown", ()=>{
-            this.rexUI.edit(nameBox);
-        });
-
-        /** nameBox.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = nameBox.x - nameBox.width + 40;
-            arrowSprite.y = nameBox.y + nameBox.height / 4;
-            console.log("hover")
-        }); */
-
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
-
-        // PLACEHOLDER - This code will be generated at a later date....
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.60, 'CODE123', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Join code: ${joinCode}`, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5);
 
         // Submit button
-        let submitButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Submit', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let lobbyButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Join Lobby', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
@@ -65,15 +48,15 @@ export class CreateGameScene extends Phaser.Scene{
         })
 
         // Submit Button
-        submitButton.setInteractive();
+        lobbyButton.setInteractive();
 
-        submitButton.on("pointerover", ()=>{
+        lobbyButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = submitButton.x - submitButton.width + 90;
-            arrowSprite.y = submitButton.y + submitButton.height / 4;
+            arrowSprite.x = lobbyButton.x - lobbyButton.width + 130;
+            arrowSprite.y = lobbyButton.y + lobbyButton.height / 4;
         })
 
-        submitButton.on("pointerup", ()=>{
+        lobbyButton.on("pointerup", ()=>{
             // Networking!
             // Submit username to the database
             // I'm not sure when join code will be generated
@@ -82,3 +65,4 @@ export class CreateGameScene extends Phaser.Scene{
         })
     }
 }
+
