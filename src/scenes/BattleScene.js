@@ -1,16 +1,16 @@
 import { CST } from "../CST.js";
-import Button from '../helpers/classes/Button.js';
+import Button from '../helpers/classes/button.js';
 import { gameOptions, enemy } from "../helpers/config.js";
-import Zone from "../helpers/classes/Zone.js";
-import Player from "../helpers/classes/Player.js";
-import Enemy from "../helpers/classes/Enemy.js";
+import Zone from "../helpers/classes/zone.js";
+import Player from "../helpers/classes/player.js";
+import Enemy from "../helpers/classes/enemy.js";
 import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/Deck.js";
-import InteractHandler from "../helpers/classes/InteractHandler.js";
-import DamageCard from "../helpers/classes/cards/DamageCard.js";
-import ComboCard from "../helpers/classes/cards/ComboCard.js";
-import ReloadCard from "../helpers/classes/cards/ReloadCard.js";
-import HealingCard from "../helpers/classes/cards/HealingCard.js";
-import { Tooltip } from "../helpers/classes/cards/Tooltip.js";
+import InteractHandler from "../helpers/classes/interactHandler.js";
+import DamageCard from "../helpers/classes/cards/damageCard.js";
+import ComboCard from "../helpers/classes/cards/comboCard.js";
+import ReloadCard from "../helpers/classes/cards/reloadCard.js";
+import HealingCard from "../helpers/classes/cards/healingCard.js";
+import { Tooltip } from "../helpers/classes/cards/tooltip.js";
 
 
 export class BattleScene extends Phaser.Scene {

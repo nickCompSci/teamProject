@@ -1,6 +1,6 @@
 import { gameOptions, enemy } from "../../config";
-import HandCard from "./HandCard";
-import { Tooltip } from "./Tooltip";
+import HandCard from "./handCard";
+import { Tooltip } from "./tooltip";
 
 export default class DamageCard extends HandCard {
     constructor(name, cost, cardType, effect, scene, x, y, sprite) {

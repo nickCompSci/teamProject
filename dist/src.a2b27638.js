@@ -237,7 +237,7 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   return DiscardPileScene;
 }(Phaser.Scene);
 exports.DiscardPileScene = DiscardPileScene;
-},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/handCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -327,7 +327,7 @@ function loadFont(name, url) {
     return error;
   });
 }
-},{}],"src/helpers/classes/Button.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/button.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -398,7 +398,7 @@ var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Button;
 }(Phaser.GameObjects.Text);
 exports.default = Button;
-},{"../font":"src/helpers/font.js"}],"src/helpers/classes/Deck.js":[function(require,module,exports) {
+},{"../font":"src/helpers/font.js"}],"src/helpers/classes/deck.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -439,14 +439,14 @@ function shuffle(array) {
     array[j] = _ref[1];
   }
 }
-},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/Zone.js":[function(require,module,exports) {
+},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Deck = require("./Deck");
+var _deck = require("./deck");
 var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -496,7 +496,7 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/Characters.js":[function(require,module,exports) {
+},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/characters.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -529,14 +529,14 @@ var Character = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return _createClass(Character);
 }(Phaser.GameObjects.Sprite);
 exports.default = Character;
-},{}],"src/helpers/classes/Player.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Characters = _interopRequireDefault(require("./Characters"));
+var _characters = _interopRequireDefault(require("./characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -596,16 +596,16 @@ var Player = /*#__PURE__*/function (_Character) {
     }
   }]);
   return Player;
-}(_Characters.default);
+}(_characters.default);
 exports.default = Player;
-},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/Enemy.js":[function(require,module,exports) {
+},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/enemy.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Characters = _interopRequireDefault(require("./Characters"));
+var _characters = _interopRequireDefault(require("./characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -680,16 +680,57 @@ var Enemy = /*#__PURE__*/function (_Character) {
     }
   }]);
   return Enemy;
-}(_Characters.default);
+}(_characters.default);
 exports.default = Enemy;
-},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/InteractHandler.js":[function(require,module,exports) {
+},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/Deck.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.deckArray = void 0;
+exports.deckSetUp = deckSetUp;
+exports.handArray = exports.graveYardArray = exports.deckTrackerArray = void 0;
+exports.shuffle = shuffle;
+var _config = require("../config.js");
+var handArray = [];
+exports.handArray = handArray;
+var deckArray = [];
+exports.deckArray = deckArray;
+var deckTrackerArray = [];
+exports.deckTrackerArray = deckTrackerArray;
+var graveYardArray = [];
+exports.graveYardArray = graveYardArray;
+function deckSetUp(scene, array, arrayTracker) {
+  var x = scene.game.config.width / 25;
+  var y = scene.game.config.height / 1.24;
+  for (var i = 0; i < array.length; i++) {
+    var cardBack = scene.add.sprite(x, y, 'cardBack');
+    cardBack.setOrigin(0.5, 1);
+    cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
+    cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
+    arrayTracker.push(cardBack);
+    x += 4;
+  }
+}
+
+// implementing Durstenfeld shffle, an optimised version of Fisher-Yates
+function shuffle(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var _ref = [array[j], array[i]];
+    array[i] = _ref[0];
+    array[j] = _ref[1];
+  }
+}
+},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/interactHandler.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Deck = require("./Deck");
+var _deck = require("./deck");
 var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -712,11 +753,11 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
       alpha: 0.3,
       duration: 50
     });
-    var index = _Deck.handArray.indexOf(gameObject);
+    var index = _deck.handArray.indexOf(gameObject);
     if (index !== -1) {
-      _Deck.handArray.splice(index, 1);
+      _deck.handArray.splice(index, 1);
     }
-    scene.arrangeCardsInCenter(_Deck.handArray);
+    scene.arrangeCardsInCenter(_deck.handArray);
   }, scene);
   scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
     gameObject.x = dragX;
@@ -725,7 +766,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
   // hover over listener
   scene.input.on('gameobjectover', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
       var yOffSet = 50;
       scene.tweens.add({
         targets: gameObject,
@@ -743,7 +784,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
   // hover out listener
   scene.input.on('gameobjectout', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
       scene.tweens.add({
         targets: gameObject,
         y: gameObject.startPosition.y,
@@ -770,7 +811,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
     gameObject.displayWidth = _config.gameOptions.cardWidth;
     gameObject.x = dropZone.x;
     gameObject.y = dropZone.y + dropZone.y / 3;
-    _Deck.graveYardArray.push(gameObject);
+    _deck.graveYardArray.push(gameObject);
 
     // remove the card from the scene after 500ms
     setTimeout(function () {
@@ -782,15 +823,15 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
   });
   scene.input.on("dragend", function (pointer, gameObject, dropped) {
     if (!dropped) {
-      _Deck.handArray.push(gameObject);
+      _deck.handArray.push(gameObject);
       gameObject.displayHeight = _config.gameOptions.cardHeight;
       gameObject.displayWidth = _config.gameOptions.cardWidth;
-      scene.arrangeCardsInCenter(_Deck.handArray);
+      scene.arrangeCardsInCenter(_deck.handArray);
     }
   }, scene);
 });
 exports.default = InteractHandler;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/Tooltip.js":[function(require,module,exports) {
+},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/tooltip.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -854,7 +895,7 @@ var Tooltip = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Tooltip;
 }(Phaser.GameObjects.Text);
 exports.Tooltip = Tooltip;
-},{}],"src/helpers/classes/cards/DamageCard.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/cards/damageCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -862,8 +903,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _tooltip = require("./tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -887,7 +928,7 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, DamageCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -926,9 +967,9 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return DamageCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = DamageCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ComboCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./tooltip":"src/helpers/classes/cards/tooltip.js"}],"src/helpers/classes/cards/comboCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -936,8 +977,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _tooltip = require("./tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -961,7 +1002,7 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ComboCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -984,9 +1025,9 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return ComboCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = ComboCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ReloadCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./tooltip":"src/helpers/classes/cards/tooltip.js"}],"src/helpers/classes/cards/reloadCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -994,8 +1035,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _tooltip = require("./tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1019,7 +1060,7 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ReloadCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -1044,9 +1085,9 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return ReloadCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = ReloadCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/HealingCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./tooltip":"src/helpers/classes/cards/tooltip.js"}],"src/helpers/classes/cards/healingCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1054,8 +1095,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _tooltip = require("./tooltip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1079,7 +1120,7 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, HealingCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -1110,9 +1151,9 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return HealingCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = HealingCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./tooltip":"src/helpers/classes/cards/tooltip.js"}],"src/scenes/battleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1120,18 +1161,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BattleScene = void 0;
 var _CST = require("../CST.js");
-var _Button = _interopRequireDefault(require("../helpers/classes/Button.js"));
+var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
 var _config = require("../helpers/config.js");
-var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
-var _Player = _interopRequireDefault(require("../helpers/classes/Player.js"));
-var _Enemy = _interopRequireDefault(require("../helpers/classes/Enemy.js"));
+var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
+var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
+var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
 var _Deck = require("../helpers/classes/Deck.js");
-var _InteractHandler = _interopRequireDefault(require("../helpers/classes/InteractHandler.js"));
-var _DamageCard = _interopRequireDefault(require("../helpers/classes/cards/DamageCard.js"));
-var _ComboCard = _interopRequireDefault(require("../helpers/classes/cards/ComboCard.js"));
-var _ReloadCard = _interopRequireDefault(require("../helpers/classes/cards/ReloadCard.js"));
-var _HealingCard = _interopRequireDefault(require("../helpers/classes/cards/HealingCard.js"));
-var _Tooltip = require("../helpers/classes/cards/Tooltip.js");
+var _interactHandler = _interopRequireDefault(require("../helpers/classes/interactHandler.js"));
+var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
+var _comboCard = _interopRequireDefault(require("../helpers/classes/cards/comboCard.js"));
+var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloadCard.js"));
+var _healingCard = _interopRequireDefault(require("../helpers/classes/cards/healingCard.js"));
+var _tooltip = require("../helpers/classes/cards/tooltip.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1180,7 +1221,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function create() {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
-      var interactiveHandler = new _InteractHandler.default(this);
+      var interactiveHandler = new _interactHandler.default(this);
       var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
       var card_bg = this.add.image(0, 0, "card_holder");
       var bg = this.add.sprite(0, 0, "background");
@@ -1189,7 +1230,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      var player = new _Player.default(this, 0, 0, "guy", _Deck.handArray);
+      var player = new _player.default(this, 0, 0, "guy", _Deck.handArray);
       player.setPosition(gameWidth / 4, gameHeight / 1.65);
       player.setScale(3);
       var heart = this.add.image(0, 0, "heart");
@@ -1221,17 +1262,17 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.loadCards();
 
       // Button to end turn
-      var endTurnButton = new _Button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
+      var endTurnButton = new _button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
       endTurnButton.changeCursor();
 
       // zone where cards can be dropped and activated
-      var dropZone = new _Zone.default(this, 500, 400, 300, 600);
+      var dropZone = new _zone.default(this, 500, 400, 300, 600);
       (0, _Deck.shuffle)(_Deck.deckArray);
       (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
 
       // enemy
       for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
-        var enemySprite = new _Enemy.default(this, 0, 0, 'enemy', i);
+        var enemySprite = new _enemy.default(this, 0, 0, 'enemy', i);
         _config.enemy.enemyList.push(enemySprite);
       }
       this.spawnEnemyOnScene();
@@ -1240,37 +1281,37 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     key: "loadCards",
     value: function loadCards() {
       // damage cards
-      var cannon = new _DamageCard.default("cannon", 2, "damage", {
+      var cannon = new _damageCard.default("cannon", 2, "damage", {
         damage: 3,
         target: "all"
       }, this, 0, 0, "cannon");
-      var grenade = new _DamageCard.default("grenade", 2, "damage", {
+      var grenade = new _damageCard.default("grenade", 2, "damage", {
         damage: 6,
         target: "single"
       }, this, 0, 0, "grenade");
 
       // combo cards
-      var headshot = new _ComboCard.default("headshot", 1, "combo", {
+      var headshot = new _comboCard.default("headshot", 1, "combo", {
         target: "damage",
         effect: "doubles"
       }, this, 0, 0, "headshot");
 
       // reload cards
-      var reload = new _ReloadCard.default("reload", 0, "reload", {
+      var reload = new _reloadCard.default("reload", 0, "reload", {
         amount: 2,
         sideEffects: null
       }, this, 0, 0, "reload");
-      var overload = new _ReloadCard.default("overload", 0, "reload", {
+      var overload = new _reloadCard.default("overload", 0, "reload", {
         amount: 4,
         sideEffects: -1
       }, this, 0, 0, "overload");
 
       // healing cards
-      var medkit = new _HealingCard.default("medkit", 1, "healing", {
+      var medkit = new _healingCard.default("medkit", 1, "healing", {
         target: "health",
         amount: 3
       }, this, 0, 0, "medkit");
-      var kevlar = new _HealingCard.default("kevlar", 2, "healing", {
+      var kevlar = new _healingCard.default("kevlar", 2, "healing", {
         target: "armour",
         amount: 6
       }, this, 0, 0, "kevlar");
@@ -1352,7 +1393,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js","../helpers/classes/cards/DamageCard.js":"src/helpers/classes/cards/DamageCard.js","../helpers/classes/cards/ComboCard.js":"src/helpers/classes/cards/ComboCard.js","../helpers/classes/cards/ReloadCard.js":"src/helpers/classes/cards/ReloadCard.js","../helpers/classes/cards/HealingCard.js":"src/helpers/classes/cards/HealingCard.js","../helpers/classes/cards/Tooltip.js":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/interactHandler.js":"src/helpers/classes/interactHandler.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js","../helpers/classes/cards/tooltip.js":"src/helpers/classes/cards/tooltip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1360,8 +1401,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.LoadScene = void 0;
 var _CST = require("../CST");
-var _HandCard = _interopRequireDefault(require("../helpers/classes/cards/HandCard"));
-var _BattleScene = require("./BattleScene");
+var _handCard = _interopRequireDefault(require("../helpers/classes/cards/handCard"));
+var _battleScene = require("./battleScene");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1393,20 +1434,260 @@ var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("headshot", "./assets/cards/Headshot.png");
       this.load.image("kevlar", "./assets/cards/Kevlar.png");
       this.load.image("medkit", "./assets/cards/Medkit.png");
-      this.load.image("overload", "./assets/cards/overload.png");
-      this.load.image("reload", "./assets/cards/reload.png");
+      this.load.image("overload", "./assets/cards/Overload.png");
+      this.load.image("reload", "./assets/cards/Reload.png");
     }
   }, {
     key: "create",
     value: function create() {
-      this.scene.add(_CST.CST.SCENES.BATTLE, _BattleScene.BattleScene, false);
+      this.scene.add(_CST.CST.SCENES.BATTLE, _battleScene.BattleScene, false);
       this.scene.start(_CST.CST.SCENES.BATTLE);
     }
   }]);
   return LoadScene;
 }(Phaser.Scene);
 exports.LoadScene = LoadScene;
-},{"../CST":"src/CST.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","./BattleScene":"src/scenes/BattleScene.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/classes/cards/handCard":"src/helpers/classes/cards/handCard.js","./battleScene":"src/scenes/battleScene.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BattleScene = void 0;
+var _CST = require("../CST.js");
+var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
+var _config = require("../helpers/config.js");
+var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
+var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
+var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
+var _Deck = require("../helpers/classes/Deck.js");
+var _interactHandler = _interopRequireDefault(require("../helpers/classes/interactHandler.js"));
+var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
+var _comboCard = _interopRequireDefault(require("../helpers/classes/cards/comboCard.js"));
+var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloadCard.js"));
+var _healingCard = _interopRequireDefault(require("../helpers/classes/cards/healingCard.js"));
+var _tooltip = require("../helpers/classes/cards/tooltip.js");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(BattleScene, _Phaser$Scene);
+  var _super = _createSuper(BattleScene);
+  function BattleScene() {
+    _classCallCheck(this, BattleScene);
+    return _super.call(this, {
+      key: _CST.CST.SCENES.BATTLE
+    });
+  }
+  _createClass(BattleScene, [{
+    key: "init",
+    value: function init(data) {
+      var cards = data;
+    }
+  }, {
+    key: "preload",
+    value: function preload() {
+      this.load.image("HUD", "./assets/hud_bg.png");
+      this.load.image("background", "./assets/background.png");
+      this.load.image("card_holder", "./assets/card_holder.jpg");
+      this.load.image("guy", "./assets/sprites/player_green_glasses.png");
+      this.load.image("heart", "./assets/sprites/heart.png");
+      this.load.image("cardBack", "./assets/sprites/cardBack.png");
+      this.load.image("discardPile", "./assets/sprites/discardPile.png");
+      this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
+        frameWidth: _config.enemy.spriteWidth,
+        frameHeight: _config.enemy.spriteHeight
+      });
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      var gameWidth = this.game.config.width;
+      var gameHeight = this.game.config.height;
+      var interactiveHandler = new _interactHandler.default(this);
+      var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+      var card_bg = this.add.image(0, 0, "card_holder");
+      var bg = this.add.sprite(0, 0, "background");
+      hud_bg.setScale(2);
+      card_bg.setPosition(gameWidth / 2, gameHeight);
+      card_bg.setScale(0.325);
+      bg.setPosition(gameWidth / 2, gameHeight / 2.6);
+      bg.setScale(0.65);
+      var player = new _player.default(this, 0, 0, "guy", _Deck.handArray);
+      player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      player.setScale(3);
+      var heart = this.add.image(0, 0, "heart");
+      var heartext = this.add.text(0, 0, player.getHealth(), {
+        color: "black",
+        fontSize: "30px"
+      });
+      heart.setScale(4);
+      heartext.setPosition(-18, -18);
+      var health = this.add.container(0, 0, [heart, heartext]);
+      health.setPosition(gameWidth / 20, gameHeight / 2.2);
+      var chamber = this.add.circle(0, 0, 30, 0xffcc00);
+      var actiontext = this.add.text(0, 0, player.getActionPoints(), {
+        color: "black",
+        fontSize: "30px"
+      });
+      actiontext.setPosition(-10, -18);
+      var actions = this.add.container(0, 0, [chamber, actiontext]);
+      actions.setPosition(gameWidth / 20, gameHeight / 1.75);
+      var discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
+      discardPile.setScale(1.5).setInteractive({
+        useHandCursor: true
+      });
+      discardPile.on('pointerdown', function (event) {
+        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _Deck.graveYardArray);
+      }, this);
+
+      // load cards
+      this.loadCards();
+
+      // Button to end turn
+      var endTurnButton = new _button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
+      endTurnButton.changeCursor();
+
+      // zone where cards can be dropped and activated
+      var dropZone = new _zone.default(this, 500, 400, 300, 600);
+      (0, _Deck.shuffle)(_Deck.deckArray);
+      (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
+
+      // enemy
+      for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
+        var enemySprite = new _enemy.default(this, 0, 0, 'enemy', i);
+        _config.enemy.enemyList.push(enemySprite);
+      }
+      this.spawnEnemyOnScene();
+    }
+  }, {
+    key: "loadCards",
+    value: function loadCards() {
+      // damage cards
+      var cannon = new _damageCard.default("cannon", 2, "damage", {
+        damage: 3,
+        target: "all"
+      }, this, 0, 0, "cannon");
+      var grenade = new _damageCard.default("grenade", 2, "damage", {
+        damage: 6,
+        target: "single"
+      }, this, 0, 0, "grenade");
+
+      // combo cards
+      var headshot = new _comboCard.default("headshot", 1, "combo", {
+        target: "damage",
+        effect: "doubles"
+      }, this, 0, 0, "headshot");
+
+      // reload cards
+      var reload = new _reloadCard.default("reload", 0, "reload", {
+        amount: 2,
+        sideEffects: null
+      }, this, 0, 0, "reload");
+      var overload = new _reloadCard.default("overload", 0, "reload", {
+        amount: 4,
+        sideEffects: -1
+      }, this, 0, 0, "overload");
+
+      // healing cards
+      var medkit = new _healingCard.default("medkit", 1, "healing", {
+        target: "health",
+        amount: 3
+      }, this, 0, 0, "medkit");
+      var kevlar = new _healingCard.default("kevlar", 2, "healing", {
+        target: "armour",
+        amount: 6
+      }, this, 0, 0, "kevlar");
+      _Deck.deckArray.push(cannon);
+      _Deck.deckArray.push(grenade);
+      _Deck.deckArray.push(headshot);
+      _Deck.deckArray.push(reload);
+      _Deck.deckArray.push(overload);
+      _Deck.deckArray.push(medkit);
+      _Deck.deckArray.push(kevlar);
+    }
+  }, {
+    key: "arrangeCardsInCenter",
+    value: function arrangeCardsInCenter(handArray) {
+      var bottomOfScreen = this.game.config.height;
+      var screenCenterX = this.game.config.width / 2;
+      var yDelta = _config.gameOptions.cardYOffset * Math.floor(handArray.length / 2);
+      for (var i = 0; i < handArray.length; i++) {
+        var card = handArray[i];
+        var cardX = screenCenterX + (i - (handArray.length - 1) / 2) * _config.gameOptions.cardDistance;
+        var cardAngle = (i - (handArray.length - 1) / 2) * _config.gameOptions.cardAngle;
+        card.x = cardX;
+        card.y = bottomOfScreen + yDelta;
+        card.angle = cardAngle;
+        if (i > handArray.length / 2 - 1) {
+          yDelta += _config.gameOptions.cardYOffset;
+        } else {
+          yDelta -= _config.gameOptions.cardYOffset;
+        }
+        card.startPosition = {
+          x: card.x,
+          y: card.y,
+          angle: card.angle,
+          depth: card.depth
+        };
+
+        // sets card to the right in front
+        card.setDepth(2);
+      }
+    }
+
+    // simulate a drawing feature
+  }, {
+    key: "endTurn",
+    value: function endTurn() {
+      if (_Deck.deckArray.length > 0) {
+        var lastCard = _Deck.deckTrackerArray.pop();
+        lastCard.destroy();
+        var drawCard = _Deck.deckArray.pop();
+        _Deck.handArray.push(drawCard);
+        drawCard.cardInHand(this);
+        this.arrangeCardsInCenter(_Deck.handArray);
+      }
+    }
+
+    // spawning in enemies and their life
+  }, {
+    key: "spawnEnemyOnScene",
+    value: function spawnEnemyOnScene() {
+      var minEnemies = 1;
+      var maxEnemies = 2;
+      var numberOfEnemies = Math.floor(Math.random() * (maxEnemies - minEnemies + 1)) + minEnemies;
+      var spawnEnemyDistanceX = 0;
+      var spawnHeartDistanceY = 0;
+      for (var i = 0; i < numberOfEnemies; i++) {
+        var randomEnemy = _config.enemy.enemyList[Math.floor(Math.random() * _config.enemy.enemyList.length)];
+
+        // For some reason, enemies spawn invisible, no clue.
+        randomEnemy.enemySpawn();
+        randomEnemy.x += spawnEnemyDistanceX;
+        randomEnemy.heartText.y += spawnHeartDistanceY;
+        spawnEnemyDistanceX += 150;
+        spawnHeartDistanceY += 100;
+        randomEnemy.setDepth(1);
+        _config.enemy.enemyOnScene.push(randomEnemy);
+      }
+    }
+  }]);
+  return BattleScene;
+}(Phaser.Scene);
+exports.BattleScene = BattleScene;
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/interactHandler.js":"src/helpers/classes/interactHandler.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js","../helpers/classes/cards/tooltip.js":"src/helpers/classes/cards/tooltip.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1458,7 +1739,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54594" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55576" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

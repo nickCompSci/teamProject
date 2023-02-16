@@ -1,4 +1,4 @@
-import { handArray, graveYardArray } from "./Deck";
+import { handArray, graveYardArray } from "./deck";
 import { gameOptions, enemy } from "../config";
 
 export default class InteractHandler {
@@ -47,7 +47,6 @@ export default class InteractHandler {
                 });
                 gameObject.tooltip.showTooltip();
                 gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
-
             }
         }, scene);
 
@@ -95,6 +94,7 @@ export default class InteractHandler {
             dropZone.renderNormalOutline(scene);
 
             scene.cameras.main.shake(100, 0.02);
+
         });
 
         scene.input.on("dragend", function(pointer, gameObject, dropped) {

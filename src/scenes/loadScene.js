@@ -1,6 +1,6 @@
 import { CST } from "../CST";
-import HandCard from "../helpers/classes/cards/HandCard";
-import { BattleScene } from "./BattleScene";
+import HandCard from "../helpers/classes/cards/handCard";
+import { BattleScene } from "./battleScene";
 
 export class LoadScene extends Phaser.Scene {
     constructor() {
@@ -15,8 +15,8 @@ export class LoadScene extends Phaser.Scene {
         this.load.image("headshot", "./assets/cards/Headshot.png");
         this.load.image("kevlar", "./assets/cards/Kevlar.png");
         this.load.image("medkit", "./assets/cards/Medkit.png");
-        this.load.image("overload", "./assets/cards/overload.png");
-        this.load.image("reload", "./assets/cards/reload.png");
+        this.load.image("overload", "./assets/cards/Overload.png");
+        this.load.image("reload", "./assets/cards/Reload.png");
     }
 
     create() {

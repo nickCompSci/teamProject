@@ -1,4 +1,4 @@
-import { graveYardArray } from "./Deck";
+import { graveYardArray } from "./deck";
 import { gameOptions } from "../config";
 
 export default class Zone extends Phaser.GameObjects.Zone {
