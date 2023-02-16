@@ -68,3 +68,15 @@ router.post("/token", (request, response) => {
         response.status(401).json({ message: "Unauthorized" });
     }
 });
+
+// route to logout for a user
+router.post("/logout", (request, response) => {
+    if (request.cookies) {
+        const refreshToken = request.cookies['refreshJwt'];
+        // delete the jwt in memory and in clear the cookies
+        if (refreshToken in tokenList) delete tokenList[refreshToken]
+        response.clearCookie("refreshJwt");
+        response.clearCookie("jwt");
+    }
+    response.status(200).json({ message: "Successfully Logged out"});
+});
