@@ -11,3 +11,8 @@ router.get("/status", (request, response, next) => {
     response.status(200).json({ status: "Ok, server running"});
 });
 
+// route to POST user registration details
+router.post("/registration", passport.authenticate("registration",
+    { session: false }), async (request, response, next) => {
+        response.status(200).json({ message: "registration successful"});
+});
