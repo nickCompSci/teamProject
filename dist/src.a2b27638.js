@@ -237,7 +237,7 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   return DiscardPileScene;
 }(Phaser.Scene);
 exports.DiscardPileScene = DiscardPileScene;
-},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/HandCard.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/handCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -327,7 +327,7 @@ function loadFont(name, url) {
     return error;
   });
 }
-},{}],"src/helpers/classes/Button.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/button.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -398,7 +398,7 @@ var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Button;
 }(Phaser.GameObjects.Text);
 exports.default = Button;
-},{"../font":"src/helpers/font.js"}],"src/helpers/classes/Deck.js":[function(require,module,exports) {
+},{"../font":"src/helpers/font.js"}],"src/helpers/classes/deck.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -439,14 +439,14 @@ function shuffle(array) {
     array[j] = _ref[1];
   }
 }
-},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/Zone.js":[function(require,module,exports) {
+},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Deck = require("./Deck");
+var _deck = require("./deck");
 var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -496,7 +496,7 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/Characters.js":[function(require,module,exports) {
+},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/characters.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -529,14 +529,14 @@ var Character = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return _createClass(Character);
 }(Phaser.GameObjects.Sprite);
 exports.default = Character;
-},{}],"src/helpers/classes/Player.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Characters = _interopRequireDefault(require("./Characters"));
+var _characters = _interopRequireDefault(require("./characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -596,16 +596,16 @@ var Player = /*#__PURE__*/function (_Character) {
     }
   }]);
   return Player;
-}(_Characters.default);
+}(_characters.default);
 exports.default = Player;
-},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/Enemy.js":[function(require,module,exports) {
+},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/enemy.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Characters = _interopRequireDefault(require("./Characters"));
+var _characters = _interopRequireDefault(require("./characters"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -680,16 +680,16 @@ var Enemy = /*#__PURE__*/function (_Character) {
     }
   }]);
   return Enemy;
-}(_Characters.default);
+}(_characters.default);
 exports.default = Enemy;
-},{"./Characters":"src/helpers/classes/Characters.js"}],"src/helpers/classes/InteractHandler.js":[function(require,module,exports) {
+},{"./characters":"src/helpers/classes/characters.js"}],"src/helpers/classes/interactHandler.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Deck = require("./Deck");
+var _deck = require("./deck");
 var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -712,11 +712,11 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
       alpha: 0.3,
       duration: 50
     });
-    var index = _Deck.handArray.indexOf(gameObject);
+    var index = _deck.handArray.indexOf(gameObject);
     if (index !== -1) {
-      _Deck.handArray.splice(index, 1);
+      _deck.handArray.splice(index, 1);
     }
-    scene.arrangeCardsInCenter(_Deck.handArray);
+    scene.arrangeCardsInCenter(_deck.handArray);
   }, scene);
   scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
     gameObject.x = dragX;
@@ -725,7 +725,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
   // hover over listener
   scene.input.on('gameobjectover', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
       var yOffSet = 50;
       scene.tweens.add({
         targets: gameObject,
@@ -743,7 +743,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
 
   // hover out listener
   scene.input.on('gameobjectout', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _Deck.handArray.includes(gameObject)) {
+    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
       scene.tweens.add({
         targets: gameObject,
         y: gameObject.startPosition.y,
@@ -770,7 +770,7 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
     gameObject.displayWidth = _config.gameOptions.cardWidth;
     gameObject.x = dropZone.x;
     gameObject.y = dropZone.y + dropZone.y / 3;
-    _Deck.graveYardArray.push(gameObject);
+    _deck.graveYardArray.push(gameObject);
 
     // remove the card from the scene after 500ms
     setTimeout(function () {
@@ -782,15 +782,15 @@ var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) 
   });
   scene.input.on("dragend", function (pointer, gameObject, dropped) {
     if (!dropped) {
-      _Deck.handArray.push(gameObject);
+      _deck.handArray.push(gameObject);
       gameObject.displayHeight = _config.gameOptions.cardHeight;
       gameObject.displayWidth = _config.gameOptions.cardWidth;
-      scene.arrangeCardsInCenter(_Deck.handArray);
+      scene.arrangeCardsInCenter(_deck.handArray);
     }
   }, scene);
 });
 exports.default = InteractHandler;
-},{"./Deck":"src/helpers/classes/Deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/Tooltip.js":[function(require,module,exports) {
+},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/toolTip.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -854,7 +854,7 @@ var Tooltip = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Tooltip;
 }(Phaser.GameObjects.Text);
 exports.Tooltip = Tooltip;
-},{}],"src/helpers/classes/cards/DamageCard.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/cards/damageCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -862,8 +862,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _toolTip = require("./toolTip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -887,7 +887,7 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, DamageCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _toolTip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -926,9 +926,9 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return DamageCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = DamageCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ComboCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./toolTip":"src/helpers/classes/cards/toolTip.js"}],"src/helpers/classes/cards/comboCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -936,8 +936,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _toolTip = require("./toolTip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -961,7 +961,7 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ComboCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _toolTip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -984,9 +984,9 @@ var ComboCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return ComboCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = ComboCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/ReloadCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./toolTip":"src/helpers/classes/cards/toolTip.js"}],"src/helpers/classes/cards/reloadCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -994,8 +994,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _toolTip = require("./toolTip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1019,7 +1019,7 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, ReloadCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _toolTip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -1044,9 +1044,9 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return ReloadCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = ReloadCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/helpers/classes/cards/HealingCard.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./toolTip":"src/helpers/classes/cards/toolTip.js"}],"src/helpers/classes/cards/healingCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1054,8 +1054,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _config = require("../../config");
-var _HandCard2 = _interopRequireDefault(require("./HandCard"));
-var _Tooltip = require("./Tooltip");
+var _handCard = _interopRequireDefault(require("./handCard"));
+var _toolTip = require("./toolTip");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1079,7 +1079,7 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     var _this;
     _classCallCheck(this, HealingCard);
     _this = _super.call(this, name, cost, cardType, effect, scene, x, y, sprite);
-    _this.tooltip = new _Tooltip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
+    _this.tooltip = new _toolTip.Tooltip(scene, x + _this.displayWidth, y, _this.getLabel());
     scene.add.existing(_assertThisInitialized(_this));
     _this.cardInHand(scene);
     return _this;
@@ -1110,9 +1110,9 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     }
   }]);
   return HealingCard;
-}(_HandCard2.default);
+}(_handCard.default);
 exports.default = HealingCard;
-},{"../../config":"src/helpers/config.js","./HandCard":"src/helpers/classes/cards/HandCard.js","./Tooltip":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/BattleScene.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js","./handCard":"src/helpers/classes/cards/handCard.js","./toolTip":"src/helpers/classes/cards/toolTip.js"}],"src/scenes/battleScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1120,18 +1120,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BattleScene = void 0;
 var _CST = require("../CST.js");
-var _Button = _interopRequireDefault(require("../helpers/classes/Button.js"));
+var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
 var _config = require("../helpers/config.js");
-var _Zone = _interopRequireDefault(require("../helpers/classes/Zone.js"));
-var _Player = _interopRequireDefault(require("../helpers/classes/Player.js"));
-var _Enemy = _interopRequireDefault(require("../helpers/classes/Enemy.js"));
-var _Deck = require("../helpers/classes/Deck.js");
-var _InteractHandler = _interopRequireDefault(require("../helpers/classes/InteractHandler.js"));
-var _DamageCard = _interopRequireDefault(require("../helpers/classes/cards/DamageCard.js"));
-var _ComboCard = _interopRequireDefault(require("../helpers/classes/cards/ComboCard.js"));
-var _ReloadCard = _interopRequireDefault(require("../helpers/classes/cards/ReloadCard.js"));
-var _HealingCard = _interopRequireDefault(require("../helpers/classes/cards/HealingCard.js"));
-var _Tooltip = require("../helpers/classes/cards/Tooltip.js");
+var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
+var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
+var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
+var _deck = require("../helpers/classes/deck.js");
+var _interactHandler = _interopRequireDefault(require("../helpers/classes/interactHandler.js"));
+var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
+var _comboCard = _interopRequireDefault(require("../helpers/classes/cards/comboCard.js"));
+var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloadCard.js"));
+var _healingCard = _interopRequireDefault(require("../helpers/classes/cards/healingCard.js"));
+var _toolTip = require("../helpers/classes/cards/toolTip.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1180,7 +1180,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function create() {
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
-      var interactiveHandler = new _InteractHandler.default(this);
+      var interactiveHandler = new _interactHandler.default(this);
       var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
       var card_bg = this.add.image(0, 0, "card_holder");
       var bg = this.add.sprite(0, 0, "background");
@@ -1189,7 +1189,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      var player = new _Player.default(this, 0, 0, "guy", _Deck.handArray);
+      var player = new _player.default(this, 0, 0, "guy", _deck.handArray);
       player.setPosition(gameWidth / 4, gameHeight / 1.65);
       player.setScale(3);
       var heart = this.add.image(0, 0, "heart");
@@ -1214,24 +1214,24 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         useHandCursor: true
       });
       discardPile.on('pointerdown', function (event) {
-        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _Deck.graveYardArray);
+        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _deck.graveYardArray);
       }, this);
 
       // load cards
       this.loadCards();
 
       // Button to end turn
-      var endTurnButton = new _Button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
+      var endTurnButton = new _button.default(gameWidth, gameHeight / 2, 'End Turn', this, this.endTurn.bind(this), '#202529');
       endTurnButton.changeCursor();
 
       // zone where cards can be dropped and activated
-      var dropZone = new _Zone.default(this, 500, 400, 300, 600);
-      (0, _Deck.shuffle)(_Deck.deckArray);
-      (0, _Deck.deckSetUp)(this, _Deck.deckArray, _Deck.deckTrackerArray);
+      var dropZone = new _zone.default(this, 500, 400, 300, 600);
+      (0, _deck.shuffle)(_deck.deckArray);
+      (0, _deck.deckSetUp)(this, _deck.deckArray, _deck.deckTrackerArray);
 
       // enemy
       for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
-        var enemySprite = new _Enemy.default(this, 0, 0, 'enemy', i);
+        var enemySprite = new _enemy.default(this, 0, 0, 'enemy', i);
         _config.enemy.enemyList.push(enemySprite);
       }
       this.spawnEnemyOnScene();
@@ -1240,47 +1240,47 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     key: "loadCards",
     value: function loadCards() {
       // damage cards
-      var cannon = new _DamageCard.default("cannon", 2, "damage", {
+      var cannon = new _damageCard.default("cannon", 2, "damage", {
         damage: 3,
         target: "all"
       }, this, 0, 0, "cannon");
-      var grenade = new _DamageCard.default("grenade", 2, "damage", {
+      var grenade = new _damageCard.default("grenade", 2, "damage", {
         damage: 6,
         target: "single"
       }, this, 0, 0, "grenade");
 
       // combo cards
-      var headshot = new _ComboCard.default("headshot", 1, "combo", {
+      var headshot = new _comboCard.default("headshot", 1, "combo", {
         target: "damage",
         effect: "doubles"
       }, this, 0, 0, "headshot");
 
       // reload cards
-      var reload = new _ReloadCard.default("reload", 0, "reload", {
+      var reload = new _reloadCard.default("reload", 0, "reload", {
         amount: 2,
         sideEffects: null
       }, this, 0, 0, "reload");
-      var overload = new _ReloadCard.default("overload", 0, "reload", {
+      var overload = new _reloadCard.default("overload", 0, "reload", {
         amount: 4,
         sideEffects: -1
       }, this, 0, 0, "overload");
 
       // healing cards
-      var medkit = new _HealingCard.default("medkit", 1, "healing", {
+      var medkit = new _healingCard.default("medkit", 1, "healing", {
         target: "health",
         amount: 3
       }, this, 0, 0, "medkit");
-      var kevlar = new _HealingCard.default("kevlar", 2, "healing", {
+      var kevlar = new _healingCard.default("kevlar", 2, "healing", {
         target: "armour",
         amount: 6
       }, this, 0, 0, "kevlar");
-      _Deck.deckArray.push(cannon);
-      _Deck.deckArray.push(grenade);
-      _Deck.deckArray.push(headshot);
-      _Deck.deckArray.push(reload);
-      _Deck.deckArray.push(overload);
-      _Deck.deckArray.push(medkit);
-      _Deck.deckArray.push(kevlar);
+      _deck.deckArray.push(cannon);
+      _deck.deckArray.push(grenade);
+      _deck.deckArray.push(headshot);
+      _deck.deckArray.push(reload);
+      _deck.deckArray.push(overload);
+      _deck.deckArray.push(medkit);
+      _deck.deckArray.push(kevlar);
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -1316,13 +1316,13 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      if (_Deck.deckArray.length > 0) {
-        var lastCard = _Deck.deckTrackerArray.pop();
+      if (_deck.deckArray.length > 0) {
+        var lastCard = _deck.deckTrackerArray.pop();
         lastCard.destroy();
-        var drawCard = _Deck.deckArray.pop();
-        _Deck.handArray.push(drawCard);
+        var drawCard = _deck.deckArray.pop();
+        _deck.handArray.push(drawCard);
         drawCard.cardInHand(this);
-        this.arrangeCardsInCenter(_Deck.handArray);
+        this.arrangeCardsInCenter(_deck.handArray);
       }
     }
 
@@ -1352,7 +1352,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/Button.js":"src/helpers/classes/Button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/Zone.js":"src/helpers/classes/Zone.js","../helpers/classes/Player.js":"src/helpers/classes/Player.js","../helpers/classes/Enemy.js":"src/helpers/classes/Enemy.js","../helpers/classes/Deck.js":"src/helpers/classes/Deck.js","../helpers/classes/InteractHandler.js":"src/helpers/classes/InteractHandler.js","../helpers/classes/cards/DamageCard.js":"src/helpers/classes/cards/DamageCard.js","../helpers/classes/cards/ComboCard.js":"src/helpers/classes/cards/ComboCard.js","../helpers/classes/cards/ReloadCard.js":"src/helpers/classes/cards/ReloadCard.js","../helpers/classes/cards/HealingCard.js":"src/helpers/classes/cards/HealingCard.js","../helpers/classes/cards/Tooltip.js":"src/helpers/classes/cards/Tooltip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/deck.js":"src/helpers/classes/deck.js","../helpers/classes/interactHandler.js":"src/helpers/classes/interactHandler.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js","../helpers/classes/cards/toolTip.js":"src/helpers/classes/cards/toolTip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1360,8 +1360,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.LoadScene = void 0;
 var _CST = require("../CST");
-var _HandCard = _interopRequireDefault(require("../helpers/classes/cards/HandCard"));
-var _BattleScene = require("./BattleScene");
+var _handCard = _interopRequireDefault(require("../helpers/classes/cards/handCard"));
+var _battleScene = require("./battleScene");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1399,14 +1399,14 @@ var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
-      this.scene.add(_CST.CST.SCENES.BATTLE, _BattleScene.BattleScene, false);
+      this.scene.add(_CST.CST.SCENES.BATTLE, _battleScene.BattleScene, false);
       this.scene.start(_CST.CST.SCENES.BATTLE);
     }
   }]);
   return LoadScene;
 }(Phaser.Scene);
 exports.LoadScene = LoadScene;
-},{"../CST":"src/CST.js","../helpers/classes/cards/HandCard":"src/helpers/classes/cards/HandCard.js","./BattleScene":"src/scenes/BattleScene.js"}],"src/index.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/classes/cards/handCard":"src/helpers/classes/cards/handCard.js","./battleScene":"src/scenes/battleScene.js"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1415,7 +1415,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.config = void 0;
 var _discardPileScene = require("./scenes/discardPileScene");
 var _loadScene = require("./scenes/loadScene");
-var _BattleScene = require("/src/scenes/BattleScene.js");
+var _battleScene = require("/src/scenes/battleScene.js");
 /** @type {import("../typings/*")} */
 
 // Fading animation - https://labs.phaser.io/edit.html?src=src/display/alpha/tween%20alpha.js&v=3.55.2
@@ -1433,7 +1433,7 @@ var config = {
 };
 exports.config = config;
 var game = new Phaser.Game(config);
-},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","./scenes/loadScene":"src/scenes/loadScene.js","/src/scenes/BattleScene.js":"src/scenes/BattleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","./scenes/loadScene":"src/scenes/loadScene.js","/src/scenes/battleScene.js":"src/scenes/battleScene.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1458,7 +1458,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54594" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40083" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -1602,5 +1602,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
+},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
 //# sourceMappingURL=/src.a2b27638.js.map

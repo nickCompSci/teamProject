@@ -1,6 +1,6 @@
 import { CST } from "../CST";
-import HandCard from "../helpers/classes/cards/HandCard";
-import { BattleScene } from "./BattleScene";
+import HandCard from "../helpers/classes/cards/handCard";
+import { BattleScene } from "./battleScene";
 
 export class LoadScene extends Phaser.Scene {
     constructor() {

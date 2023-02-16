@@ -1,4 +1,4 @@
-import Character from "./Characters";
+import Character from "./characters";
 
 export default class Enemy extends Character {
     constructor(scene, x, y, sprite, frame) {
