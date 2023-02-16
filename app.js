@@ -35,7 +35,15 @@ app.use(express.static(__dirname + '/src'));
 app.get('/', function (request, response) {
     response.sendFile(__dirname + "/index.html");
 });
-// the routes that are available, in routes dir
+// the main routes that are available, in routes dir
 app.use("/", routes);
+
+// catch all erroneous routes entered by user
+app.use((request, response, next) => {
+    response.status(404); // error code 404
+    response.json({ message: "404 - Not found"});
+});
+
+
 
 
