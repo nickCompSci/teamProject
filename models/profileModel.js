@@ -37,3 +37,9 @@ ProfileSchema.pre('save', async function (next) {
     next();
 });
 
+// validating a profiles password when logging in
+ProfileSchema.methods.isValidPassword = async function (password) {
+    const user = this;
+    const compare = await bcrypt.compare(password, user.password);
+    return compare;
+}
