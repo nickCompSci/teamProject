@@ -6,3 +6,8 @@ const tokenList = {};
 //create express router
 const router = express.Router();
 
+// route to check if server is active and running
+router.get("/status", (request, response, next) => {
+    response.status(200).json({ status: "Ok, server running"});
+});
+
