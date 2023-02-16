@@ -51,3 +51,20 @@ router.post("/login", async (request, response, next) => {
         }
     })(request, response, next);
 });
+
+// route to check if the user is authorized by checking the
+// tracked token in the cookie
+router.post("/token", (request, response) => {
+    const { email, refreshToken } = request.body;
+    if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)){
+        const body = { email, _id: tokenList[refreshToken]._id };
+        const token = jwt.sign({ user: body }, "top_secret",
+            { expiresIn: 300});
+        // update the jwt
+        response.cookie("jwt", token);
+        tokenList[refreshToken].token = token;
+        response.status(200).json({ token });
+    } else {
+        response.status(401).json({ message: "Unauthorized" });
+    }
+});
