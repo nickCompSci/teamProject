@@ -44,6 +44,11 @@ app.use((request, response, next) => {
     response.json({ message: "404 - Not found"});
 });
 
-
+// handle internal server errors
+app.use((err, request, response, next) => {
+    // http error code for server errors
+    response.status(err.status || 500); 
+    response.json({ error: err});
+});
 
 
