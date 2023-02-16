@@ -21,3 +21,23 @@ passport.use("registration", new localStrategy({
     }
 }));
 
+// handle user login authentication
+passport.use("login", new localStrategy({
+    usernameField: "email",
+    passwordField: "password"
+    // the callback function
+}, async (email, password, done) => {
+    try {
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return done(null, false, { message: "Wrong email or password"});
+        }
+        const validate = await user.isValidPassword(password);
+        if (!validate) {
+            return done(null, false, { message: "Wrong email or password" });
+        }
+        return done(null, user, { message : "Logged in Successfully" });
+    } catch (error) {
+        return done(error);
+    }
+}));
