@@ -43,3 +43,6 @@ ProfileSchema.methods.isValidPassword = async function (password) {
     const compare = await bcrypt.compare(password, user.password);
     return compare;
 }
+
+const ProfileModel = mongoose.model("profile", ProfileSchema);
+module.exports = ProfileModel;
