@@ -26,3 +26,14 @@ const ProfileSchema = new Schema({
         maxLength : 20 }
 });
 
+// pre-save hook which is called everytime before a
+// a document/field is saved to database
+ProfileSchema.pre('save', async function (next) {
+    // this pre-save hook allows us to hash the password then
+    // store the hashed value in the mongo database
+    const user = this;
+    const hashedPassword = await bcrypt.hash(this.password, 25)
+    this.password = hashedPassword;
+    next();
+});
+
