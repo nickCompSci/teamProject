@@ -1,7 +1,7 @@
 /** @type {import("../typings/*")} */
 import { DiscardPileScene } from "./scenes/discardPileScene";
 import { LoadScene } from "./scenes/loadScene";
-import {BattleScene} from "/src/scenes/BattleScene.js";
+import {BattleScene} from "/src/scenes/battleScene.js";
 
 // Fading animation - https://labs.phaser.io/edit.html?src=src/display/alpha/tween%20alpha.js&v=3.55.2
 
