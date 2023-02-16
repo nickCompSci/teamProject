@@ -51,4 +51,10 @@ app.use((err, request, response, next) => {
     response.json({ error: err});
 });
 
+// server begins listening on the provided port
+// either 3000 or from an environment variable
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server started on port ${process.env.PORT || 3000}`);
+});
+
 
