@@ -80,3 +80,5 @@ router.post("/logout", (request, response) => {
     }
     response.status(200).json({ message: "Successfully Logged out"});
 });
+
+module.exports = router;
