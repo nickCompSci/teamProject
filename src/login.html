@@ -26,6 +26,30 @@
     </div>
 </form>
 
-
+<!-- script to handle when user presses login link -->
+<script>
+    function signIn() {
+        // obtain the email and password field
+      var data = {
+        email: document.forms[0].elements[0].value,
+        password: document.forms[0].elements[1].value
+      };
+      // send it to the /login in route
+      $.ajax({
+        type: 'POST',
+        url: '/login',
+        data,
+        // on success,redirect user to game.html
+        success: function (data) {
+          window.location.replace('game.html');
+        },
+        // on error return login page again to user
+        error: function (xhr) {
+          window.alert(JSON.stringify(xhr));
+          window.location.replace('/login.html');
+        }
+      });
+    }
+  </script>
 </body>
 </html>
