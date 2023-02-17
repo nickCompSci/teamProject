@@ -5,8 +5,77 @@
 }
 
 /* all text with gameFont */
-*{
+* {
     font-family: gameFont;
         color: white;
 }
     
+body {
+    background-image: url("../tower2.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 50% 0%;
+    font-size: 40px
+}
+
+form {
+    text-align: center;
+}
+ 
+ .container {
+    padding: 25px;
+}
+
+label {
+    display: block;
+}
+
+a {
+    color: white;
+}
+
+a:link {
+    text-decoration: none;
+}
+    
+a:visited {
+    text-decoration: none;
+}
+    
+a:hover {
+    text-decoration: none;
+    cursor:pointer;
+}
+    
+a:active {
+    text-decoration: none;
+}
+/* when hovering over links, use cursor pointer */
+a.pointer {
+    cursor: pointer;
+}
+
+/* design for the input box */
+input[type=email], input[type=password],input[type=text] {
+    width: 25%;
+    margin: 8px 0;
+    padding: 12px 20px;
+    display: inline-block;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid white;
+    color: white;
+}
+
+/* when an input box is in focus, i.e a user has clicked on it */
+input:focus {
+    outline:2px solid white;
+    border:none;
+}
+
+/* placeholder text */
+input::placeholder {
+    color: white;
+    opacity: 1;
+    font-size: 15px;
+}
