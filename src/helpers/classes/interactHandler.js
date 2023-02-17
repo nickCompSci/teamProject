@@ -5,6 +5,7 @@ export default class InteractHandler {
     constructor(scene) {
 
         scene.input.on('dragstart', function (pointer, gameObject) {
+            gameObject.tooltip.removeTooltip();
             scene.tweens.add({
                 targets: gameObject,
                 angle: 0,
@@ -77,6 +78,7 @@ export default class InteractHandler {
 
         scene.input.on('drop', function(pointer, gameObject, dropZone) {
             gameObject.input.enabled = false;
+            gameObject.tooltip.removeTooltip();
 
             // setting card in the middle 
             gameObject.displayHeight = gameOptions.cardHeight;
