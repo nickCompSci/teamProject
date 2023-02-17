@@ -1,0 +1,12 @@
+/* the font style */
+@font-face {
+    font-family: gameFont;
+    src: url(../../../dist/assets/PixelboyFont.ttf);
+}
+
+/* all text with gameFont */
+*{
+    font-family: gameFont;
+        color: white;
+}
+    
