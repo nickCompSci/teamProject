@@ -1,11 +1,12 @@
-import Character from "./characters";
+import Deck from "./deck.js"
 
-export default class Player extends Character {
+export default class Player extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, x, y, sprite, deck) {
-        super(scene, x, y, sprite);
+    constructor(scene, x, y, sprite, frame) {
+        super(scene, x, y, sprite, frame);
+        this.health = 50;
         this.actionPoints = 6;
-        this.deck = deck;
+        this.deck = new Deck();
         this.spriteType = "player";
         scene.add.existing(this);
     }

@@ -1,6 +1,4 @@
-import Character from "./characters";
-
-export default class Enemy extends Character {
+export default class Enemy extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, sprite, frame) {
         super(scene, x, y, sprite, frame);
         this.setScale(2);
