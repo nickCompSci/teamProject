@@ -11,7 +11,7 @@
 }
     
 body {
-    background-image: url("../tower2.jpg");
+    background-image: url("../../../dist/assets/tower2.jpg");
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: 50% 0%;
