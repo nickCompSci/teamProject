@@ -25,7 +25,7 @@ function getCookie(cookieName) {
       success: function(data) {},
       error: function(xhr) {
         window.alert(JSON.stringify(xhr));
-        window.location.replace('login.html');
+        window.location.replace('/index.html');
       }
     });
   }, 10000);
