@@ -1,7 +1,7 @@
 /* the font style */
 @font-face {
     font-family: gameFont;
-    src: url(../../../dist/assets/PixelboyFont.ttf);
+    src: url(../resources/PixelboyFont.ttf);
 }
 
 /* all text with gameFont */
@@ -11,7 +11,7 @@
 }
     
 body {
-    background-image: url("../../../dist/assets/tower2.jpg");
+    background-image: url("../resources/tower2.jpg");
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: 50% 0%;
