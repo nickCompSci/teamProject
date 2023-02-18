@@ -32,7 +32,7 @@ ProfileSchema.pre('save', async function (next) {
     // this pre-save hook allows us to hash the password then
     // store the hashed value in the mongo database
     const user = this;
-    const hashedPassword = await bcrypt.hash(this.password, 25)
+    const hashedPassword = await bcrypt.hash(this.password, 15)
     this.password = hashedPassword;
     next();
 });
