@@ -55,7 +55,10 @@ router.post("/login", async (request, response, next) => {
 // route to check if the user is authorized by checking the
 // tracked token in the cookie
 router.post("/token", (request, response) => {
-    const { email, refreshToken } = request.body;
+    // const  email = request.body.email;
+    const refreshToken = request.body.refreshToken;
+    const decoded = jwt.decode(request.body.refreshToken);
+    const email = decoded.user.email;
     if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)){
         const body = { email, _id: tokenList[refreshToken]._id };
         const token = jwt.sign({ user: body }, "top_secret",
