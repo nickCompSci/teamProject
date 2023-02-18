@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require("passport");
 const express = require("express");
 const jwt = require("jsonwebtoken");
@@ -30,8 +31,10 @@ router.post("/login", async (request, response, next) => {
                     _id: user._id,
                     email: user.email
                 };
-                const token = jwt.sign({ user: body }, "top_secret", { expiresIn: 300});
-                const refreshToken = jwt.sign({ user: body }, "top_secret_refresh",
+                const jwtKey = process.env.JWT_SIGN_KEY;
+                const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
+                const token = jwt.sign({ user: body }, jwtKey, { expiresIn: 300});
+                const refreshToken = jwt.sign({ user: body }, jwtRefreshKey,
                 { expiresIn: 86400});
                 // store the jwt in a cookie
                 response.cookie("jwt", token);
@@ -56,12 +59,13 @@ router.post("/login", async (request, response, next) => {
 // tracked token in the cookie
 router.post("/token", (request, response) => {
     // const  email = request.body.email;
+    const jwtKey = process.env.JWT_SIGN_KEY;
     const refreshToken = request.body.refreshToken;
     const decoded = jwt.decode(request.body.refreshToken);
     const email = decoded.user.email;
     if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)){
         const body = { email, _id: tokenList[refreshToken]._id };
-        const token = jwt.sign({ user: body }, "top_secret",
+        const token = jwt.sign({ user: body }, jwtKey,
             { expiresIn: 300});
         // update the jwt
         response.cookie("jwt", token);

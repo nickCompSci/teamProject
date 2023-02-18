@@ -8,6 +8,7 @@ const routes = require("./routes/main");
 
 // setting up a mongo connection using mongoose
 const uri = process.env.MONGO_CONNECTION_URL;
+process.env.JW
 mongoose.connect(uri, {useNewUrlParser : true});
 // catch errors when connecting
 mongoose.connection.on('error', (error) => {

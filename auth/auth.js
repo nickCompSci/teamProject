@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require("passport");
 const localStrategy = require("passport-local").Strategy;
 const JWTstrategy = require("passport-jwt").Strategy;
@@ -46,7 +47,7 @@ passport.use("login", new localStrategy({
 passport.use(new JWTstrategy({
     // used to sign the jwt that is created
     // placeholder can be changed or env variable
-    secretOrKey: 'top_secret',
+    secretOrKey: process.env.JWT_SIGN_KEY,
     // function used to obtain the jwt from request object
     // jwt will be inside a cookie, so must extract
     jwtFromRequest: function (request) {
