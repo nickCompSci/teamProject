@@ -1,7 +1,7 @@
 /**
 This file is used to create the main menu scene.
 */
-import { CST } from "../CST";
+import { CST } from "../CST.js";
 export class MenuScene extends Phaser.Scene{
     constructor(){
         super({

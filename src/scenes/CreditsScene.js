@@ -1,7 +1,7 @@
 /**
 This file is used to create the credits scene
 */
-import { CST } from "../CST";
+import { CST } from "../CST.js";
 export class CreditsScene extends Phaser.Scene{
     constructor(){
         super({

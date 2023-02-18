@@ -1,7 +1,7 @@
 /**
 This file is used to create the lobby scene.
 */
-import { CST } from "../CST";
+import { CST } from "../CST.js";
 export class LobbyScene extends Phaser.Scene{
     constructor(){
         super({

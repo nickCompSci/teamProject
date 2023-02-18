@@ -1,7 +1,7 @@
 /**
 This file is used to create the options scene.
 */
-import { CST } from "../CST";
+import { CST } from "../CST.js";
 export class OptionsScene extends Phaser.Scene{
     constructor(){
         super({

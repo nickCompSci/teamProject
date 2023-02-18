@@ -1,7 +1,7 @@
 /**
 This file is used to create the create game scene.
 */
-import { CST } from "../CST";
+import { CST } from "../CST.js";
 export class JoinGameScene extends Phaser.Scene{
     constructor(){
         super({

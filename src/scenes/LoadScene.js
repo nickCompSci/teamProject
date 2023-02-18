@@ -1,13 +1,13 @@
 /**
 This file is used to load all the assets for the game.
 */
-import { CST } from "../CST";
-import { MenuScene } from "./MenuScene";
-import { OptionsScene } from "./OptionsScene";
-import { CreditsScene } from "./CreditsScene";
-import { JoinGameScene } from "./JoinGameScene";
-import { CreateGameScene } from "./CreateGameScene";
-import { LobbyScene } from "./LobbyScene";
+import { CST } from "../CST.js";
+import { MenuScene } from "./MenuScene.js";
+import { OptionsScene } from "./OptionsScene.js";
+import { CreditsScene } from "./CreditsScene.js";
+import { JoinGameScene } from "./JoinGameScene.js";
+import { CreateGameScene } from "./CreateGameScene.js";
+import { LobbyScene } from "./LobbyScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
