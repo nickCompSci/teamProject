@@ -10,7 +10,7 @@ import {CreditsScene} from "./scenes/CreditsScene";
 import {JoinGameScene} from "./scenes/JoinGameScene";
 import {CreateGameScene} from "./scenes/CreateGameScene";
 import {LobbyScene} from "./scenes/LobbyScene";
-import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
+import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
 
 // Creates the game
 let game = new Phaser.Game({
