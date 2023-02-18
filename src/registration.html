@@ -22,7 +22,7 @@
     <input type="text" id="username" placeholder="Username" required>
 
     <div class="links"><a onClick="signUp()">Register</a></div>
-    <div class="links"><a href="login.html">Already have an account? Login here.</a></div>
+    <div class="links"><a href="/index.html">Already have an account? Login here.</a></div>
 </form>
 
 <!-- handler when user clicks on link/button to register details -->
@@ -41,7 +41,7 @@
         success: function (data) {
         // on successfull registration, redirect to login
           window.alert('User created successfully');
-          window.location.replace('login.html');
+          window.location.replace('/index.html');
         },
         // on error return registration back to user again
         error: function (xhr) {
