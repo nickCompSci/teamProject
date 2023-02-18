@@ -58,7 +58,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Simulate load times (for testing)
         for(let i = 0; i < 200; i++){
-            this.load.image("background" + i, "./assets/background");
+            this.load.image("background" + i, "../assets/resources/tower2.jpg");
         }
 
         // Used to create the progress bar
