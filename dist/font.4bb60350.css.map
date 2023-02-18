@@ -1,1 +1,0 @@
-{"version":3,"sources":["font.css"],"names":[],"mappings":"AAAA;IACI,iBAAiB;IACjB,iDAAyC;AAC7C","file":"font.4bb60350.css","sourceRoot":"..","sourcesContent":["@font-face {\r\n    font-family: font;\r\n    src: url('./dist/assets/CustomFont1.ttf');\r\n}"]}
