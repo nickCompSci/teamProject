@@ -10,7 +10,7 @@ import {CreditsScene} from "./scenes/CreditsScene.js";
 import {JoinGameScene} from "./scenes/JoinGameScene.js";
 import {CreateGameScene} from "./scenes/CreateGameScene.js";
 import {LobbyScene} from "./scenes/LobbyScene.js";
-import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
+// import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
 
 // Creates the game
 let game = new Phaser.Game({
@@ -27,15 +27,15 @@ let game = new Phaser.Game({
     dom: {
         createContainer: true
     },
-    plugins: {
-        scene: [
-            {
-                key: "rexUI",
-                plugin: RexUIPlugin,
-                mapping: "rexUI"
-            }
-        ]
-    }
+    // plugins: {
+    //     scene: [
+    //         {
+    //             key: "rexUI",
+    //             plugin: RexUIPlugin,
+    //             mapping: "rexUI"
+    //         }
+    //     ]
+    // }
 });
 
 // Function to load a font - https://stackoverflow.com/questions/51217147/how-to-use-a-local-font-in-phaser-3

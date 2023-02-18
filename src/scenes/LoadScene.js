@@ -32,14 +32,14 @@ export class LoadScene extends Phaser.Scene{
         this.load.audio("soundtrack", "../assets/resources/soundtrack.mp3");
 
         // Load plugins
-        this.load.scenePlugin({
-            key: 'rexuiplugin',
-		    url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
-		    sceneKey: 'rexUI'
-        });
+        // this.load.scenePlugin({
+        //     key: 'rexuiplugin',
+		//     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+		//     sceneKey: 'rexUI'
+        // });
 
-        this.load.plugin('rextexteditplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js', true)
-        this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
+        // this.load.plugin('rextexteditplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js', true)
+        // this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
 
 
         // Progress Bar

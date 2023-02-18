@@ -26,9 +26,9 @@ export class JoinGameScene extends Phaser.Scene{
         // Code box
         codeBox.setInteractive();
 
-        codeBox.on("pointerdown", ()=>{
-            this.rexUI.edit(codeBox);
-        });
+        // codeBox.on("pointerdown", ()=>{
+        //     this.rexUI.edit(codeBox);
+        // });
 
         /** codeBox.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
