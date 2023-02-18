@@ -30,6 +30,11 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 // the JS file used for user/profile authentication 
 require("./auth/auth");
+// will not let a user visit game.html unless authenticated
+app.get('/game.html', passport.authenticate('jwt', { session : false }),
+     function (request, response) {
+    response.sendFile(__dirname + '/src/game.html');
+  });
 // where express will display/use static files
 app.use(express.static(__dirname + '/src'));
 app.get('/', function (request, response) {
