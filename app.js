@@ -33,10 +33,10 @@ require("./auth/auth");
 // will not let a user visit game.html unless authenticated
 app.get('/game.html', passport.authenticate('jwt', { session : false }),
      function (request, response) {
-    response.sendFile(__dirname + '/src/game.html');
+    response.sendFile(__dirname + '/public/game.html');
   });
 // where express will display/use static files
-app.use(express.static(__dirname + '/src'));
+app.use(express.static(__dirname + '/public'));
 app.get('/', function (request, response) {
     response.sendFile(__dirname + "/index.html");
 });
