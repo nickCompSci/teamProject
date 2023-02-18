@@ -48,7 +48,7 @@ function loadFont(name, url) {
     });
 }
 
-loadFont("font1", "./assets/PixelboyFont.ttf");
+loadFont("font1", "../assets/resources//PixelboyFont.ttf");
 
 //NOTES
 // Remove username field from create game scene and join game scene

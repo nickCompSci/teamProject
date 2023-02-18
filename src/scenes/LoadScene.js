@@ -25,11 +25,11 @@ export class LoadScene extends Phaser.Scene{
     preload(){
 
         // Load images
-        this.load.image("background", "./assets/tower2.jpg");
-        this.load.image("arrow", "./assets/arrow.png")
+        this.load.image("background", "../assets/resources/tower2.jpg");
+        this.load.image("arrow", "../assets/resources/arrow.png")
 
         // Load audio
-        this.load.audio("soundtrack", "./assets/soundtrack.mp3");
+        this.load.audio("soundtrack", "../assets/resources/soundtrack.mp3");
 
         // Load plugins
         this.load.scenePlugin({
