@@ -2,6 +2,7 @@ require('dotenv').config();
 const passport = require("passport");
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const neo4j = require('neo4j-driver');
 // current/active jwt tokens
 const tokenList = {};
 //create express router
@@ -15,6 +16,27 @@ router.get("/status", (request, response, next) => {
 // route to POST user registration details
 router.post("/registration", passport.authenticate("registration",
     { session: false }), async (request, response, next) => {
+
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+        
+        // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const newPerson = request.body.username;
+            const session = driver.session({ database: 'neo4j' });
+            const writeQuery = `CREATE (n:Person { username: $newPerson })`;
+            await session.executeWrite(tx =>
+                tx.run(writeQuery, { newPerson })
+            );           
+        }catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            // Don't forget to close the driver connection when you're finished with it.
+            await driver.close();
+        }    
+        
         response.status(200).json({ message: "registration successful"});
 });
 
