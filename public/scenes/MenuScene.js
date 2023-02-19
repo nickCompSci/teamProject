@@ -30,6 +30,8 @@ export class MenuScene extends Phaser.Scene{
 
         let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
+        let friendsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 350, 'Friends', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
         // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
 
@@ -126,5 +128,20 @@ export class MenuScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.CREDITS)
             console.log("click")
         })
+
+        // Friends Button
+        friendsButton.setInteractive();
+
+        friendsButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = friendsButton.x - friendsButton.width +100;
+            arrowSprite.y = friendsButton.y + friendsButton.height / 4;
+        })
+
+        friendsButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.FRIENDS)
+            console.log("click")
+        })        
     }
 }
