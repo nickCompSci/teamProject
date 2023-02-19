@@ -10,7 +10,7 @@ import {CreditsScene} from "./scenes/CreditsScene.js";
 import {JoinGameScene} from "./scenes/JoinGameScene.js";
 import {CreateGameScene} from "./scenes/CreateGameScene.js";
 import {LobbyScene} from "./scenes/LobbyScene.js";
-import { friendScene } from "./scenes/FriendScene.js";
+import {friendScene} from "./scenes/FriendScene.js";
 
 // import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
 
@@ -20,7 +20,7 @@ let game = new Phaser.Game({
     height: 800,
     scale: { parent: 'phaser-container', mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
-        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene, LobbyScene
+        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene, LobbyScene, friendScene
     ],
     render:{
         pixelArt: true

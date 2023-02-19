@@ -5,7 +5,7 @@ import { CST } from "../CST.js";
 export class friendScene extends Phaser.Scene{
     constructor(){
         super({
-            key: CST.SCENES.CREDITS
+            key: CST.SCENES.FRIENDS
         })
     }
 
