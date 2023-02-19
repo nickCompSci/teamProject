@@ -10,6 +10,7 @@ import {CreditsScene} from "./scenes/CreditsScene.js";
 import {JoinGameScene} from "./scenes/JoinGameScene.js";
 import {CreateGameScene} from "./scenes/CreateGameScene.js";
 import {LobbyScene} from "./scenes/LobbyScene.js";
+
 // import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
 
 // Creates the game

@@ -8,6 +8,7 @@ import { CreditsScene } from "./CreditsScene.js";
 import { JoinGameScene } from "./JoinGameScene.js";
 import { CreateGameScene } from "./CreateGameScene.js";
 import { LobbyScene } from "./LobbyScene.js";
+import { friendScene } from "./FriendScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
