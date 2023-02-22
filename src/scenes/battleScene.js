@@ -96,7 +96,6 @@ export class BattleScene extends Phaser.Scene {
         }
         this.spawnEnemyOnScene();
 
-
         this.input.on('dragstart', function (pointer, gameObject) {
             gameObject.tooltip.removeTooltip();
             this.tweens.add({
@@ -169,7 +168,8 @@ export class BattleScene extends Phaser.Scene {
             dropZone.renderNormalOutline();
         }); 
 
-        this.input.on('drop', function(pointer, gameObject, dropZone) {
+        this.input.on('drop', (pointer, gameObject, dropZone) => {
+            if (this.player.getActionPoints() >= gameObject.getCost()) {
                 gameObject.input.enabled = false;
                 gameObject.tooltip.removeTooltip();
         
@@ -187,19 +187,27 @@ export class BattleScene extends Phaser.Scene {
                     gameObject.setActive(false).setVisible(false); 
                 }, 500);
         
+                this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
+                this.actiontext.text = this.player.getActionPoints();
                 dropZone.renderNormalOutline(this);
         
                 this.cameras.main.shake(100, 0.02);
+            } else {
+                this.dragend(pointer, gameObject, false);
+            }
         });
 
-        this.input.on("dragend", function(pointer, gameObject, dropped) {
-            if (!dropped) {
-                this.player.handArray.push(gameObject);
-                gameObject.displayHeight = gameOptions.cardHeight;
-                gameObject.displayWidth = gameOptions.cardWidth;
-                this.arrangeCardsInCenter(this.player.handArray);
-            }
-        }, this);
+        this.input.on("dragend", this.dragend, this);
+    }
+
+    dragend(pointer, gameObject, dropped) {
+        
+        if (!dropped) {
+            this.player.handArray.push(gameObject);
+            gameObject.displayHeight = gameOptions.cardHeight;
+            gameObject.displayWidth = gameOptions.cardWidth;
+            this.arrangeCardsInCenter(this.player.handArray);
+        }
     }
 
     loadCards() {
