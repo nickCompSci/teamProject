@@ -54,21 +54,21 @@ export class BattleScene extends Phaser.Scene {
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
         
-        let player = new Player(this, 0, 0, "guy", handArray);
-        player.setPosition(gameWidth/4, gameHeight/1.65);
-        player.setScale(3);
+        this.player = new Player(this, 0, 0, "guy");
+        this.player.setPosition(gameWidth/4, gameHeight/1.65);
+        this.player.setScale(3);
 
         let heart = this.add.image(0, 0, "heart");
-        let heartext = this.add.text(0,0, player.getHealth(), {color: "black", fontSize: "30px"});
+        this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
         heart.setScale(4);
-        heartext.setPosition(-18, -18);
-        let health = this.add.container(0, 0, [heart, heartext]);
+        this.heartext.setPosition(-18, -18);
+        let health = this.add.container(0, 0, [heart, this.heartext]);
         health.setPosition(gameWidth/20, gameHeight/2.2);
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
-        let actiontext = this.add.text(0,0, player.getActionPoints(), {color: "black", fontSize: "30px"});
-        actiontext.setPosition(-10, -18);
-        let actions = this.add.container(0, 0, [chamber, actiontext]);
+        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
+        this.actiontext.setPosition(-10, -18);
+        let actions = this.add.container(0, 0, [chamber, this.actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
 
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
@@ -86,8 +86,8 @@ export class BattleScene extends Phaser.Scene {
         let dropZone = new Zone(this, 500, 400, 300, 600);
 
         // shuffles the deck and sets up the visual for the deck cards
-        shuffle(deckArray);
-        deckSetUp(this, deckArray, deckTrackerArray);
+        this.player.shuffle();
+        this.player.deckSetUp(this);
 
         // loading in every enemy sprite
         for (let i=0; i < enemy.numberOfSprites; i++) {
@@ -218,13 +218,13 @@ export class BattleScene extends Phaser.Scene {
         let medkit = new HealingCard("medkit", 1, "healing", {target: "health", amount: 3}, this, 0, 0, "medkit");
         let kevlar = new HealingCard("kevlar", 2, "healing", {target: "armour", amount: 6}, this, 0, 0, "kevlar");
 
-        deckArray.push(cannon);
-        deckArray.push(grenade);
-        deckArray.push(headshot)
-        deckArray.push(reload);
-        deckArray.push(overload);
-        deckArray.push(medkit);
-        deckArray.push(kevlar);
+        this.player.deckArray.push(cannon);
+        this.player.deckArray.push(grenade);
+        this.player.deckArray.push(headshot)
+        this.player.deckArray.push(reload);
+        this.player.deckArray.push(overload);
+        this.player.deckArray.push(medkit);
+        this.player.deckArray.push(kevlar);
     }
 
     arrangeCardsInCenter(handArray) {
@@ -262,14 +262,14 @@ export class BattleScene extends Phaser.Scene {
 
     // simulate a drawing feature
     endTurn() {
-        if (deckArray.length > 0) {
-            let lastCard = deckTrackerArray.pop();
+        if (this.player.deckArray.length > 0) {
+            let lastCard = this.player.deckTrackerArray.pop();
             lastCard.destroy();
 
-            let drawCard = deckArray.pop();
-            handArray.push(drawCard);
+            let drawCard = this.player.deckArray.pop();
+            this.player.handArray.push(drawCard);
             drawCard.cardInHand(this);
-            this.arrangeCardsInCenter(handArray);
+            this.arrangeCardsInCenter(this.player.handArray);
         }
     }
 
