@@ -5,7 +5,6 @@ import Zone from "../helpers/classes/zone.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
 import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/deck.js";
-import InteractHandler from "../helpers/classes/interactHandler.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
@@ -96,6 +95,111 @@ export class BattleScene extends Phaser.Scene {
             enemy.enemyList.push(enemySprite);
         }
         this.spawnEnemyOnScene();
+
+
+        this.input.on('dragstart', function (pointer, gameObject) {
+            gameObject.tooltip.removeTooltip();
+            this.tweens.add({
+                targets: gameObject,
+                angle: 0,
+                x: pointer.x,
+                y: pointer.y,
+                duration: 50
+            });
+            this.tweens.add({
+                targets: this.background,
+                alpha: 0.3,
+                duration: 50
+            });
+            
+            let index = this.player.handArray.indexOf(gameObject);
+            if (index !== -1) {
+                this.player.handArray.splice(index, 1);
+            }
+
+            this.arrangeCardsInCenter(this.player.handArray);
+
+        }, this);
+
+        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+        });
+
+        // hover over listener
+        this.input.on('gameobjectover', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                let yOffSet = 50;
+                this.tweens.add({
+                    targets: gameObject,
+                    angle: 0,
+                    y: gameObject.startPosition.y - yOffSet,
+                    displayWidth: gameOptions.cardWidth * 2,
+                    displayHeight: gameOptions.cardHeight * 2,
+                    depth: 100,
+                    duration: 10
+                });
+                gameObject.tooltip.showTooltip();
+                gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
+
+            }
+        }, this);
+
+        // hover out listener
+        this.input.on('gameobjectout', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                this.tweens.add({
+                    targets: gameObject,
+                    y: gameObject.startPosition.y,
+                    angle: gameObject.startPosition.angle,
+                    displayWidth: gameOptions.cardWidth,
+                    displayHeight: gameOptions.cardHeight,
+                    depth: gameObject.startPosition.depth,
+                    duration: 10
+                });
+                gameObject.tooltip.removeTooltip();
+            }
+       }, this);
+
+        this.input.on('dragenter', function(pointer, gameObject, dropZone) {
+            dropZone.renderActiveOutline();
+        });
+
+        this.input.on('dragleave', function(pointer, gameObject, dropZone) {
+            dropZone.renderNormalOutline();
+        }); 
+
+        this.input.on('drop', function(pointer, gameObject, dropZone) {
+                gameObject.input.enabled = false;
+                gameObject.tooltip.removeTooltip();
+        
+                // setting card in the middle 
+                gameObject.displayHeight = gameOptions.cardHeight;
+                gameObject.displayWidth = gameOptions.cardWidth;
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y + dropZone.y / 3;
+                
+                this.player.graveYardArray.push(gameObject);
+        
+                // remove the card from the scene after 500ms
+                setTimeout(function() { 
+                    gameObject.activateCard(this);
+                    gameObject.setActive(false).setVisible(false); 
+                }, 500);
+        
+                dropZone.renderNormalOutline(this);
+        
+                this.cameras.main.shake(100, 0.02);
+        });
+
+        this.input.on("dragend", function(pointer, gameObject, dropped) {
+            if (!dropped) {
+                this.player.handArray.push(gameObject);
+                gameObject.displayHeight = gameOptions.cardHeight;
+                gameObject.displayWidth = gameOptions.cardWidth;
+                this.arrangeCardsInCenter(this.player.handArray);
+            }
+        }, this);
     }
 
     loadCards() {
