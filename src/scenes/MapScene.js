@@ -163,11 +163,19 @@ export class MapScene extends Phaser.Scene{
     
         encountersInteractive(this)
 
-        let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive()
-        /*.on("pointerup", ()=>{
+        let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MAP);
-        })*/
+            if (map.currentLocation == 11) {
+                for (let i=0; i<map.adjacent.length; i++) {
+                    map.adjacent[i].getEncounter().disableInteractive();
+                }
+                map.levelInc();
+                level.text = map._level.toString();
+                encountersInteractive(this);
+                player.x = map._current_room.x;
+                player.y = map._current_room.y;
+            }
+        })
 
         next_floor.on ("pointerover", ()=>{
             pointer.x = next_floor.x+60;
@@ -200,7 +208,6 @@ export class MapScene extends Phaser.Scene{
                     pointer.setVisible(true).setDepth(3);
                     pointer.x = adjacent[i].getEncounter().x+60;
                     pointer.y = adjacent[i].getEncounter().y-30;
-                    map.setAdjacent()
 
                 })
             }

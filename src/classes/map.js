@@ -26,7 +26,9 @@ export default class Map {
 
         this._doors = doors;
         this._doors_temp = [];
-        this._current_room = startEnd[0];
+        this._start = startEnd[0];
+        this._end = startEnd[1];
+        this._current_room = this._start;
 
         for (let i=0; i<doors.length; i++) {
             this._doors_temp.push(new Door(doors[i], door_positions[i]));
@@ -41,14 +43,16 @@ export default class Map {
 
         shuffle(encounters);
         this.assignLocations(encounters, positions);
-        this._rooms.push(new Room (0, startEnd[0], true));
-        this._rooms.push(new Room(11, startEnd[1]));
+        this._rooms.push(new Room (0, this._start, true));
+        this._rooms.push(new Room(11, this._end));
         this.setAdjacent();
     }
 
     playerLocation(room) {
         this._current_location = room.getNumber();
         this._current_room = room.getEncounter();
+
+        this.setAdjacent();
     }
 
     get level() {
@@ -104,12 +108,13 @@ export default class Map {
     // For incrementing the level and randomizing a new floor.
     levelInc() {
         this._level++;
-        this._current_location = 0;
-        this._current_room = startEnd[0];
+        this.playerLocation(new Room (0, this._start, true));
 
         shuffle(this._encounters);
 
         this.assignLocations(this._encounters, this._positions);
+        this._rooms.push(new Room (0, this._start, true));
+        this._rooms.push(new Room(11, this._end));
 
         for (let i=0; i<this._doors.length; i++) {
             this._doors[i].randomizePosition();
@@ -117,13 +122,14 @@ export default class Map {
 
         this.setAdjacent();
 
+        console.log(this._current_location, this._adjacent)
+
     }
 
     // for assigning the positions (x, y) to the icons/images.
     assignLocations(icon, locations) {
         this._rooms = []
         for (let i=0; i<icon.length; i++) {
-            console.log(icon[i])
             icon[i].x = locations[i].x;
             icon[i].y = locations[i].y;
             icon[i].setDepth(1);
