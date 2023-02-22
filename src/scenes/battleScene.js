@@ -21,6 +21,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     init(data) {
+        // data returns a list of preloaded cards
         let cards = data;
     }
 
@@ -77,20 +78,19 @@ export class BattleScene extends Phaser.Scene {
             this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
         }, this);
         
-        // load cards
+        // loads all the different types of cards
         this.loadCards();
 
-        // Button to end turn
         let endTurnButton = new Button(gameWidth, gameHeight/2, 'End Turn', this, this.endTurn.bind(this), '#202529');
-        endTurnButton.changeCursor();
 
         // zone where cards can be dropped and activated
         let dropZone = new Zone(this, 500, 400, 300, 600);
 
+        // shuffles the deck and sets up the visual for the deck cards
         shuffle(deckArray);
         deckSetUp(this, deckArray, deckTrackerArray);
 
-        // enemy
+        // loading in every enemy sprite
         for (let i=0; i < enemy.numberOfSprites; i++) {
             let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
             enemy.enemyList.push(enemySprite);
@@ -124,6 +124,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     arrangeCardsInCenter(handArray) {
+        // arranges for the cards to be organised around the bottom middle of the screen
         let bottomOfScreen = this.game.config.height;
         let screenCenterX = this.game.config.width / 2;
         let yDelta = gameOptions.cardYOffset * (Math.floor(handArray.length / 2));
@@ -142,6 +143,7 @@ export class BattleScene extends Phaser.Scene {
                 yDelta -= gameOptions.cardYOffset;
             }
 
+            // cards remember their original coordinates for events that make the cards leave and renter the hand
             card.startPosition = {
                 x: card.x,
                 y: card.y,

@@ -12,12 +12,9 @@ export default class Button extends Phaser.GameObjects.Text {
         this.setOrigin(1, 0.5);
         this.setPadding(this.padding.x, this.padding.y);
         this.setStyle({ backgroundColor: bgColour});
+        this.setInteractive( { useHandCursor: true});
         this.on('pointerdown', () => callback());
         scene.add.existing(this);
-    }
-
-    changeCursor() {
-        this.setInteractive({ useHandCursor: true });
     }
 
     changePadding(newX, newY) {
