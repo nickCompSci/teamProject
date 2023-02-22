@@ -4,8 +4,6 @@ import { gameOptions, enemy} from "../helpers/config.js";
 import Zone from "../helpers/classes/zone.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
-import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/deck.js";
-import InteractHandler from "../helpers/classes/interactHandler.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
@@ -19,6 +17,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     init(data) {
+        // data returns a list of preloaded cards
         let cards = data;
         // make these class variables to turn them off on click
         this.endTurnButton;
@@ -43,8 +42,6 @@ export class BattleScene extends Phaser.Scene {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
-        let interactiveHandler = new InteractHandler(this);
-
         let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
         let card_bg = this.add.image(0, 0, "card_holder");
         let bg = this.add.sprite(0, 0, "background");
@@ -55,21 +52,21 @@ export class BattleScene extends Phaser.Scene {
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
         
-        let player = new Player(this, 0, 0, "guy", handArray);
-        player.setPosition(gameWidth/4, gameHeight/1.65);
-        player.setScale(3);
+        this.player = new Player(this, 0, 0, "guy");
+        this.player.setPosition(gameWidth/4, gameHeight/1.65);
+        this.player.setScale(3);
 
         let heart = this.add.image(0, 0, "heart");
-        let heartext = this.add.text(0,0, player.getHealth(), {color: "black", fontSize: "30px"});
+        this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
         heart.setScale(4);
-        heartext.setPosition(-18, -18);
-        let health = this.add.container(0, 0, [heart, heartext]);
+        this.heartext.setPosition(-18, -18);
+        let health = this.add.container(0, 0, [heart, this.heartext]);
         health.setPosition(gameWidth/20, gameHeight/2.2);
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
-        let actiontext = this.add.text(0,0, player.getActionPoints(), {color: "black", fontSize: "30px"});
-        actiontext.setPosition(-10, -18);
-        let actions = this.add.container(0, 0, [chamber, actiontext]);
+        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
+        this.actiontext.setPosition(-10, -18);
+        let actions = this.add.container(0, 0, [chamber, this.actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
 
         // set it so a rectangular zone appear with overflow
@@ -79,26 +76,141 @@ export class BattleScene extends Phaser.Scene {
             this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
         }, this);
         
-        // load cards
+        // loads all the different types of cards
         this.loadCards();
         
-        this.endTurnButton = new Button(gameWidth, gameHeight/2, "End Turn", this, this.endTurn.bind(this, player, this.endTurnButton), '#202529');
-        this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, player, this.keepCardButton), '#202529');
+        this.endTurnButton = new Button(gameWidth, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
+        this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         // zone where cards can be dropped and activated
         let dropZone = new Zone(this, 200, 200, 500, 500);
 
-        // shuffle the deck, draw it and set up the cards in hand;
-        shuffle(deckArray);
-        deckSetUp(this, deckArray, deckTrackerArray);
+        // spawning enemies according to spritesheet randomly
+        // shuffles the deck and sets up the visual for the deck cards
+        this.player.shuffle();
+        this.player.deckSetUp(this);
         this.drawCard(gameOptions.startCards);
 
-        // spawning enemies according to spritesheet randomly
+        // loading in every enemy sprite
         for (let i=0; i < enemy.numberOfSprites; i++) {
             let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
             enemy.enemyList.push(enemySprite);
         }
         this.spawnEnemyOnScene();
+
+        // card event listeners for pointer interactions
+        this.input.on('dragstart', function (pointer, gameObject) {
+            gameObject.tooltip.removeTooltip();
+            this.tweens.add({
+                targets: gameObject,
+                angle: 0,
+                x: pointer.x,
+                y: pointer.y,
+                duration: 50
+            });
+            this.tweens.add({
+                targets: this.background,
+                alpha: 0.3,
+                duration: 50
+            });
+            
+            let index = this.player.handArray.indexOf(gameObject);
+            if (index !== -1) {
+                this.player.handArray.splice(index, 1);
+            }
+
+            this.arrangeCardsInCenter(this.player.handArray);
+
+        }, this);
+
+        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+        });
+
+        // hover over listener
+        this.input.on('gameobjectover', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                let yOffSet = 50;
+                this.tweens.add({
+                    targets: gameObject,
+                    angle: 0,
+                    y: gameObject.startPosition.y - yOffSet,
+                    displayWidth: gameOptions.cardWidth * 2,
+                    displayHeight: gameOptions.cardHeight * 2,
+                    depth: 100,
+                    duration: 10
+                });
+                gameObject.tooltip.showTooltip();
+                gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
+
+            }
+        }, this);
+
+        // hover out listener
+        this.input.on('gameobjectout', function(pointer, gameObject) {
+            if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                this.tweens.add({
+                    targets: gameObject,
+                    y: gameObject.startPosition.y,
+                    angle: gameObject.startPosition.angle,
+                    displayWidth: gameOptions.cardWidth,
+                    displayHeight: gameOptions.cardHeight,
+                    depth: gameObject.startPosition.depth,
+                    duration: 10
+                });
+                gameObject.tooltip.removeTooltip();
+            }
+       }, this);
+
+        this.input.on('dragenter', function(pointer, gameObject, dropZone) {
+            dropZone.renderActiveOutline();
+        });
+
+        this.input.on('dragleave', function(pointer, gameObject, dropZone) {
+            dropZone.renderNormalOutline();
+        }); 
+
+        this.input.on('drop', (pointer, gameObject, dropZone) => {
+            if (this.player.getActionPoints() >= gameObject.getCost()) {
+                gameObject.input.enabled = false;
+                gameObject.tooltip.removeTooltip();
+        
+                // setting card in the middle 
+                gameObject.displayHeight = gameOptions.cardHeight;
+                gameObject.displayWidth = gameOptions.cardWidth;
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y + dropZone.y / 3;
+                
+                this.player.graveYardArray.push(gameObject);
+        
+                // remove the card from the scene after 500ms
+                setTimeout(function() { 
+                    gameObject.activateCard(this);
+                    gameObject.setActive(false).setVisible(false); 
+                }, 500);
+        
+                this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
+                this.actiontext.text = this.player.getActionPoints();
+                dropZone.renderNormalOutline(this);
+        
+                this.cameras.main.shake(100, 0.02);
+            } else {
+                this.dragend(pointer, gameObject, false);
+            }
+        });
+
+        this.input.on("dragend", this.dragend, this);
+    }
+
+    dragend(pointer, gameObject, dropped) {
+        
+        if (!dropped) {
+            this.player.handArray.push(gameObject);
+            gameObject.displayHeight = gameOptions.cardHeight;
+            gameObject.displayWidth = gameOptions.cardWidth;
+            this.arrangeCardsInCenter(this.player.handArray);
+        }
     }
 
 
@@ -118,32 +230,32 @@ export class BattleScene extends Phaser.Scene {
         let medkit = new HealingCard("medkit", 1, "healing", {target: "health", amount: 3}, this, 0, 0, "medkit");
         let kevlar = new HealingCard("kevlar", 2, "healing", {target: "armour", amount: 6}, this, 0, 0, "kevlar");
 
-        deckArray.push(cannon);
-        deckArray.push(grenade);
-        deckArray.push(headshot)
-        deckArray.push(reload);
-        deckArray.push(overload);
-        deckArray.push(medkit);
-        deckArray.push(kevlar);
+        this.player.deckArray.push(cannon);
+        this.player.deckArray.push(grenade);
+        this.player.deckArray.push(headshot)
+        this.player.deckArray.push(reload);
+        this.player.deckArray.push(overload);
+        this.player.deckArray.push(medkit);
+        this.player.deckArray.push(kevlar);
     }
     
 
     // draw an amount of cards
     drawCard(amountOfCards) {
         for (let i=0; i < amountOfCards; i++) {
-            let lastCard = deckTrackerArray.pop();
+            let lastCard = this.player.deckTrackerArray.pop();
             lastCard.destroy();
 
-            let drawCard = deckArray.pop();
-            handArray.push(drawCard);
+            let drawCard = this.player.deckArray.pop();
+            this.player.handArray.push(drawCard);
             drawCard.cardInHand(this);
-            this.arrangeCardsInCenter(handArray);
+            this.arrangeCardsInCenter(this.player.handArray);
         }
     }
 
 
     arrangeCardsInCenter(handArray) {
-        // organise code based on the bottom middle of screen
+        // arranges for the cards to be organised around the bottom middle of the screen
         let bottomOfScreen = this.game.config.height;
         let screenCenterX = this.game.config.width / 2;
         let yDelta = gameOptions.cardYOffset * (Math.floor(handArray.length / 2));
@@ -162,6 +274,7 @@ export class BattleScene extends Phaser.Scene {
                 yDelta -= gameOptions.cardYOffset;
             }
 
+            // cards remember their original coordinates for events that make the cards leave and renter the hand
             card.startPosition = {
                 x: card.x,
                 y: card.y,
@@ -179,17 +292,24 @@ export class BattleScene extends Phaser.Scene {
     keepCard(player) {
         this.keepCardButton.visible = false;
         this.endTurnButton.visible = true;
-        player.selectCardInHand(player);
+        this.player.selectCardInHand(player);
     }
     
     
     // ends the player's turn
-    endTurn(player) {
+    endTurn() {
         this.keepCardButton.visible = true;
         this.endTurnButton.visible = false;
-        player.moveCardsBackInDeck(this);
-    }
+        this.player.moveCardsBackInDeck(this);
+        
+        // simulate enemies attacking
+        for (let i=0; i < enemy.enemyOnScene.length; i++) {
+            enemy.enemyOnScene[i].action(this);
+        }
+        this.heartext.text = this.player.getHealth();
 
+        // automatic drawing goes here
+    }
     
     // spawning in enemies and their life
     spawnEnemyOnScene() {

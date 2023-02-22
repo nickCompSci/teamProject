@@ -1,5 +1,6 @@
 import { gameOptions } from "../../config";
 
+// Cards that appear in the player's hand
 export default class HandCard extends Phaser.GameObjects.Sprite {
     constructor(name, cost, cardType, effect, scene, x, y, sprite) {
         super(scene, x, y, sprite);
