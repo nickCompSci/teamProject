@@ -1,6 +1,5 @@
 export default class Room {
 
-
     constructor(number, encounter, visited=false) {
         this._number = number;
         this._encounter = encounter;

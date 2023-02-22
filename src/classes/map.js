@@ -2,10 +2,28 @@ import shuffle from './shuffle';
 import Door from "./door";
 import Room from "./room";
 
+/*
+    When constructing a map:
+
+        - All 11 doors are initialized 
+            (the randomization of door positions are handled by the door class itself).
+        
+        - Player's location and current room is set to the starting room.
+
+        - Encounters are shuffled and assigned a random location from the list of positions.
+            (Rooms are created for each)
+
+        - The start and end rooms are initialized separately as they are always set.
+
+        - Rooms that are adjacent to the player are then set.
+
+*/
+
 export default class Map {
     constructor(encounters, positions, doors, door_positions, startEnd) {
         this._encounters = encounters;
         this._positions = positions;
+
         this._doors = doors;
         this._doors_temp = [];
         this._current_room = startEnd[0];
@@ -22,7 +40,6 @@ export default class Map {
         this._rooms = [];
 
         shuffle(encounters);
-
         this.assignLocations(encounters, positions);
         this._rooms.push(new Room (0, startEnd[0], true));
         this._rooms.push(new Room(11, startEnd[1]));
@@ -50,6 +67,7 @@ export default class Map {
         return this._adjacent;
     }
 
+    // Sets the rooms adjacent to the players current location.
     setAdjacent() {
         this._adjacent = [];
         let room = 0;
@@ -83,9 +101,11 @@ export default class Map {
 
     }
 
+    // For incrementing the level and randomizing a new floor.
     levelInc() {
         this._level++;
-        this._current_location = Math.floor(Math.random() * 12);
+        this._current_location = 0;
+        this._current_room = startEnd[0];
 
         shuffle(this._encounters);
 
@@ -99,7 +119,7 @@ export default class Map {
 
     }
 
-    // for assigning the positions to the icons
+    // for assigning the positions (x, y) to the icons/images.
     assignLocations(icon, locations) {
         this._rooms = []
         for (let i=0; i<icon.length; i++) {

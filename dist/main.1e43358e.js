@@ -632,14 +632,296 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST":"src/CST.js"}],"src/scenes/MapScene.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js"}],"src/classes/shuffle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = shuffle;
+// function for randomly shuffling an array - https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+
+function shuffle(array) {
+  var currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    var _ref = [array[randomIndex], array[currentIndex]];
+    array[currentIndex] = _ref[0];
+    array[randomIndex] = _ref[1];
+  }
+  return array;
+}
+},{}],"src/classes/door.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _shuffle = _interopRequireDefault(require("./shuffle"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var Door = /*#__PURE__*/function () {
+  /*
+  Positions should be a list of positions.
+  Position should include x, y, l and r.
+  l and r are left and right or up and down respectively depending on where the door is situated.
+  */
+
+  function Door(image, positions) {
+    _classCallCheck(this, Door);
+    this._image = image;
+    this._positions = positions;
+    this._position = (0, _shuffle.default)(positions)[0];
+    this._image.x = this._position.x;
+    this._image.y = this._position.y;
+    this._room = this._position.room;
+    this._adjacent = this._position.adjacent;
+  }
+
+  // Used to randomize the doors position (if door has multiple positions).
+  _createClass(Door, [{
+    key: "randomizePosition",
+    value: function randomizePosition() {
+      this._position = (0, _shuffle.default)(this._positions)[0];
+      this._image.x = this._position.x;
+      this._image.y = this._position.y;
+      this._adjacent = this._position.adjacent;
+      this._room = this._position.room;
+    }
+  }, {
+    key: "image",
+    get: function get() {
+      return this._image;
+    }
+  }, {
+    key: "adjacent",
+    get: function get() {
+      return this._adjacent;
+    }
+  }, {
+    key: "room",
+    get: function get() {
+      return this._room;
+    }
+  }]);
+  return Door;
+}();
+exports.default = Door;
+},{"./shuffle":"src/classes/shuffle.js"}],"src/classes/room.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var Room = /*#__PURE__*/function () {
+  function Room(number, encounter) {
+    var visited = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    _classCallCheck(this, Room);
+    this._number = number;
+    this._encounter = encounter;
+    this._visited = visited;
+  }
+  _createClass(Room, [{
+    key: "setVisited",
+    value: function setVisited() {
+      this._visited = true;
+      this._encounter.setDepth(-1);
+    }
+  }, {
+    key: "getNumber",
+    value: function getNumber() {
+      return this._number;
+    }
+  }, {
+    key: "getEncounter",
+    value: function getEncounter() {
+      return this._encounter;
+    }
+  }, {
+    key: "getVisited",
+    value: function getVisited() {
+      return this._visited;
+    }
+  }]);
+  return Room;
+}();
+exports.default = Room;
+},{}],"src/classes/map.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _shuffle = _interopRequireDefault(require("./shuffle"));
+var _door = _interopRequireDefault(require("./door"));
+var _room = _interopRequireDefault(require("./room"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+/*
+    When constructing a map:
+
+        - All 11 doors are initialized 
+            (the randomization of door positions are handled by the door class itself).
+        
+        - Player's location and current room is set to the starting room.
+
+        - Encounters are shuffled and assigned a random location from the list of positions.
+            (Rooms are created for each)
+
+        - The start and end rooms are initialized separately as they are always set.
+
+        - Rooms that are adjacent to the player are then set.
+
+*/
+var Map = /*#__PURE__*/function () {
+  function Map(encounters, positions, doors, door_positions, startEnd) {
+    _classCallCheck(this, Map);
+    this._encounters = encounters;
+    this._positions = positions;
+    this._doors = doors;
+    this._doors_temp = [];
+    this._current_room = startEnd[0];
+    for (var i = 0; i < doors.length; i++) {
+      this._doors_temp.push(new _door.default(doors[i], door_positions[i]));
+    }
+    this._doors = this._doors_temp;
+    this._level = 0;
+    this._current_location = 0;
+    this._adjacent = [];
+    this._rooms = [];
+    (0, _shuffle.default)(encounters);
+    this.assignLocations(encounters, positions);
+    this._rooms.push(new _room.default(0, startEnd[0], true));
+    this._rooms.push(new _room.default(11, startEnd[1]));
+    this.setAdjacent();
+  }
+  _createClass(Map, [{
+    key: "playerLocation",
+    value: function playerLocation(room) {
+      this._current_location = room.getNumber();
+      this._current_room = room.getEncounter();
+    }
+  }, {
+    key: "level",
+    get: function get() {
+      return this._level;
+    }
+  }, {
+    key: "currentLocation",
+    get: function get() {
+      return this._current_location;
+    },
+    set: function set(encounter) {
+      this._current_location = encounter;
+    }
+  }, {
+    key: "adjacent",
+    get: function get() {
+      return this._adjacent;
+    }
+
+    // Sets the rooms adjacent to the players current location.
+  }, {
+    key: "setAdjacent",
+    value: function setAdjacent() {
+      this._adjacent = [];
+      var room = 0;
+      var door = 0;
+      for (var i = 0; i < this._doors.length; i++) {
+        door = this._doors[i];
+        if (door._room == this._current_location) {
+          room = door._adjacent;
+          this._adjacent.push(room);
+        }
+        if (door._adjacent == this._current_location) {
+          room = door._room;
+          this._adjacent.push(room);
+        }
+      }
+      var adjacent_temp = [];
+      for (var _i = 0; _i < this._adjacent.length; _i++) {
+        for (var j = 0; j < this._rooms.length; j++) {
+          if (this._adjacent[_i] == this._rooms[j].getNumber()) {
+            adjacent_temp.push(this._rooms[j]);
+          }
+        }
+      }
+      this._adjacent = adjacent_temp;
+    }
+
+    // For incrementing the level and randomizing a new floor.
+  }, {
+    key: "levelInc",
+    value: function levelInc() {
+      this._level++;
+      this._current_location = 0;
+      this._current_room = startEnd[0];
+      (0, _shuffle.default)(this._encounters);
+      this.assignLocations(this._encounters, this._positions);
+      for (var i = 0; i < this._doors.length; i++) {
+        this._doors[i].randomizePosition();
+      }
+      this.setAdjacent();
+    }
+
+    // for assigning the positions (x, y) to the icons/images.
+  }, {
+    key: "assignLocations",
+    value: function assignLocations(icon, locations) {
+      this._rooms = [];
+      for (var i = 0; i < icon.length; i++) {
+        console.log(icon[i]);
+        icon[i].x = locations[i].x;
+        icon[i].y = locations[i].y;
+        icon[i].setDepth(1);
+        this._rooms.push(new _room.default(locations[i].room, icon[i]));
+      }
+    }
+  }, {
+    key: "randomizePlayerLocation",
+    value: function randomizePlayerLocation() {
+      this._current_location = Math.floor(Math.random() * 12);
+    }
+  }]);
+  return Map;
+}();
+exports.default = Map;
+},{"./shuffle":"src/classes/shuffle.js","./door":"src/classes/door.js","./room":"src/classes/room.js"}],"src/scenes/MapScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.MapScene = void 0;
+var _map = _interopRequireDefault(require("../classes/map"));
 var _CST = require("../CST");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -679,6 +961,8 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
       }).setDepth(1).setOrigin(0.5);
       var arrowSprite = this.add.sprite(100, 100, "arrow");
       arrowSprite.setVisible(false);
+      var pointer = this.add.sprite(100, 100, "pointer");
+      pointer.setVisible(false);
 
       // Back Button
       backButton.setInteractive();
@@ -686,196 +970,254 @@ var MapScene = /*#__PURE__*/function (_Phaser$Scene) {
         arrowSprite.setVisible(true);
         arrowSprite.x = backButton.x - backButton.width + 60;
         arrowSprite.y = backButton.y + backButton.height / 4;
-        console.log("hover");
       });
       backButton.on("pointerup", function () {
         // Moves back to the main menu when the back button is clicked
         _this.scene.start(_CST.CST.SCENES.MENU);
-        console.log("click");
       });
 
+      //  ** BEGINS HERE ** 
+
       // adds icons for map
-      var battle = this.add.image(0, 0, 'cards');
-      var shop = this.add.image(0, 0, 'shop');
-      var random = this.add.image(0, 0, 'random');
-      var random2 = this.add.image(0, 0, 'random');
-      var battle2 = this.add.image(0, 0, 'cards');
-      var battle3 = this.add.image(0, 0, 'cards');
-      var battle4 = this.add.image(0, 0, 'cards');
-      var battle5 = this.add.image(0, 0, 'cards');
-      var battle6 = this.add.image(0, 0, 'cards');
-      var battle7 = this.add.image(0, 0, 'cards');
+      var battle = this.add.image(0, 0, 'cards').setDepth(2);
+      var shop = this.add.image(0, 0, 'shop').setDepth(2);
+      var random = this.add.image(0, 0, 'random').setDepth(2);
+      var random2 = this.add.image(0, 0, 'random').setDepth(2);
+      var battle2 = this.add.image(0, 0, 'cards').setDepth(2);
+      var battle3 = this.add.image(0, 0, 'cards').setDepth(2);
+      var battle4 = this.add.image(0, 0, 'cards').setDepth(2);
+      var battle5 = this.add.image(0, 0, 'cards').setDepth(2);
+      var battle6 = this.add.image(0, 0, 'cards').setDepth(2);
+      var battle7 = this.add.image(0, 0, 'cards').setDepth(2);
+      var start = this.add.image(740, 490, 'door').setDepth(2);
+      var end = this.add.image(270, 460, 'door').setDepth(2);
       var encounters = [battle, battle2, battle3, battle4, battle5, battle6, battle7, shop, random, random2];
+      var startEnd = [start, end];
 
-      // function for randomly shuffling the array - https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-      function shuffle(array) {
-        var currentIndex = array.length,
-          randomIndex;
-
-        // While there remain elements to shuffle.
-        while (currentIndex != 0) {
-          // Pick a remaining element.
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex--;
-
-          // And swap it with the current element.
-          var _ref = [array[randomIndex], array[currentIndex]];
-          array[currentIndex] = _ref[0];
-          array[randomIndex] = _ref[1];
-        }
-        return array;
-      }
+      //Door images and their respective set of positions
       var door1 = this.add.image(0, 0, "door");
       var door_pos1 = [{
         x: 280,
-        y: 383
+        y: 383,
+        room: 9,
+        adjacent: 11
       }, {
         x: 320,
-        y: 335
+        y: 335,
+        room: 9,
+        adjacent: 7
       }, {
         x: 320,
-        y: 240
+        y: 240,
+        room: 9,
+        adjacent: 8
       }];
       var door2 = this.add.image(0, 0, "door");
       var door_pos2 = [{
         x: 320,
-        y: 417
+        y: 417,
+        room: 11,
+        adjacent: 7
       }, {
         x: 320,
-        y: 483
+        y: 483,
+        room: 11,
+        adjacent: 6
       }];
       var door3 = this.add.image(0, 0, "door");
       var door_pos3 = [{
         x: 280,
-        y: 518
+        y: 518,
+        room: 10,
+        adjacent: 11
       }, {
         x: 320,
-        y: 560
+        y: 560,
+        room: 10,
+        adjacent: 6
       }];
       var door4 = this.add.image(0, 0, "door");
       var door_pos4 = [{
         x: 400,
-        y: 288
+        y: 288,
+        room: 8,
+        adjacent: 7
       }];
       var door5 = this.add.image(0, 0, "door");
       var door_pos5 = [{
         x: 450,
-        y: 450
+        y: 450,
+        room: 7,
+        adjacent: 6
       }];
       var door6 = this.add.image(0, 0, "door");
       var door_pos6 = [{
         x: 503,
-        y: 240
+        y: 240,
+        room: 8,
+        adjacent: 4
       }, {
         x: 503,
-        y: 335
+        y: 335,
+        room: 7,
+        adjacent: 5
       }, {
         x: 503,
-        y: 505
+        y: 505,
+        room: 6,
+        adjacent: 2
       }, {
         x: 503,
-        y: 610
+        y: 610,
+        room: 6,
+        adjacent: 3
       }];
       var door7 = this.add.image(0, 0, "door");
       var door_pos7 = [{
         x: 566,
-        y: 288
+        y: 288,
+        room: 4,
+        adjacent: 5
       }, {
         x: 670,
-        y: 288
+        y: 288,
+        room: 4,
+        adjacent: 1
       }];
       var door8 = this.add.image(0, 0, "door");
       var door_pos8 = [{
         x: 618,
-        y: 335
+        y: 335,
+        room: 5,
+        adjacent: 1
       }];
       var door9 = this.add.image(0, 0, "door");
       var door_pos9 = [{
         x: 566,
-        y: 450
+        y: 450,
+        room: 5,
+        adjacent: 2
       }];
       var door10 = this.add.image(0, 0, "door");
       var door_pos10 = [{
         x: 566,
-        y: 560
+        y: 560,
+        room: 3,
+        adjacent: 2
       }, {
         x: 730,
-        y: 560
+        y: 560,
+        room: 3,
+        adjacent: 0
       }];
       var door11 = this.add.image(0, 0, "door");
       var door_pos11 = [{
         x: 730,
-        y: 382
+        y: 382,
+        room: 0,
+        adjacent: 1
       }, {
         x: 680,
-        y: 500
+        y: 500,
+        room: 0,
+        adjacent: 2
       }];
       var doors = [door1, door2, door3, door4, door5, door6, door7, door8, door9, door10, door11];
-      shuffle(encounters);
       var door_positions = [door_pos1, door_pos2, door_pos3, door_pos4, door_pos5, door_pos6, door_pos7, door_pos8, door_pos9, door_pos10, door_pos11];
-      for (var i = 0; i < door_positions.length; i++) {
-        shuffle(door_positions[i]);
-      }
-      door_positions = [door_pos1[0], door_pos2[0], door_pos3[0], door_pos4[0], door_pos5[0], door_pos6[0], door_pos7[0], door_pos8[0], door_pos9[0], door_pos10[0], door_pos11[0]];
 
       // room positions for encounter icons
       var positions = [{
         x: this.game.renderer.width / 2 - 225,
-        y: this.game.renderer.height / 2 - 70
+        y: this.game.renderer.height / 2 - 70,
+        room: 9
       }, {
         x: this.game.renderer.width / 2 - 75,
-        y: this.game.renderer.height / 2 - 170
+        y: this.game.renderer.height / 2 - 170,
+        room: 8
       }, {
         x: this.game.renderer.width / 2 - 75,
-        y: this.game.renderer.height / 2 - 20
+        y: this.game.renderer.height / 2 - 20,
+        room: 7
       }, {
         x: this.game.renderer.width / 2 + 80,
-        y: this.game.renderer.height / 2 + 110
+        y: this.game.renderer.height / 2 + 110,
+        room: 2
       }, {
         x: this.game.renderer.width / 2 + 60,
-        y: this.game.renderer.height / 2 - 20
+        y: this.game.renderer.height / 2 - 20,
+        room: 5
       }, {
         x: this.game.renderer.width / 2 + 90,
-        y: this.game.renderer.height / 2 - 165
+        y: this.game.renderer.height / 2 - 165,
+        room: 4
       }, {
         x: this.game.renderer.width / 2 - 75,
-        y: this.game.renderer.height / 2 + 130
+        y: this.game.renderer.height / 2 + 130,
+        room: 6
       }, {
         x: this.game.renderer.width / 2 - 225,
-        y: this.game.renderer.height / 2 + 170
+        y: this.game.renderer.height / 2 + 170,
+        room: 10
       }, {
         x: this.game.renderer.width / 2 + 120,
-        y: this.game.renderer.height / 2 + 230
+        y: this.game.renderer.height / 2 + 230,
+        room: 3
       }, {
         x: this.game.renderer.width / 2 + 200,
-        y: this.game.renderer.height / 2 - 60
+        y: this.game.renderer.height / 2 - 60,
+        room: 1
       }];
+      var map = new _map.default(encounters, positions, doors, door_positions, startEnd);
+      var level = this.add.text(220, 100, map._level.toString(), {
+        fontFamily: 'font1',
+        fill: '#ffffff',
+        fontSize: '60px'
+      }).setDepth(1).setOrigin(0.5);
+      encountersInteractive(this);
+      var next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive();
+      /*.on("pointerup", ()=>{
+          // Moves back to the main menu when the back button is clicked
+          this.scene.start(CST.SCENES.MAP);
+      })*/
 
-      // for assigning the positions to the icons
-      function assignLocations(icon, locations) {
-        for (var _i = 0; _i < icon.length; _i++) {
-          icon[_i].x = locations[_i].x;
-          icon[_i].y = locations[_i].y;
-          icon[_i].setDepth(1);
+      next_floor.on("pointerover", function () {
+        pointer.x = next_floor.x + 60;
+        pointer.y = next_floor.y - 30;
+        encountersInteractive(_this);
+      });
+      var player = this.add.image(map._current_room.x, map._current_room.y, 'player_map').setDepth(4);
+      function encountersInteractive(scene) {
+        var adjacent = map.adjacent;
+        var _loop = function _loop(i) {
+          adjacent[i].getEncounter().setInteractive();
+          adjacent[i].getEncounter().on("pointerup", function () {
+            // Moves back to the main menu when the back button is clicked
+            map.playerLocation(adjacent[i]);
+            player.x = map._current_room.x;
+            player.y = map._current_room.y;
+            for (var _i = 0; _i < adjacent.length; _i++) {
+              adjacent[_i].getEncounter().disableInteractive();
+            }
+            map.setAdjacent();
+            adjacent[i].setVisited();
+          });
+          adjacent[i].getEncounter().on("pointerover", function () {
+            pointer.setVisible(true).setDepth(3);
+            pointer.x = adjacent[i].getEncounter().x + 60;
+            pointer.y = adjacent[i].getEncounter().y - 30;
+            map.setAdjacent();
+          });
+        };
+        for (var i = 0; i < adjacent.length; i++) {
+          _loop(i);
         }
       }
-      for (var _i2 = 0; _i2 < encounters.length; _i2++) {
-        encounters[_i2].setInteractive();
-        encounters[_i2].setDepth(2);
-        encounters[_i2].on("pointerup", function () {
-          // Moves back to the main menu when the back button is clicked
-          _this.scene.start(_CST.CST.SCENES.BATTLE);
-          console.log("click");
-        });
-      }
-      assignLocations(encounters, positions);
-      assignLocations(doors, door_positions);
     }
   }]);
   return MapScene;
 }(Phaser.Scene);
 exports.MapScene = MapScene;
-},{"../CST":"src/CST.js"}],"src/scenes/LoadScene.js":[function(require,module,exports) {
+},{"../classes/map":"src/classes/map.js","../CST":"src/CST.js"}],"src/scenes/LoadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -928,11 +1270,14 @@ var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("background", "./assets/background.png");
       this.load.image("player2", "./assets/player2.png");
       this.load.image("player", "./assets/player.png");
+      this.load.image("player_map", "./assets/player_map.png");
       this.load.image("map", "./assets/tower_floor_map.png");
       this.load.image("shop", "./assets/shop.png");
       this.load.image("random", "./assets/random.png");
-      this.load.image("cards", "./assets/cards.png");
+      this.load.image("cards", "./assets/cards_new.png");
       this.load.image("door", "./assets/doorway.png");
+      this.load.image("up", "./assets/up_arrow.png");
+      this.load.image("pointer", "./assets/pointer.png");
 
       // Load audio
       this.load.audio("soundtrack", "./assets/soundtrack.mp3");
@@ -993,6 +1338,11 @@ var game = new Phaser.Game({
   scene: [_LoadScene.LoadScene, _MenuScene.MenuScene, _OptionsScene.OptionsScene, _CreditsScene.CreditsScene, _BattleScene.BattleScene, _MapScene.MapScene],
   render: {
     pixelArt: true
+  },
+  scale: {
+    parent: 'phaser-container',
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   }
 });
 
@@ -1031,7 +1381,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63977" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62321" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -18,6 +18,7 @@ export default class Door {
         this._adjacent = this._position.adjacent
     }
 
+    // Used to randomize the doors position (if door has multiple positions).
     randomizePosition() {
         this._position = shuffle(this._positions)[0];
         this._image.x = this._position.x
