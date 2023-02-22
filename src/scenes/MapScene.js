@@ -39,8 +39,6 @@ export class MapScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.MENU);
         })
 
-        //  ** BEGINS HERE ** 
-
         // adds icons for map
         let battle = this.add.image( 0,0, 'cards').setDepth(2);
         let shop = this.add.image(  0,0, 'shop').setDepth(2);
@@ -159,12 +157,14 @@ export class MapScene extends Phaser.Scene{
 
         const map = new Map(encounters, positions, doors, door_positions, startEnd)
 
+        // level counter top in the left
         let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
     
+        // N.B. *** VERY IMPORTANT FUNCTION *** 
         encountersInteractive(this)
 
+        // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
-            // Moves back to the main menu when the back button is clicked
             if (map.currentLocation == 11) {
                 for (let i=0; i<map.adjacent.length; i++) {
                     map.adjacent[i].getEncounter().disableInteractive();
@@ -177,14 +177,33 @@ export class MapScene extends Phaser.Scene{
             }
         })
 
+        /* 
+        N.B. *** IMPORTANT AGAIN KEVIN ***
+        This up arrow needs to be hovered over when moving to a new room.
+
+        THIS SIMULATES RETURNING TO THE MAP SCREEN FROM THE BATTLE SCENE CURRENTLY.
+
+        */
+
         next_floor.on ("pointerover", ()=>{
             pointer.x = next_floor.x+60;
             pointer.y = next_floor.y-30;
             encountersInteractive(this);
         })
 
+        // player icon on the map
         let player = this.add.image(map._current_room.x, map._current_room.y, 'player_map').setDepth(4)
         
+        /*
+        THIS IS WHERE THE INTERACTIVITY FOR THE ENCOUNTERS SHOULD BE DONE.
+
+        DECIDING ON THE SCENE DEPENDING ON THE ENCOUNTER SHOULD BE DONE HERE.
+
+        HANDLES ALL OF THE REASSIGNING OF THE ADJACENT ROOMS AND THE CURRENT LOCATION OF THE PLAYER.
+
+        ALSO LOGS THE ROOMS THAT HAVE BEEN VISITED.
+        */
+
         function encountersInteractive(scene) {
             let adjacent = map.adjacent;
 
