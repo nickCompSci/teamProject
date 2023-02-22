@@ -85,7 +85,7 @@ export class BattleScene extends Phaser.Scene {
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
         this.player.deckSetUp(this);
-        this.drawCard(gameOptions.startCards);
+        this.player.drawCard(gameOptions.startCards, this);
 
         // spawning enemies according to spritesheet randomly
         for (let i=0; i < enemy.numberOfSprites; i++) {
@@ -235,21 +235,7 @@ export class BattleScene extends Phaser.Scene {
         this.player.deckArray.push(kevlar);
     }
     
-
-    // draw an amount of cards
-    drawCard(amountOfCards) {
-        for (let i=0; i < amountOfCards; i++) {
-            let lastCard = this.player.deckTrackerArray.pop();
-            lastCard.destroy();
-
-            let drawCard = this.player.deckArray.pop();
-            this.player.handArray.push(drawCard);
-            drawCard.cardInHand(this);
-            this.arrangeCardsInCenter(this.player.handArray);
-        }
-    }
-
-
+   
     arrangeCardsInCenter(handArray) {
         // arranges for the cards to be organised around the bottom middle of the screen
         let bottomOfScreen = this.game.config.height;
@@ -303,8 +289,10 @@ export class BattleScene extends Phaser.Scene {
             enemy.enemyOnScene[i].action(this);
         }
         this.heartext.text = this.player.getHealth();
-
-        // automatic drawing goes here
+        
+        // automatic drawing goes here and checking if needing to reshuffle the deck
+        this.player.drawCard(1, this);
+        this.player.resetDeck(this);
     }
     
     // spawning in enemies and their life

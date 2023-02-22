@@ -70,6 +70,20 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.enableDragOnCards();
 
     }
+    
+    // draw an amount of cards
+    drawCard(amountOfCards, scene) {
+        for (let i=0; i < amountOfCards; i++) {
+            let lastCard = this.deckTrackerArray.pop();
+            lastCard.setActive(false).setVisible(false);
+
+            let drawCard = this.deckArray.pop();
+            this.handArray.push(drawCard);
+            drawCard.cardInHand(scene);
+            scene.arrangeCardsInCenter(this.handArray);
+        }
+    }
+
 
     disableDragOnCards() {
         for (let i=0; i < this.handArray.length; i++) {
@@ -86,15 +100,22 @@ export default class Player extends Phaser.GameObjects.Sprite {
     deckSetUp(scene) {
         let x = scene.game.config.width / 25;
         let y = scene.game.config.height / 1.24;
+
+        // need to remove all sprites currently active
+        if (this.deckTrackerArray.length > 0) {
+            for (let j=0; j < this.deckTrackerArray.length; j++) {
+                this.deckTrackerArray[j].destroy();
+            }
+        }
+
         for (let i=0; i < this.deckArray.length; i++) {
-            let cardBack = scene.add.sprite(x,
-            y, 'cardBack');
+            let cardBack = scene.add.sprite(x, y, 'cardBack');
             cardBack.setOrigin(0.5, 1);
             cardBack.displayWidth = cardBackDimensions.backWidth / 2;
             cardBack.displayHeight = cardBackDimensions.backHeight / 2;
             
             this.deckTrackerArray.push(cardBack);
-            x += 4;
+            x += 3;
         }
     }
     
@@ -103,6 +124,19 @@ export default class Player extends Phaser.GameObjects.Sprite {
         for (let i = this.deckArray.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i+1));
             [this.deckArray[i], this.deckArray[j]] = [this.deckArray[j], this.deckArray[i]]
+        }
+    }
+
+    resetDeck(scene) {
+        console.log(this.graveYardArray.length);
+        if (this.deckArray.length <= 0) {
+            // push all the cards in graveYard array back to the deck
+            for (let i=this.graveYardArray.length; i > 0; i--) {
+                let card = this.graveYardArray.shift();
+                this.deckArray.push(card);
+            }
+            this.shuffle();
+            this.deckSetUp(scene);
         }
     }
 

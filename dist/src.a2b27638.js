@@ -576,6 +576,20 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       scene.arrangeCardsInCenter(this.handArray);
       this.enableDragOnCards();
     }
+
+    // draw an amount of cards
+  }, {
+    key: "drawCard",
+    value: function drawCard(amountOfCards, scene) {
+      for (var i = 0; i < amountOfCards; i++) {
+        var lastCard = this.deckTrackerArray.pop();
+        lastCard.setActive(false).setVisible(false);
+        var drawCard = this.deckArray.pop();
+        this.handArray.push(drawCard);
+        drawCard.cardInHand(scene);
+        scene.arrangeCardsInCenter(this.handArray);
+      }
+    }
   }, {
     key: "disableDragOnCards",
     value: function disableDragOnCards() {
@@ -595,13 +609,20 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     value: function deckSetUp(scene) {
       var x = scene.game.config.width / 25;
       var y = scene.game.config.height / 1.24;
+
+      // need to remove all sprites currently active
+      if (this.deckTrackerArray.length > 0) {
+        for (var j = 0; j < this.deckTrackerArray.length; j++) {
+          this.deckTrackerArray[j].destroy();
+        }
+      }
       for (var i = 0; i < this.deckArray.length; i++) {
         var cardBack = scene.add.sprite(x, y, 'cardBack');
         cardBack.setOrigin(0.5, 1);
         cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
         cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
         this.deckTrackerArray.push(cardBack);
-        x += 4;
+        x += 3;
       }
     }
 
@@ -614,6 +635,20 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
         var _ref = [this.deckArray[j], this.deckArray[i]];
         this.deckArray[i] = _ref[0];
         this.deckArray[j] = _ref[1];
+      }
+    }
+  }, {
+    key: "resetDeck",
+    value: function resetDeck(scene) {
+      console.log(this.graveYardArray.length);
+      if (this.deckArray.length <= 0) {
+        // push all the cards in graveYard array back to the deck
+        for (var i = this.graveYardArray.length; i > 0; i--) {
+          var card = this.graveYardArray.shift();
+          this.deckArray.push(card);
+        }
+        this.shuffle();
+        this.deckSetUp(scene);
       }
     }
   }, {
@@ -856,9 +891,6 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
       if (this.effect.target == "single") {
         for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
           _config.enemy.enemyOnScene[i].once("pointerdown", function (pointer) {
-            this.setInteractive({
-              useHandCursor: true
-            });
             this.setHealth(this.getHealth() - card.effect.damage);
             this.heartText.setText(this.getHealth());
             for (var j = 0; j < _config.enemy.enemyOnScene.length; j++) {
@@ -1192,7 +1224,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
       this.player.deckSetUp(this);
-      this.drawCard(_config.gameOptions.startCards);
+      this.player.drawCard(_config.gameOptions.startCards, this);
 
       // spawning enemies according to spritesheet randomly
       for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
@@ -1349,20 +1381,6 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.player.deckArray.push(medkit);
       this.player.deckArray.push(kevlar);
     }
-
-    // draw an amount of cards
-  }, {
-    key: "drawCard",
-    value: function drawCard(amountOfCards) {
-      for (var i = 0; i < amountOfCards; i++) {
-        var lastCard = this.player.deckTrackerArray.pop();
-        lastCard.destroy();
-        var drawCard = this.player.deckArray.pop();
-        this.player.handArray.push(drawCard);
-        drawCard.cardInHand(this);
-        this.arrangeCardsInCenter(this.player.handArray);
-      }
-    }
   }, {
     key: "arrangeCardsInCenter",
     value: function arrangeCardsInCenter(handArray) {
@@ -1419,7 +1437,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       }
       this.heartext.text = this.player.getHealth();
 
-      // automatic drawing goes here
+      // automatic drawing goes here and checking if needing to reshuffle the deck
+      this.player.drawCard(1, this);
+      this.player.resetDeck(this);
     }
 
     // spawning in enemies and their life

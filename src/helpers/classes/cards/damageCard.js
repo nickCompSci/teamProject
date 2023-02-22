@@ -19,7 +19,6 @@ export default class DamageCard extends HandCard {
         if (this.effect.target == "single") {
             for (let i=0; i < enemy.enemyOnScene.length; i++) {
                 enemy.enemyOnScene[i].once("pointerdown", function(pointer) {
-                    this.setInteractive({useHandCursor: true});
                     this.setHealth(this.getHealth() - card.effect.damage);
                     this.heartText.setText(this.getHealth());
 
