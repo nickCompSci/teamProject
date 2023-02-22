@@ -80,7 +80,7 @@ export class BattleScene extends Phaser.Scene {
         this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         // zone where cards can be dropped and activated
-        let dropZone = new Zone(this, 200, 200, 500, 500);
+        let dropZone = new Zone(this, 500, 310, 665, 665);
 
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();

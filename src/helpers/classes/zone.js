@@ -1,10 +1,8 @@
-import { gameOptions } from "../config";
 
 export default class Zone extends Phaser.GameObjects.Zone {
     constructor(scene, x, y, width, height) {
-        super(scene, x, y, width, height).setRectangleDropZone(x, y);
-        this.setOrigin(0, 0);
-        this.setDepth(0);
+        super(scene, x, y, width, height).setRectangleDropZone(width, height);
+        this.setOrigin(0, 1);
         scene.add.existing(this);
         this.normalZone = 0xffff00; // yellow
         this.activeZone = 0x00ffff; // lightblue / turquoise 

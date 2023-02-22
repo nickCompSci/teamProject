@@ -403,7 +403,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -423,9 +422,8 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   function Zone(scene, x, y, width, height) {
     var _this;
     _classCallCheck(this, Zone);
-    (_this = _super.call(this, scene, x, y, width, height)).setRectangleDropZone(x, y);
-    _this.setOrigin(0, 0);
-    _this.setDepth(0);
+    (_this = _super.call(this, scene, x, y, width, height)).setRectangleDropZone(width, height);
+    _this.setOrigin(0, 1);
     scene.add.existing(_assertThisInitialized(_this));
     _this.normalZone = 0xffff00; // yellow
     _this.activeZone = 0x00ffff; // lightblue / turquoise 
@@ -452,7 +450,7 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{"../config":"src/helpers/config.js"}],"src/helpers/classes/player.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1219,7 +1217,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.keepCardButton = new _button.default(gameWidth, gameHeight / 2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
       // zone where cards can be dropped and activated
-      var dropZone = new _zone.default(this, 200, 200, 500, 500);
+      var dropZone = new _zone.default(this, 500, 310, 665, 665);
 
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
