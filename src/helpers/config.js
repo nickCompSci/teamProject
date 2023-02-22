@@ -20,3 +20,4 @@ export const enemy = {
     enemyList: [],
     enemyOnScene: []
 }
+

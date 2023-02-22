@@ -1,6 +1,6 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions, enemy } from "../helpers/config.js";
+import { gameOptions, enemy} from "../helpers/config.js";
 import Zone from "../helpers/classes/zone.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
@@ -10,8 +10,6 @@ import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
 import HealingCard from "../helpers/classes/cards/healingCard.js";
-import { Tooltip } from "../helpers/classes/cards/toolTip.js";
-
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -22,6 +20,9 @@ export class BattleScene extends Phaser.Scene {
 
     init(data) {
         let cards = data;
+        // make these class variables to turn them off on click
+        this.endTurnButton;
+        this.keepCardButton;
     }
 
     preload() {
@@ -71,6 +72,7 @@ export class BattleScene extends Phaser.Scene {
         let actions = this.add.container(0, 0, [chamber, actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
 
+        // set it so a rectangular zone appear with overflow
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
         discardPile.setScale(1.5).setInteractive({useHandCursor: true});
         discardPile.on('pointerdown', function (event) {
@@ -79,18 +81,19 @@ export class BattleScene extends Phaser.Scene {
         
         // load cards
         this.loadCards();
-
-        // Button to end turn
-        let endTurnButton = new Button(gameWidth, gameHeight/2, 'End Turn', this, this.endTurn.bind(this), '#202529');
-        endTurnButton.changeCursor();
+        
+        this.endTurnButton = new Button(gameWidth, gameHeight/2, "End Turn", this, this.endTurn.bind(this, player, this.endTurnButton), '#202529');
+        this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, player, this.keepCardButton), '#202529');
 
         // zone where cards can be dropped and activated
-        let dropZone = new Zone(this, 500, 400, 300, 600);
+        let dropZone = new Zone(this, 200, 200, 500, 500);
 
+        // shuffle the deck, draw it and set up the cards in hand;
         shuffle(deckArray);
         deckSetUp(this, deckArray, deckTrackerArray);
+        this.drawCard(gameOptions.startCards);
 
-        // enemy
+        // spawning enemies according to spritesheet randomly
         for (let i=0; i < enemy.numberOfSprites; i++) {
             let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
             enemy.enemyList.push(enemySprite);
@@ -98,9 +101,10 @@ export class BattleScene extends Phaser.Scene {
         this.spawnEnemyOnScene();
     }
 
+
     loadCards() {
         // damage cards
-        let cannon = new DamageCard("cannon", 2, "damage", {damage: 3, target: "all"}, this, 0, 0, "cannon");
+        let cannon = new DamageCard("cannon", 1, "damage", {damage: 3, target: "all"}, this, 0, 0, "cannon");
         let grenade = new DamageCard("grenade", 2, "damage", {damage: 6, target: "single"}, this, 0, 0, "grenade");
 
         // combo cards
@@ -122,8 +126,24 @@ export class BattleScene extends Phaser.Scene {
         deckArray.push(medkit);
         deckArray.push(kevlar);
     }
+    
+
+    // draw an amount of cards
+    drawCard(amountOfCards) {
+        for (let i=0; i < amountOfCards; i++) {
+            let lastCard = deckTrackerArray.pop();
+            lastCard.destroy();
+
+            let drawCard = deckArray.pop();
+            handArray.push(drawCard);
+            drawCard.cardInHand(this);
+            this.arrangeCardsInCenter(handArray);
+        }
+    }
+
 
     arrangeCardsInCenter(handArray) {
+        // organise code based on the bottom middle of screen
         let bottomOfScreen = this.game.config.height;
         let screenCenterX = this.game.config.width / 2;
         let yDelta = gameOptions.cardYOffset * (Math.floor(handArray.length / 2));
@@ -154,19 +174,23 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
-    // simulate a drawing feature
-    endTurn() {
-        if (deckArray.length > 0) {
-            let lastCard = deckTrackerArray.pop();
-            lastCard.destroy();
 
-            let drawCard = deckArray.pop();
-            handArray.push(drawCard);
-            drawCard.cardInHand(this);
-            this.arrangeCardsInCenter(handArray);
-        }
+    // start keep cards and make keep cards button appear
+    keepCard(player) {
+        this.keepCardButton.visible = false;
+        this.endTurnButton.visible = true;
+        player.selectCardInHand(player);
+    }
+    
+    
+    // ends the player's turn
+    endTurn(player) {
+        this.keepCardButton.visible = true;
+        this.endTurnButton.visible = false;
+        player.moveCardsBackInDeck(this);
     }
 
+    
     // spawning in enemies and their life
     spawnEnemyOnScene() {
         let minEnemies = 1;

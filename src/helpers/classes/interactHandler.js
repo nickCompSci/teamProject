@@ -5,6 +5,7 @@ export default class InteractHandler {
     constructor(scene) {
 
         scene.input.on('dragstart', function (pointer, gameObject) {
+            gameObject.tooltip.removeTooltip();
             scene.tweens.add({
                 targets: gameObject,
                 angle: 0,
