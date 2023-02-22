@@ -41,8 +41,6 @@ export class BattleScene extends Phaser.Scene {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
-        let interactiveHandler = new InteractHandler(this);
-
         let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
         let card_bg = this.add.image(0, 0, "card_holder");
         let bg = this.add.sprite(0, 0, "background");

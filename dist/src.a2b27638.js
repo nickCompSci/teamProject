@@ -395,65 +395,13 @@ var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
   return Button;
 }(Phaser.GameObjects.Text);
 exports.default = Button;
-},{"../font":"src/helpers/font.js"}],"src/helpers/classes/deck.js":[function(require,module,exports) {
+},{"../font":"src/helpers/font.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _config = require("../config.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-var Deck = /*#__PURE__*/function () {
-  function Deck() {
-    _classCallCheck(this, Deck);
-    this.handArray = [];
-    this.deckArray = [];
-    this.deckTrackerArray = [];
-    this.deckArraygraveYardArray = [];
-  }
-  _createClass(Deck, [{
-    key: "deckSetUp",
-    value: function deckSetUp(scene, array, arrayTracker) {
-      var x = scene.game.config.width / 25;
-      var y = scene.game.config.height / 1.24;
-      for (var i = 0; i < array.length; i++) {
-        var cardBack = scene.add.sprite(x, y, 'cardBack');
-        cardBack.setOrigin(0.5, 1);
-        cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
-        cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
-        arrayTracker.push(cardBack);
-        x += 4;
-      }
-    }
-  }, {
-    key: "shuffle",
-    value: function shuffle(array) {
-      // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
-      for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var _ref = [array[j], array[i]];
-        array[i] = _ref[0];
-        array[j] = _ref[1];
-      }
-    }
-  }]);
-  return Deck;
-}();
-exports.default = Deck;
-},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _deck = require("./deck");
 var _config = require("../config");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -503,15 +451,14 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
-},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/player.js":[function(require,module,exports) {
+},{"../config":"src/helpers/config.js"}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _deck = _interopRequireDefault(require("./deck.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _config = require("../config.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -534,12 +481,41 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this = _super.call(this, scene, x, y, sprite, frame);
     _this.health = 50;
     _this.actionPoints = 6;
-    _this.deck = new _deck.default();
+    _this.handArray = [];
+    _this.deckArray = [];
+    _this.deckTrackerArray = [];
+    _this.graveYardArray = [];
     _this.spriteType = "player";
     scene.add.existing(_assertThisInitialized(_this));
     return _this;
   }
   _createClass(Player, [{
+    key: "deckSetUp",
+    value: function deckSetUp(scene) {
+      var x = scene.game.config.width / 25;
+      var y = scene.game.config.height / 1.24;
+      for (var i = 0; i < this.deckArray.length; i++) {
+        var cardBack = scene.add.sprite(x, y, 'cardBack');
+        cardBack.setOrigin(0.5, 1);
+        cardBack.displayWidth = _config.cardBackDimensions.backWidth / 2;
+        cardBack.displayHeight = _config.cardBackDimensions.backHeight / 2;
+        this.deckTrackerArray.push(cardBack);
+        x += 4;
+      }
+    }
+
+    // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
+  }, {
+    key: "shuffle",
+    value: function shuffle() {
+      for (var i = this.deckArray.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var _ref = [this.deckArray[j], this.deckArray[i]];
+        this.deckArray[i] = _ref[0];
+        this.deckArray[j] = _ref[1];
+      }
+    }
+  }, {
     key: "getHealth",
     value: function getHealth() {
       return this.health;
@@ -560,11 +536,6 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       this.actionPoints = actionPoints;
     }
   }, {
-    key: "getDeck",
-    value: function getDeck() {
-      return this.deck;
-    }
-  }, {
     key: "getSpriteType",
     value: function getSpriteType() {
       return this.spriteType;
@@ -573,7 +544,7 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return Player;
 }(Phaser.GameObjects.Sprite);
 exports.default = Player;
-},{"./deck.js":"src/helpers/classes/deck.js"}],"src/helpers/classes/enemy.js":[function(require,module,exports) {
+},{"../config.js":"src/helpers/config.js"}],"src/helpers/classes/enemy.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -620,6 +591,11 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   // generates a random number between min and max parameters
   // min and max included
   _createClass(Enemy, [{
+    key: "action",
+    value: function action(scene) {
+      scene.player.health = scene.player.getHealth() - 5;
+    }
+  }, {
     key: "getRandomHealth",
     value: function getRandomHealth(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -655,117 +631,7 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return Enemy;
 }(Phaser.GameObjects.Sprite);
 exports.default = Enemy;
-},{}],"src/helpers/classes/interactHandler.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _deck = require("./deck");
-var _config = require("../config");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-var InteractHandler = /*#__PURE__*/_createClass(function InteractHandler(scene) {
-  _classCallCheck(this, InteractHandler);
-  scene.input.on('dragstart', function (pointer, gameObject) {
-    gameObject.tooltip.removeTooltip();
-    scene.tweens.add({
-      targets: gameObject,
-      angle: 0,
-      x: pointer.x,
-      y: pointer.y,
-      duration: 50
-    });
-    scene.tweens.add({
-      targets: scene.background,
-      alpha: 0.3,
-      duration: 50
-    });
-    var index = _deck.handArray.indexOf(gameObject);
-    if (index !== -1) {
-      _deck.handArray.splice(index, 1);
-    }
-    scene.arrangeCardsInCenter(_deck.handArray);
-  }, scene);
-  scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-    gameObject.x = dragX;
-    gameObject.y = dragY;
-  });
-
-  // hover over listener
-  scene.input.on('gameobjectover', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
-      var yOffSet = 50;
-      scene.tweens.add({
-        targets: gameObject,
-        angle: 0,
-        y: gameObject.startPosition.y - yOffSet,
-        displayWidth: _config.gameOptions.cardWidth * 2,
-        displayHeight: _config.gameOptions.cardHeight * 2,
-        depth: 100,
-        duration: 10
-      });
-      gameObject.tooltip.showTooltip();
-      gameObject.tooltip.setLabelCoordinates(gameObject.x + _config.gameOptions.cardWidth, gameObject.y - _config.gameOptions.cardHeight * 2 - yOffSet + 10);
-    }
-  }, scene);
-
-  // hover out listener
-  scene.input.on('gameobjectout', function (pointer, gameObject) {
-    if (gameObject.type === "Sprite" && _deck.handArray.includes(gameObject)) {
-      scene.tweens.add({
-        targets: gameObject,
-        y: gameObject.startPosition.y,
-        angle: gameObject.startPosition.angle,
-        displayWidth: _config.gameOptions.cardWidth,
-        displayHeight: _config.gameOptions.cardHeight,
-        depth: gameObject.startPosition.depth,
-        duration: 10
-      });
-      gameObject.tooltip.removeTooltip();
-    }
-  }, scene);
-  scene.input.on('dragenter', function (pointer, gameObject, dropZone) {
-    dropZone.renderActiveOutline();
-  });
-  scene.input.on('dragleave', function (pointer, gameObject, dropZone) {
-    dropZone.renderNormalOutline();
-  });
-  scene.input.on('drop', function (pointer, gameObject, dropZone) {
-    gameObject.input.enabled = false;
-    gameObject.tooltip.removeTooltip();
-
-    // setting card in the middle 
-    gameObject.displayHeight = _config.gameOptions.cardHeight;
-    gameObject.displayWidth = _config.gameOptions.cardWidth;
-    gameObject.x = dropZone.x;
-    gameObject.y = dropZone.y + dropZone.y / 3;
-    _deck.graveYardArray.push(gameObject);
-
-    // remove the card from the scene after 500ms
-    setTimeout(function () {
-      gameObject.activateCard(scene);
-      gameObject.setActive(false).setVisible(false);
-    }, 500);
-    dropZone.renderNormalOutline(scene);
-    scene.cameras.main.shake(100, 0.02);
-  });
-  scene.input.on("dragend", function (pointer, gameObject, dropped) {
-    if (!dropped) {
-      _deck.handArray.push(gameObject);
-      gameObject.displayHeight = _config.gameOptions.cardHeight;
-      gameObject.displayWidth = _config.gameOptions.cardWidth;
-      scene.arrangeCardsInCenter(_deck.handArray);
-    }
-  }, scene);
-});
-exports.default = InteractHandler;
-},{"./deck":"src/helpers/classes/deck.js","../config":"src/helpers/config.js"}],"src/helpers/classes/cards/toolTip.js":[function(require,module,exports) {
+},{}],"src/helpers/classes/cards/toolTip.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1100,8 +966,6 @@ var _config = require("../helpers/config.js");
 var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
 var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
 var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
-var _deck = require("../helpers/classes/deck.js");
-var _interactHandler = _interopRequireDefault(require("../helpers/classes/interactHandler.js"));
 var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
 var _comboCard = _interopRequireDefault(require("../helpers/classes/cards/comboCard.js"));
 var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloadCard.js"));
@@ -1154,9 +1018,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
+      var _this = this;
       var gameWidth = this.game.config.width;
       var gameHeight = this.game.config.height;
-      var interactiveHandler = new _interactHandler.default(this);
       var hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
       var card_bg = this.add.image(0, 0, "card_holder");
       var bg = this.add.sprite(0, 0, "background");
@@ -1165,32 +1029,32 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      var player = new _player.default(this, 0, 0, "guy", _deck.handArray);
-      player.setPosition(gameWidth / 4, gameHeight / 1.65);
-      player.setScale(3);
+      this.player = new _player.default(this, 0, 0, "guy");
+      this.player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      this.player.setScale(3);
       var heart = this.add.image(0, 0, "heart");
-      var heartext = this.add.text(0, 0, player.getHealth(), {
+      this.heartext = this.add.text(0, 0, this.player.getHealth(), {
         color: "black",
         fontSize: "30px"
       });
       heart.setScale(4);
-      heartext.setPosition(-18, -18);
-      var health = this.add.container(0, 0, [heart, heartext]);
+      this.heartext.setPosition(-18, -18);
+      var health = this.add.container(0, 0, [heart, this.heartext]);
       health.setPosition(gameWidth / 20, gameHeight / 2.2);
       var chamber = this.add.circle(0, 0, 30, 0xffcc00);
-      var actiontext = this.add.text(0, 0, player.getActionPoints(), {
+      this.actiontext = this.add.text(0, 0, this.player.getActionPoints(), {
         color: "black",
         fontSize: "30px"
       });
-      actiontext.setPosition(-10, -18);
-      var actions = this.add.container(0, 0, [chamber, actiontext]);
+      this.actiontext.setPosition(-10, -18);
+      var actions = this.add.container(0, 0, [chamber, this.actiontext]);
       actions.setPosition(gameWidth / 20, gameHeight / 1.75);
       var discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
       discardPile.setScale(1.5).setInteractive({
         useHandCursor: true
       });
       discardPile.on('pointerdown', function (event) {
-        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, _deck.graveYardArray);
+        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, graveYardArray);
       }, this);
 
       // loads all the different types of cards
@@ -1201,8 +1065,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var dropZone = new _zone.default(this, 500, 400, 300, 600);
 
       // shuffles the deck and sets up the visual for the deck cards
-      (0, _deck.shuffle)(_deck.deckArray);
-      (0, _deck.deckSetUp)(this, _deck.deckArray, _deck.deckTrackerArray);
+      this.player.shuffle();
+      this.player.deckSetUp(this);
 
       // loading in every enemy sprite
       for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
@@ -1210,6 +1074,106 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         _config.enemy.enemyList.push(enemySprite);
       }
       this.spawnEnemyOnScene();
+      this.input.on('dragstart', function (pointer, gameObject) {
+        gameObject.tooltip.removeTooltip();
+        this.tweens.add({
+          targets: gameObject,
+          angle: 0,
+          x: pointer.x,
+          y: pointer.y,
+          duration: 50
+        });
+        this.tweens.add({
+          targets: this.background,
+          alpha: 0.3,
+          duration: 50
+        });
+        var index = this.player.handArray.indexOf(gameObject);
+        if (index !== -1) {
+          this.player.handArray.splice(index, 1);
+        }
+        this.arrangeCardsInCenter(this.player.handArray);
+      }, this);
+      this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+      });
+
+      // hover over listener
+      this.input.on('gameobjectover', function (pointer, gameObject) {
+        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+          var yOffSet = 50;
+          this.tweens.add({
+            targets: gameObject,
+            angle: 0,
+            y: gameObject.startPosition.y - yOffSet,
+            displayWidth: _config.gameOptions.cardWidth * 2,
+            displayHeight: _config.gameOptions.cardHeight * 2,
+            depth: 100,
+            duration: 10
+          });
+          gameObject.tooltip.showTooltip();
+          gameObject.tooltip.setLabelCoordinates(gameObject.x + _config.gameOptions.cardWidth, gameObject.y - _config.gameOptions.cardHeight * 2 - yOffSet + 10);
+        }
+      }, this);
+
+      // hover out listener
+      this.input.on('gameobjectout', function (pointer, gameObject) {
+        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+          this.tweens.add({
+            targets: gameObject,
+            y: gameObject.startPosition.y,
+            angle: gameObject.startPosition.angle,
+            displayWidth: _config.gameOptions.cardWidth,
+            displayHeight: _config.gameOptions.cardHeight,
+            depth: gameObject.startPosition.depth,
+            duration: 10
+          });
+          gameObject.tooltip.removeTooltip();
+        }
+      }, this);
+      this.input.on('dragenter', function (pointer, gameObject, dropZone) {
+        dropZone.renderActiveOutline();
+      });
+      this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+        dropZone.renderNormalOutline();
+      });
+      this.input.on('drop', function (pointer, gameObject, dropZone) {
+        if (_this.player.getActionPoints() >= gameObject.getCost()) {
+          gameObject.input.enabled = false;
+          gameObject.tooltip.removeTooltip();
+
+          // setting card in the middle 
+          gameObject.displayHeight = _config.gameOptions.cardHeight;
+          gameObject.displayWidth = _config.gameOptions.cardWidth;
+          gameObject.x = dropZone.x;
+          gameObject.y = dropZone.y + dropZone.y / 3;
+          _this.player.graveYardArray.push(gameObject);
+
+          // remove the card from the scene after 500ms
+          setTimeout(function () {
+            gameObject.activateCard(this);
+            gameObject.setActive(false).setVisible(false);
+          }, 500);
+          _this.player.actionPoints = _this.player.getActionPoints() - gameObject.getCost();
+          _this.actiontext.text = _this.player.getActionPoints();
+          dropZone.renderNormalOutline(_this);
+          _this.cameras.main.shake(100, 0.02);
+        } else {
+          _this.dragend(pointer, gameObject, false);
+        }
+      });
+      this.input.on("dragend", this.dragend, this);
+    }
+  }, {
+    key: "dragend",
+    value: function dragend(pointer, gameObject, dropped) {
+      if (!dropped) {
+        this.player.handArray.push(gameObject);
+        gameObject.displayHeight = _config.gameOptions.cardHeight;
+        gameObject.displayWidth = _config.gameOptions.cardWidth;
+        this.arrangeCardsInCenter(this.player.handArray);
+      }
     }
   }, {
     key: "loadCards",
@@ -1249,13 +1213,13 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         target: "armour",
         amount: 6
       }, this, 0, 0, "kevlar");
-      _deck.deckArray.push(cannon);
-      _deck.deckArray.push(grenade);
-      _deck.deckArray.push(headshot);
-      _deck.deckArray.push(reload);
-      _deck.deckArray.push(overload);
-      _deck.deckArray.push(medkit);
-      _deck.deckArray.push(kevlar);
+      this.player.deckArray.push(cannon);
+      this.player.deckArray.push(grenade);
+      this.player.deckArray.push(headshot);
+      this.player.deckArray.push(reload);
+      this.player.deckArray.push(overload);
+      this.player.deckArray.push(medkit);
+      this.player.deckArray.push(kevlar);
     }
   }, {
     key: "arrangeCardsInCenter",
@@ -1294,14 +1258,18 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      if (_deck.deckArray.length > 0) {
-        var lastCard = _deck.deckTrackerArray.pop();
+      if (this.player.deckArray.length > 0) {
+        var lastCard = this.player.deckTrackerArray.pop();
         lastCard.destroy();
-        var drawCard = _deck.deckArray.pop();
-        _deck.handArray.push(drawCard);
+        var drawCard = this.player.deckArray.pop();
+        this.player.handArray.push(drawCard);
         drawCard.cardInHand(this);
-        this.arrangeCardsInCenter(_deck.handArray);
+        this.arrangeCardsInCenter(this.player.handArray);
       }
+      for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
+        _config.enemy.enemyOnScene[i].action(this);
+      }
+      this.heartext.text = this.player.getHealth();
     }
 
     // spawning in enemies and their life
@@ -1330,7 +1298,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/deck.js":"src/helpers/classes/deck.js","../helpers/classes/interactHandler.js":"src/helpers/classes/interactHandler.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js","../helpers/classes/cards/toolTip.js":"src/helpers/classes/cards/toolTip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js","../helpers/classes/cards/toolTip.js":"src/helpers/classes/cards/toolTip.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1436,7 +1404,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41559" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39895" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
