@@ -19,7 +19,9 @@ let game = new Phaser.Game({
     ],
     render:{
         pixelArt: true
-    }
+    }, 
+    scale: { parent: 'phaser-container', mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }
+
 });
 
 // Function to load a font - https://stackoverflow.com/questions/51217147/how-to-use-a-local-font-in-phaser-3

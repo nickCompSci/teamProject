@@ -30,12 +30,15 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("background", "./assets/background.png");
         this.load.image("player2", "./assets/player2.png");
         this.load.image("player", "./assets/player.png");
+        this.load.image("player_map", "./assets/player_map.png")
 
         this.load.image("map", "./assets/tower_floor_map.png");
         this.load.image("shop", "./assets/shop.png");
         this.load.image("random", "./assets/random.png");
-        this.load.image("cards", "./assets/cards.png");
+        this.load.image("cards", "./assets/cards_new.png");
         this.load.image("door", "./assets/doorway.png");
+        this.load.image("up", "./assets/up_arrow.png")
+        this.load.image("pointer", "./assets/pointer.png")
 
         // Load audio
         this.load.audio("soundtrack", "./assets/soundtrack.mp3");
