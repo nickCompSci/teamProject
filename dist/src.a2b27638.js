@@ -211,6 +211,7 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
+      console.log("HERE");
       var bg = this.add.sprite(-110, 0, "background").setOrigin(0, 0);
       bg.setScale(1);
       bg.alpha = 0.3;
@@ -230,7 +231,7 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
         }
       }
       this.input.once("pointerdown", function () {
-        this.scene.start(_CST.CST.SCENES.BATTLE);
+        this.scene.stop(_CST.CST.SCENES.DISCARD_PILE);
       }, this);
     }
   }]);
@@ -482,8 +483,10 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     var _this;
     _classCallCheck(this, Player);
     _this = _super.call(this, scene, x, y, sprite, frame);
-    _this.health = 50;
-    _this.actionPoints = 6;
+    _this.maxHealth = 50;
+    _this.health = _this.maxHealth;
+    _this.maxActionPoints = 6;
+    _this.actionPoints = _this.maxActionPoints;
     _this.handArray = [];
     _this.deckArray = [];
     _this.deckTrackerArray = [];
@@ -621,7 +624,12 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   }, {
     key: "setHealth",
     value: function setHealth(health) {
-      this.health = health;
+      this.health += health;
+
+      // setting it back to max health if going over
+      if (this.health > this.maxHealth) {
+        this.health = this.maxHealth;
+      }
     }
   }, {
     key: "getActionPoints",
@@ -631,7 +639,12 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   }, {
     key: "setActionPoints",
     value: function setActionPoints(actionPoints) {
-      this.actionPoints = actionPoints;
+      this.actionPoints += actionPoints;
+
+      // setting it back to max AP if going over
+      if (this.actionPoints > this.maxActionPoints) {
+        this.actionPoints = this.maxActionPoints;
+      }
     }
   }, {
     key: "getSpriteType",
@@ -843,6 +856,9 @@ var DamageCard = /*#__PURE__*/function (_HandCard) {
       if (this.effect.target == "single") {
         for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
           _config.enemy.enemyOnScene[i].once("pointerdown", function (pointer) {
+            this.setInteractive({
+              useHandCursor: true
+            });
             this.setHealth(this.getHealth() - card.effect.damage);
             this.heartText.setText(this.getHealth());
             for (var j = 0; j < _config.enemy.enemyOnScene.length; j++) {
@@ -973,7 +989,14 @@ var ReloadCard = /*#__PURE__*/function (_HandCard) {
   }, {
     key: "activateCard",
     value: function activateCard(scene) {
-      var card = this;
+      if (this.effect.sideEffects !== null) {
+        // removing health if its overloading card
+        scene.player.setHealth(this.effect.sideEffects);
+        scene.heartext.setText(scene.player.health);
+        // add function here to kill the player if health goes to 0
+      }
+
+      scene.player.setActionPoints(this.effect.amount);
     }
   }, {
     key: "getLabel",
@@ -1027,15 +1050,18 @@ var HealingCard = /*#__PURE__*/function (_HandCard) {
     value: function cardInHand(scene) {
       _get(_getPrototypeOf(HealingCard.prototype), "cardInHand", this).call(this, scene);
     }
-
-    // needs to access the player's health and armour
   }, {
     key: "activateCard",
     value: function activateCard(scene) {
-      var card = this;
-      if (card.effect.target == "health") {
-        console.log(this);
+      if (this.effect.target == "health") {
+        scene.player.setHealth(this.effect.amount);
+        scene.heartext.setText(scene.player.health);
       }
+      // include bottom when armour is introduced
+      // } else (this.effect.target == "armour") {
+      //     scene.player.setArmour(this.effect.amount);
+      //     scene.armourText.setText(scene.player.armour);
+      // }
     }
   }, {
     key: "getLabel",
@@ -1095,9 +1121,6 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function init(data) {
       // data returns a list of preloaded cards
       var cards = data;
-      // make these class variables to turn them off on click
-      this.endTurnButton;
-      this.keepCardButton;
     }
   }, {
     key: "preload",
@@ -1155,7 +1178,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         useHandCursor: true
       });
       discardPile.on('pointerdown', function (event) {
-        this.scene.start(_CST.CST.SCENES.DISCARD_PILE, graveYardArray);
+        this.scene.launch(_CST.CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
       }, this);
 
       // loads all the different types of cards
@@ -1166,13 +1189,12 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // zone where cards can be dropped and activated
       var dropZone = new _zone.default(this, 200, 200, 500, 500);
 
-      // spawning enemies according to spritesheet randomly
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
       this.player.deckSetUp(this);
       this.drawCard(_config.gameOptions.startCards);
 
-      // loading in every enemy sprite
+      // spawning enemies according to spritesheet randomly
       for (var i = 0; i < _config.enemy.numberOfSprites; i++) {
         var enemySprite = new _enemy.default(this, 0, 0, 'enemy', i);
         _config.enemy.enemyList.push(enemySprite);
@@ -1255,10 +1277,10 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           gameObject.x = dropZone.x;
           gameObject.y = dropZone.y + dropZone.y / 3;
           _this.player.graveYardArray.push(gameObject);
+          gameObject.activateCard(_this);
 
           // remove the card from the scene after 500ms
           setTimeout(function () {
-            gameObject.activateCard(this);
             gameObject.setActive(false).setVisible(false);
           }, 500);
           _this.player.actionPoints = _this.player.getActionPoints() - gameObject.getCost();
@@ -1307,15 +1329,15 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       }, this, 0, 0, "reload");
       var overload = new _reloadCard.default("overload", 0, "reload", {
         amount: 4,
-        sideEffects: -1
+        sideEffects: -15
       }, this, 0, 0, "overload");
 
       // healing cards
-      var medkit = new _healingCard.default("medkit", 1, "healing", {
+      var medkit = new _healingCard.default("medkit", 0, "healing", {
         target: "health",
         amount: 3
       }, this, 0, 0, "medkit");
-      var kevlar = new _healingCard.default("kevlar", 2, "healing", {
+      var kevlar = new _healingCard.default("kevlar", 1, "healing", {
         target: "armour",
         amount: 6
       }, this, 0, 0, "kevlar");
@@ -1532,7 +1554,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62836" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58954" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

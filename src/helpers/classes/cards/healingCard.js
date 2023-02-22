@@ -14,12 +14,16 @@ export default class HealingCard extends HandCard {
         super.cardInHand(scene);
     } 
 
-    // needs to access the player's health and armour
     activateCard(scene) {
-        let card = this;
-        if (card.effect.target == "health") {
-            console.log(this);
+        if (this.effect.target == "health") {
+            scene.player.setHealth(this.effect.amount);
+            scene.heartext.setText(scene.player.health);
         }
+        // include bottom when armour is introduced
+        // } else (this.effect.target == "armour") {
+        //     scene.player.setArmour(this.effect.amount);
+        //     scene.armourText.setText(scene.player.armour);
+        // }
     }
 
     getLabel() {

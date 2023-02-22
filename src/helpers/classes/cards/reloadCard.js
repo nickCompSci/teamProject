@@ -17,7 +17,14 @@ export default class ReloadCard extends HandCard {
     // nned to account for next turn side effects
     // such as losing action points next turn
     activateCard(scene) {
-        let card = this;
+        if (this.effect.sideEffects !== null) {
+            // removing health if its overloading card
+            scene.player.setHealth(this.effect.sideEffects);
+            scene.heartext.setText(scene.player.health);
+            // add function here to kill the player if health goes to 0
+        }
+
+        scene.player.setActionPoints(this.effect.amount);
     }
 
     getLabel() {

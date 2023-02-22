@@ -4,8 +4,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y, sprite, frame) {
         super(scene, x, y, sprite, frame);
-        this.health = 50;
-        this.actionPoints = 6;
+        this.maxHealth = 50;
+        this.health = this.maxHealth;
+        this.maxActionPoints = 6;
+        this.actionPoints = this.maxActionPoints;
         this.handArray = [];
         this.deckArray = [];
         this.deckTrackerArray = [];
@@ -109,7 +111,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     setHealth(health) {
-        this.health = health;
+        this.health += health;
+
+        // setting it back to max health if going over
+        if (this.health > this.maxHealth) {
+            this.health = this.maxHealth;
+        }
     }
 
     getActionPoints() {
@@ -117,7 +124,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     setActionPoints(actionPoints) {
-        this.actionPoints = actionPoints;
+        this.actionPoints += actionPoints;
+
+        // setting it back to max AP if going over
+        if (this.actionPoints > this.maxActionPoints) {
+            this.actionPoints = this.maxActionPoints
+        }
     }
 
     getSpriteType() {

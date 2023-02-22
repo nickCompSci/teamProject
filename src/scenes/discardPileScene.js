@@ -23,6 +23,7 @@ export class DiscardPileScene extends Phaser.Scene {
     }
 
     create() {
+        console.log("HERE");
         let bg = this.add.sprite(-110, 0, "background").setOrigin(0,0);
         bg.setScale(1);
         bg.alpha = 0.3;
@@ -46,7 +47,7 @@ export class DiscardPileScene extends Phaser.Scene {
         }
 
         this.input.once("pointerdown", function() {
-            this.scene.start(CST.SCENES.BATTLE);
+            this.scene.stop(CST.SCENES.DISCARD_PILE);
         }, this);
     }
 }

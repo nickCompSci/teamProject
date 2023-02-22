@@ -19,9 +19,6 @@ export class BattleScene extends Phaser.Scene {
     init(data) {
         // data returns a list of preloaded cards
         let cards = data;
-        // make these class variables to turn them off on click
-        this.endTurnButton;
-        this.keepCardButton;
     }
 
     preload() {
@@ -73,7 +70,7 @@ export class BattleScene extends Phaser.Scene {
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
         discardPile.setScale(1.5).setInteractive({useHandCursor: true});
         discardPile.on('pointerdown', function (event) {
-            this.scene.start(CST.SCENES.DISCARD_PILE, graveYardArray);
+            this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
         
         // loads all the different types of cards
@@ -85,13 +82,12 @@ export class BattleScene extends Phaser.Scene {
         // zone where cards can be dropped and activated
         let dropZone = new Zone(this, 200, 200, 500, 500);
 
-        // spawning enemies according to spritesheet randomly
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
         this.player.deckSetUp(this);
         this.drawCard(gameOptions.startCards);
 
-        // loading in every enemy sprite
+        // spawning enemies according to spritesheet randomly
         for (let i=0; i < enemy.numberOfSprites; i++) {
             let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
             enemy.enemyList.push(enemySprite);
@@ -183,10 +179,10 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.y = dropZone.y + dropZone.y / 3;
                 
                 this.player.graveYardArray.push(gameObject);
-        
+                gameObject.activateCard(this);
+
                 // remove the card from the scene after 500ms
                 setTimeout(function() { 
-                    gameObject.activateCard(this);
                     gameObject.setActive(false).setVisible(false); 
                 }, 500);
         
@@ -224,11 +220,11 @@ export class BattleScene extends Phaser.Scene {
         
         // reload cards
         let reload = new ReloadCard("reload", 0, "reload", {amount: 2, sideEffects: null}, this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -1}, this, 0, 0, "overload");
+        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -15}, this, 0, 0, "overload");
 
         // healing cards
-        let medkit = new HealingCard("medkit", 1, "healing", {target: "health", amount: 3}, this, 0, 0, "medkit");
-        let kevlar = new HealingCard("kevlar", 2, "healing", {target: "armour", amount: 6}, this, 0, 0, "kevlar");
+        let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 3}, this, 0, 0, "medkit");
+        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 6}, this, 0, 0, "kevlar");
 
         this.player.deckArray.push(cannon);
         this.player.deckArray.push(grenade);
