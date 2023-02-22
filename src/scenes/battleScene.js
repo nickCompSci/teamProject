@@ -4,7 +4,6 @@ import { gameOptions, enemy } from "../helpers/config.js";
 import Zone from "../helpers/classes/zone.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
-import {handArray, deckArray, deckTrackerArray, graveYardArray, shuffle, deckSetUp} from "../helpers/classes/deck.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
@@ -279,6 +278,11 @@ export class BattleScene extends Phaser.Scene {
             drawCard.cardInHand(this);
             this.arrangeCardsInCenter(this.player.handArray);
         }
+
+        for (let i=0; i < enemy.enemyOnScene.length; i++) {
+            enemy.enemyOnScene[i].action(this);
+        }
+        this.heartext.text = this.player.getHealth();
     }
 
     // spawning in enemies and their life

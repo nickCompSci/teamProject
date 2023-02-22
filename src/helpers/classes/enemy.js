@@ -19,6 +19,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   
     // generates a random number between min and max parameters
     // min and max included
+    action(scene) {
+        scene.player.health = scene.player.getHealth() - 5;
+    }
+
     getRandomHealth(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
