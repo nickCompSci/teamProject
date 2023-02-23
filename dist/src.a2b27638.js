@@ -423,12 +423,12 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
     var _this;
     _classCallCheck(this, Zone);
     (_this = _super.call(this, scene, x, y, width, height)).setRectangleDropZone(width, height);
-    _this.setOrigin(0, 1);
     scene.add.existing(_assertThisInitialized(_this));
     _this.normalZone = 0xffff00; // yellow
     _this.activeZone = 0x00ffff; // lightblue / turquoise 
 
     _this.zoneOutline = scene.add.graphics();
+    ;
     _this.renderNormalOutline(scene);
     return _this;
   }
@@ -1217,7 +1217,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.keepCardButton = new _button.default(gameWidth, gameHeight / 2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
       // zone where cards can be dropped and activated
-      var dropZone = new _zone.default(this, 500, 310, 665, 665);
+      var dropZone = new _zone.default(this, 500, 250, 665, 500);
 
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
@@ -1572,7 +1572,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58954" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63726" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
