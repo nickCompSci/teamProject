@@ -66,7 +66,7 @@ export class BattleScene extends Phaser.Scene {
         let actions = this.add.container(0, 0, [chamber, this.actiontext]);
         actions.setPosition(gameWidth/20, gameHeight/1.75);
 
-        // set it so a rectangular zone appear with overflow
+        // launch the discard pile scene in parallel
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
         discardPile.setScale(1.5).setInteractive({useHandCursor: true});
         discardPile.on('pointerdown', function (event) {

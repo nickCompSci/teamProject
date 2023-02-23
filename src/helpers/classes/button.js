@@ -1,4 +1,4 @@
-import { loadFont } from "../font"
+// import { loadFont } from "../font"
 // loadFont("font1", "./assets/PixelboyFont.ttf");
 
 export default class Button extends Phaser.GameObjects.Text {
@@ -15,6 +15,10 @@ export default class Button extends Phaser.GameObjects.Text {
         this.setInteractive( { useHandCursor: true});
         this.on('pointerdown', () => callback());
         scene.add.existing(this);
+    }
+
+    setFontColour(fontColour) {
+        this.setStyle({color: "#202529"});
     }
 
     changePadding(newX, newY) {

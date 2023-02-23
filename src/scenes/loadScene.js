@@ -20,7 +20,6 @@ export class LoadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.add(CST.SCENES.BATTLE, BattleScene, false);
         this.scene.start(CST.SCENES.BATTLE);
     }
 }

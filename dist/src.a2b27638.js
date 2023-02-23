@@ -132,6 +132,80 @@ var CST = {
   }
 };
 exports.CST = CST;
+},{}],"src/helpers/classes/button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+// import { loadFont } from "../font"
+// loadFont("font1", "./assets/PixelboyFont.ttf");
+var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
+  _inherits(Button, _Phaser$GameObjects$T);
+  var _super = _createSuper(Button);
+  function Button(x, y, label, scene, callback, bgColour) {
+    var _this;
+    _classCallCheck(this, Button);
+    _this = _super.call(this, scene, x, y, label);
+    _this.padding = {
+      x: 8,
+      y: 15
+    };
+    _this.setOrigin(1, 0.5);
+    _this.setPadding(_this.padding.x, _this.padding.y);
+    _this.setStyle({
+      backgroundColor: bgColour
+    });
+    _this.setInteractive({
+      useHandCursor: true
+    });
+    _this.on('pointerdown', function () {
+      return callback();
+    });
+    scene.add.existing(_assertThisInitialized(_this));
+    return _this;
+  }
+  _createClass(Button, [{
+    key: "setFontColour",
+    value: function setFontColour(fontColour) {
+      this.setStyle({
+        color: "#202529"
+      });
+    }
+  }, {
+    key: "changePadding",
+    value: function changePadding(newX, newY) {
+      this.padding = {
+        x: newX,
+        y: newY
+      };
+      this.setPadding(this.padding.x, this.padding.y);
+    }
+  }, {
+    key: "changeOrigin",
+    value: function changeOrigin(newX, newY) {
+      if (0 <= newX <= 1 && 0 <= newY <= 1) {
+        this.setOrigin(newX, newY);
+      }
+    }
+  }]);
+  return Button;
+}(Phaser.GameObjects.Text);
+exports.default = Button;
 },{}],"src/helpers/config.js":[function(require,module,exports) {
 "use strict";
 
@@ -170,8 +244,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DiscardPileScene = void 0;
 var _CST = require("../CST");
+var _button = _interopRequireDefault(require("../helpers/classes/button"));
 var _config = require("../helpers/config");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -184,7 +263,6 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var graveYardArray;
 var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   _inherits(DiscardPileScene, _Phaser$Scene);
   var _super = _createSuper(DiscardPileScene);
@@ -197,48 +275,70 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
   _createClass(DiscardPileScene, [{
     key: "init",
     value: function init(data) {
-      graveYardArray = data;
+      this.graveYardArray = data;
     }
   }, {
     key: "preload",
     value: function preload() {
-      this.load.spritesheet("cards", "./assets/sprites/spritesheet.png", {
-        frameWidth: _config.gameOptions.cardWidth,
-        frameHeight: _config.gameOptions.cardHeight
-      });
       this.load.image("background", "./assets/background.png");
+      this.load.image("reload", "./assets/cards/Reload.png");
     }
   }, {
     key: "create",
     value: function create() {
-      console.log("HERE");
-      var bg = this.add.sprite(-110, 0, "background").setOrigin(0, 0);
+      var gameWidth = this.game.config.width;
+      var gameHeight = this.game.config.height;
+      var bg = this.add.image(-20, 0, "background").setOrigin(0, 0);
       bg.setScale(1);
-      bg.alpha = 0.3;
-      var startX = 0;
-      var startY = 0;
-      if (graveYardArray.length == 0) {
-        console.log("You have no discarded or used cards.");
-      } else {
-        for (var i = 0; i < graveYardArray.length; i++) {
-          graveYardArray[i].setVisible(true);
-          var discardCard = this.add.existing(graveYardArray[i]);
-          discardCard.x = startX + i * 150;
-          discardCard.y = startY;
-          discardCard.setOrigin(0, 0);
-          discardCard.displayWidth = _config.gameOptions.cardWidth;
-          discardCard.displayHeight = _config.gameOptions.cardHeight;
+      var title = this.add.text(gameWidth / 2, 5, "Discard Pile", {
+        fontSize: "45px"
+      });
+      title.setOrigin(0.5, 0);
+      var startX = 10;
+      var startY = 50;
+      var xOffset = _config.gameOptions.cardWidth + 50;
+      var yOffSet = _config.gameOptions.cardHeight + 60;
+      var xCounter = 0;
+      var yCounter = 0;
+      if (this.graveYardArray.length > 0) {
+        var _iterator = _createForOfIteratorHelper(this.graveYardArray),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var cards = _step.value;
+            cards.setVisible(true);
+            var discardCard = this.add.existing(cards);
+            discardCard.x = startX + xCounter * xOffset;
+            discardCard.y = startY + yCounter * yOffSet;
+            discardCard.setOrigin(0, 0);
+            discardCard.displayWidth = _config.gameOptions.cardWidth * 1.3;
+            discardCard.displayHeight = _config.gameOptions.cardHeight * 1.3;
+            xCounter++;
+            if (xCounter === 5) {
+              xCounter = 0;
+              yCounter++;
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
         }
       }
-      this.input.once("pointerdown", function () {
+      this.input.on("pointerdown", function () {
         this.scene.stop(_CST.CST.SCENES.DISCARD_PILE);
       }, this);
+    }
+  }, {
+    key: "damageCardFilter",
+    value: function damageCardFilter() {
+      console.log("Hello");
     }
   }]);
   return DiscardPileScene;
 }(Phaser.Scene);
 exports.DiscardPileScene = DiscardPileScene;
-},{"../CST":"src/CST.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/handCard.js":[function(require,module,exports) {
+},{"../CST":"src/CST.js","../helpers/classes/button":"src/helpers/classes/button.js","../helpers/config":"src/helpers/config.js"}],"src/helpers/classes/cards/handCard.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -314,89 +414,7 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return HandCard;
 }(Phaser.GameObjects.Sprite);
 exports.default = HandCard;
-},{"../../config":"src/helpers/config.js"}],"src/helpers/font.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.loadFont = loadFont;
-function loadFont(name, url) {
-  var newFont = new FontFace(name, 'url(${url})');
-  newFont.load().then(function (loaded) {
-    document.fonts.add(loaded);
-  }).catch(function (error) {
-    return error;
-  });
-}
-},{}],"src/helpers/classes/button.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _font = require("../font");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-// loadFont("font1", "./assets/PixelboyFont.ttf");
-var Button = /*#__PURE__*/function (_Phaser$GameObjects$T) {
-  _inherits(Button, _Phaser$GameObjects$T);
-  var _super = _createSuper(Button);
-  function Button(x, y, label, scene, callback, bgColour) {
-    var _this;
-    _classCallCheck(this, Button);
-    _this = _super.call(this, scene, x, y, label);
-    _this.padding = {
-      x: 8,
-      y: 15
-    };
-    _this.setOrigin(1, 0.5);
-    _this.setPadding(_this.padding.x, _this.padding.y);
-    _this.setStyle({
-      backgroundColor: bgColour
-    });
-    _this.setInteractive({
-      useHandCursor: true
-    });
-    _this.on('pointerdown', function () {
-      return callback();
-    });
-    scene.add.existing(_assertThisInitialized(_this));
-    return _this;
-  }
-  _createClass(Button, [{
-    key: "changePadding",
-    value: function changePadding(newX, newY) {
-      this.padding = {
-        x: newX,
-        y: newY
-      };
-      this.setPadding(this.padding.x, this.padding.y);
-    }
-  }, {
-    key: "changeOrigin",
-    value: function changeOrigin(newX, newY) {
-      if (0 <= newX <= 1 && 0 <= newY <= 1) {
-        this.setOrigin(newX, newY);
-      }
-    }
-  }]);
-  return Button;
-}(Phaser.GameObjects.Text);
-exports.default = Button;
-},{"../font":"src/helpers/font.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js"}],"src/helpers/classes/zone.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1205,7 +1223,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       var actions = this.add.container(0, 0, [chamber, this.actiontext]);
       actions.setPosition(gameWidth / 20, gameHeight / 1.75);
 
-      // set it so a rectangular zone appear with overflow
+      // launch the discard pile scene in parallel
       var discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
       discardPile.setScale(1.5).setInteractive({
         useHandCursor: true
@@ -1565,7 +1583,6 @@ var LoadScene = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
-      this.scene.add(_CST.CST.SCENES.BATTLE, _battleScene.BattleScene, false);
       this.scene.start(_CST.CST.SCENES.BATTLE);
     }
   }]);
@@ -1595,7 +1612,7 @@ var config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: [_loadScene.LoadScene, _discardPileScene.DiscardPileScene]
+  scene: [_loadScene.LoadScene, _battleScene.BattleScene, _discardPileScene.DiscardPileScene]
 };
 exports.config = config;
 var game = new Phaser.Game(config);
