@@ -12,6 +12,7 @@ export var config = {
     scale: { parent: 'phaser-container', mode:Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: [
         LoadScene,
+        BattleScene,
         DiscardPileScene
     ]
 };
