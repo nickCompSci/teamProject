@@ -1,6 +1,6 @@
 export const gameOptions = {
     deck: 6,
-    startCards: 5,
+    startCards: 6,
     cardWidth: 130,
     cardHeight: 205,
     cardDistance: 100,

@@ -126,7 +126,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
-  startCards: 5,
+  startCards: 6,
   cardWidth: 130,
   cardHeight: 205,
   cardDistance: 100,
@@ -223,7 +223,7 @@ var HandCard = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   return HandCard;
 }(Phaser.GameObjects.Sprite);
 exports.default = HandCard;
-},{"../../config":"src/helpers/config.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../../config":"src/helpers/config.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -248,7 +248,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63726" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41557" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -392,5 +392,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/helpers/classes/cards/handCard.js"], null)
+},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/helpers/classes/cards/handCard.js"], null)
 //# sourceMappingURL=/handCard.bbc6275c.js.map

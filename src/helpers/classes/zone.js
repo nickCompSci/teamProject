@@ -1,4 +1,3 @@
-
 export default class Zone extends Phaser.GameObjects.Zone {
     constructor(scene, x, y, width, height) {
         super(scene, x, y, width, height).setRectangleDropZone(width, height);

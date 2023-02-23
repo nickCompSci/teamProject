@@ -141,7 +141,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
-  startCards: 5,
+  startCards: 6,
   cardWidth: 130,
   cardHeight: 205,
   cardDistance: 100,
@@ -1125,6 +1125,9 @@ var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloa
 var _healingCard = _interopRequireDefault(require("../helpers/classes/cards/healingCard.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -1217,7 +1220,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.keepCardButton = new _button.default(gameWidth, gameHeight / 2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
       // zone where cards can be dropped and activated
-      var dropZone = new _zone.default(this, 500, 250, 665, 500);
+      //let dropZone = new Zone(this, 500, 250, 665, 665);
+      var dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
@@ -1234,23 +1238,23 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // card event listeners for pointer interactions
       this.input.on('dragstart', function (pointer, gameObject) {
         gameObject.tooltip.removeTooltip();
-        this.tweens.add({
+        _this.tweens.add({
           targets: gameObject,
           angle: 0,
           x: pointer.x,
           y: pointer.y,
           duration: 50
         });
-        this.tweens.add({
-          targets: this.background,
+        _this.tweens.add({
+          targets: _this.background,
           alpha: 0.3,
           duration: 50
         });
-        var index = this.player.handArray.indexOf(gameObject);
+        var index = _this.player.handArray.indexOf(gameObject);
         if (index !== -1) {
-          this.player.handArray.splice(index, 1);
+          _this.player.handArray.splice(index, 1);
         }
-        this.arrangeCardsInCenter(this.player.handArray);
+        _this.arrangeCardsInCenter(_this.player.handArray);
       }, this);
       this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
         gameObject.x = dragX;
@@ -1259,9 +1263,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover over listener
       this.input.on('gameobjectover', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+        if (gameObject.type === "Sprite" && _this.player.handArray.includes(gameObject)) {
           var yOffSet = 50;
-          this.tweens.add({
+          _this.tweens.add({
             targets: gameObject,
             angle: 0,
             y: gameObject.startPosition.y - yOffSet,
@@ -1277,8 +1281,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover out listener
       this.input.on('gameobjectout', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
-          this.tweens.add({
+        if (gameObject.type === "Sprite" && _this.player.handArray.includes(gameObject)) {
+          _this.tweens.add({
             targets: gameObject,
             y: gameObject.startPosition.y,
             angle: gameObject.startPosition.angle,
@@ -1291,15 +1295,21 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         }
       }, this);
       this.input.on('dragenter', function (pointer, gameObject, dropZone) {
-        dropZone.renderActiveOutline();
+        //dropZone.renderActiveOutline();
+        gameObject.setTint(0xffa500);
       });
       this.input.on('dragleave', function (pointer, gameObject, dropZone) {
-        dropZone.renderNormalOutline();
+        //dropZone.renderNormalOutline();
+        gameObject.clearTint();
+        if (gameObject.cost > _this.player.actionPoints) {
+          gameObject.setTint(0xff0000);
+        }
       });
       this.input.on('drop', function (pointer, gameObject, dropZone) {
         if (_this.player.getActionPoints() >= gameObject.getCost()) {
           gameObject.input.enabled = false;
           gameObject.tooltip.removeTooltip();
+          gameObject.clearTint();
 
           // setting card in the middle 
           gameObject.displayHeight = _config.gameOptions.cardHeight;
@@ -1315,9 +1325,25 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           }, 500);
           _this.player.actionPoints = _this.player.getActionPoints() - gameObject.getCost();
           _this.actiontext.text = _this.player.getActionPoints();
-          dropZone.renderNormalOutline(_this);
+          //dropZone.renderNormalOutline(this);
+
           _this.cameras.main.shake(100, 0.02);
+          var _iterator = _createForOfIteratorHelper(_this.player.handArray),
+            _step;
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var card = _step.value;
+              if (card.cost > _this.player.actionPoints) {
+                card.setTint(0xff0000);
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
         } else {
+          gameObject.setTint(0xff0000);
           _this.dragend(pointer, gameObject, false);
         }
       });
@@ -1418,6 +1444,18 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function keepCard(player) {
       this.keepCardButton.visible = false;
       this.endTurnButton.visible = true;
+      var _iterator2 = _createForOfIteratorHelper(this.player.handArray),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var card = _step2.value;
+          card.clearTint();
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
       this.player.selectCardInHand(player);
     }
 
@@ -1438,6 +1476,20 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // automatic drawing goes here and checking if needing to reshuffle the deck
       this.player.drawCard(1, this);
       this.player.resetDeck(this);
+      var _iterator3 = _createForOfIteratorHelper(this.player.handArray),
+        _step3;
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var card = _step3.value;
+          if (card.cost > this.player.actionPoints) {
+            card.setTint(0xff0000);
+          }
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
     }
 
     // spawning in enemies and their life
@@ -1547,7 +1599,7 @@ var config = {
 };
 exports.config = config;
 var game = new Phaser.Game(config);
-},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","./scenes/loadScene":"src/scenes/loadScene.js","/src/scenes/battleScene.js":"src/scenes/battleScene.js"}],"../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/discardPileScene":"src/scenes/discardPileScene.js","./scenes/loadScene":"src/scenes/loadScene.js","/src/scenes/battleScene.js":"src/scenes/battleScene.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1572,7 +1624,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63726" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41557" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -1716,5 +1768,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
+},{}]},{},["../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
 //# sourceMappingURL=/src.a2b27638.js.map

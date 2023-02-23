@@ -80,7 +80,8 @@ export class BattleScene extends Phaser.Scene {
         this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         // zone where cards can be dropped and activated
-        let dropZone = new Zone(this, 500, 250, 665, 500);
+        //let dropZone = new Zone(this, 500, 250, 665, 665);
+        let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
@@ -95,7 +96,7 @@ export class BattleScene extends Phaser.Scene {
         this.spawnEnemyOnScene();
 
         // card event listeners for pointer interactions
-        this.input.on('dragstart', function (pointer, gameObject) {
+        this.input.on('dragstart', (pointer, gameObject) => {
             gameObject.tooltip.removeTooltip();
             this.tweens.add({
                 targets: gameObject,
@@ -119,13 +120,13 @@ export class BattleScene extends Phaser.Scene {
 
         }, this);
 
-        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             gameObject.x = dragX;
             gameObject.y = dragY;
         });
 
         // hover over listener
-        this.input.on('gameobjectover', function(pointer, gameObject) {
+        this.input.on('gameobjectover', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
                 let yOffSet = 50;
                 this.tweens.add({
@@ -144,7 +145,7 @@ export class BattleScene extends Phaser.Scene {
         }, this);
 
         // hover out listener
-        this.input.on('gameobjectout', function(pointer, gameObject) {
+        this.input.on('gameobjectout', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
                 this.tweens.add({
                     targets: gameObject,
@@ -159,18 +160,24 @@ export class BattleScene extends Phaser.Scene {
             }
        }, this);
 
-        this.input.on('dragenter', function(pointer, gameObject, dropZone) {
-            dropZone.renderActiveOutline();
+        this.input.on('dragenter', (pointer, gameObject, dropZone) => {
+            //dropZone.renderActiveOutline();
+            gameObject.setTint(0xffa500);
         });
 
-        this.input.on('dragleave', function(pointer, gameObject, dropZone) {
-            dropZone.renderNormalOutline();
+        this.input.on('dragleave', (pointer, gameObject, dropZone) => {
+            //dropZone.renderNormalOutline();
+            gameObject.clearTint();
+            if (gameObject.cost > this.player.actionPoints) {
+                gameObject.setTint(0xff0000);
+            }
         }); 
 
         this.input.on('drop', (pointer, gameObject, dropZone) => {
             if (this.player.getActionPoints() >= gameObject.getCost()) {
                 gameObject.input.enabled = false;
                 gameObject.tooltip.removeTooltip();
+                gameObject.clearTint();
         
                 // setting card in the middle 
                 gameObject.displayHeight = gameOptions.cardHeight;
@@ -188,10 +195,16 @@ export class BattleScene extends Phaser.Scene {
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 this.actiontext.text = this.player.getActionPoints();
-                dropZone.renderNormalOutline(this);
+                //dropZone.renderNormalOutline(this);
         
                 this.cameras.main.shake(100, 0.02);
+                for (let card of this.player.handArray){
+                    if (card.cost > this.player.actionPoints){
+                        card.setTint(0xff0000);
+                    }
+                }
             } else {
+                gameObject.setTint(0xff0000);
                 this.dragend(pointer, gameObject, false);
             }
         });
@@ -274,6 +287,9 @@ export class BattleScene extends Phaser.Scene {
     keepCard(player) {
         this.keepCardButton.visible = false;
         this.endTurnButton.visible = true;
+        for (let card of this.player.handArray){
+            card.clearTint();
+        }
         this.player.selectCardInHand(player);
     }
     
@@ -293,6 +309,11 @@ export class BattleScene extends Phaser.Scene {
         // automatic drawing goes here and checking if needing to reshuffle the deck
         this.player.drawCard(1, this);
         this.player.resetDeck(this);
+        for (let card of this.player.handArray){
+            if (card.cost > this.player.actionPoints){
+                card.setTint(0xff0000);
+            }
+        }
     }
     
     // spawning in enemies and their life
