@@ -2,6 +2,7 @@ import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
 import { gameOptions, enemy} from "../helpers/config.js";
 import Zone from "../helpers/classes/zone.js";
+import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
@@ -26,7 +27,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("background", "./assets/background.png");
         this.load.image("card_holder", "./assets/card_holder.jpg");
         this.load.image("guy", "./assets/sprites/player_green_glasses.png");
-        this.load.image("heart", "./assets/sprites/heart.png");
+        //this.load.image("heart", "./assets/sprites/heart.png");
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
         this.load.image("discardPile", "./assets/sprites/discardPile.png")
         this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
@@ -50,15 +51,16 @@ export class BattleScene extends Phaser.Scene {
         bg.setScale(0.65);
         
         this.player = new Player(this, 0, 0, "guy");
-        this.player.setPosition(gameWidth/4, gameHeight/1.65);
+        this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(3);
 
-        let heart = this.add.image(0, 0, "heart");
-        this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
-        heart.setScale(4);
-        this.heartext.setPosition(-18, -18);
-        let health = this.add.container(0, 0, [heart, this.heartext]);
-        health.setPosition(gameWidth/20, gameHeight/2.2);
+        //let heart = this.add.image(0, 0, "heart");
+        //this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
+        //heart.setScale(4);
+        //this.heartext.setPosition(-18, -18);
+        //let health = this.add.container(0, 0, [heart, this.heartext]);
+        //health.setPosition(gameWidth/20, gameHeight/2.2);
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health)
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
@@ -321,10 +323,11 @@ export class BattleScene extends Phaser.Scene {
             let base_damage = enemy.enemyOnScene[i].action();
             this.damage_calculation(this.player, base_damage, [1]);
         }
-        this.heartext.text = this.player.getHealth();
+        this.playerHealth.health = this.player.health;
+        this.playerHealth.show_health();
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        this.player.drawCard(6 - this.player.handArray.length, this);
+        this.player.drawCard(5 - this.player.handArray.length, this);
         this.player.resetDeck(this);
         for (let card of this.player.handArray){
             if (card.cost > this.player.actionPoints){

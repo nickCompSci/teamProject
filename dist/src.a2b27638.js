@@ -215,7 +215,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
-  startCards: 6,
+  startCards: 5,
   cardWidth: 130,
   cardHeight: 205,
   cardDistance: 100,
@@ -468,6 +468,50 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
+},{}],"src/helpers/classes/healthBar.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var HealthBar = /*#__PURE__*/function () {
+  function HealthBar(scene, x, y, maxHealth, health) {
+    _classCallCheck(this, HealthBar);
+    this.bar = new Phaser.GameObjects.Graphics(scene);
+    this.x = x;
+    this.y = y;
+    this.maxHealth = maxHealth;
+    this.health = health;
+    this.show_health();
+    scene.add.existing(this.bar);
+  }
+  _createClass(HealthBar, [{
+    key: "show_health",
+    value: function show_health() {
+      this.bar.clear();
+
+      //  BG
+      this.bar.fillStyle(0xffffff);
+      this.bar.fillRect(this.x, this.y, 104, 16);
+
+      //  Health
+      this.bar.fillStyle(0x000000);
+      this.bar.fillRect(this.x + 2, this.y + 2, 100, 12);
+      var percentage = 100 * (this.health / this.maxHealth);
+      this.bar.fillStyle(0xff0000);
+      this.bar.fillRect(this.x + 2, this.y + 2, percentage, 12);
+    }
+  }]);
+  return HealthBar;
+}();
+exports.default = HealthBar;
 },{}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
@@ -1134,6 +1178,7 @@ var _CST = require("../CST.js");
 var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
 var _config = require("../helpers/config.js");
 var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
+var _healthBar = _interopRequireDefault(require("../helpers/classes/healthBar.js"));
 var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
 var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
 var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
@@ -1179,7 +1224,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("background", "./assets/background.png");
       this.load.image("card_holder", "./assets/card_holder.jpg");
       this.load.image("guy", "./assets/sprites/player_green_glasses.png");
-      this.load.image("heart", "./assets/sprites/heart.png");
+      //this.load.image("heart", "./assets/sprites/heart.png");
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("discardPile", "./assets/sprites/discardPile.png");
       this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
@@ -1202,17 +1247,16 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
       this.player = new _player.default(this, 0, 0, "guy");
-      this.player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      this.player.setPosition(gameWidth / 3.5, gameHeight / 1.7);
       this.player.setScale(3);
-      var heart = this.add.image(0, 0, "heart");
-      this.heartext = this.add.text(0, 0, this.player.getHealth(), {
-        color: "black",
-        fontSize: "30px"
-      });
-      heart.setScale(4);
-      this.heartext.setPosition(-18, -18);
-      var health = this.add.container(0, 0, [heart, this.heartext]);
-      health.setPosition(gameWidth / 20, gameHeight / 2.2);
+
+      //let heart = this.add.image(0, 0, "heart");
+      //this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
+      //heart.setScale(4);
+      //this.heartext.setPosition(-18, -18);
+      //let health = this.add.container(0, 0, [heart, this.heartext]);
+      //health.setPosition(gameWidth/20, gameHeight/2.2);
+      this.playerHealth = new _healthBar.default(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health);
       var chamber = this.add.circle(0, 0, 30, 0xffcc00);
       this.actiontext = this.add.text(0, 0, this.player.getActionPoints(), {
         color: "black",
@@ -1520,10 +1564,11 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         var base_damage = _config.enemy.enemyOnScene[i].action();
         this.damage_calculation(this.player, base_damage, [1]);
       }
-      this.heartext.text = this.player.getHealth();
+      this.playerHealth.health = this.player.health;
+      this.playerHealth.show_health();
 
       // automatic drawing goes here and checking if needing to reshuffle the deck
-      this.player.drawCard(6 - this.player.handArray.length, this);
+      this.player.drawCard(5 - this.player.handArray.length, this);
       this.player.resetDeck(this);
       var _iterator4 = _createForOfIteratorHelper(this.player.handArray),
         _step4;
@@ -1567,7 +1612,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/healthBar.js":"src/helpers/classes/healthBar.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

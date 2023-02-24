@@ -126,7 +126,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.gameOptions = exports.enemy = exports.cardBackDimensions = void 0;
 var gameOptions = {
   deck: 6,
-  startCards: 6,
+  startCards: 5,
   cardWidth: 130,
   cardHeight: 205,
   cardDistance: 100,
