@@ -128,7 +128,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     resetDeck(scene) {
-        console.log(this.graveYardArray.length);
         if (this.deckArray.length <= 0) {
             // push all the cards in graveYard array back to the deck
             for (let i=this.graveYardArray.length; i > 0; i--) {

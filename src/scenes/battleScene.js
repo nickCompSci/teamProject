@@ -222,11 +222,21 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
-    damage_calculation(base, modifiers) {
+    damage_calculation(character, damage, modifiers) {
         for (let modifier of modifiers){
-            base = base * modifier;
+            damage = damage * modifier;
         }
-        return damage
+        console.log(damage);
+        character.health = character.health - damage;
+        character.setTint(0xff0000);
+        let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
+        damage_num.setPosition(character.x + 40, character.y - 80);
+        this.time.delayedCall(450, this.damage_event, [character, damage_num], this);
+    }
+
+    damage_event(character, damage_num){
+        character.clearTint();
+        damage_num.destroy();
     }
 
     loadCards() {
@@ -308,7 +318,8 @@ export class BattleScene extends Phaser.Scene {
         
         // simulate enemies attacking
         for (let i=0; i < enemy.enemyOnScene.length; i++) {
-            enemy.enemyOnScene[i].action(this);
+            let base_damage = enemy.enemyOnScene[i].action();
+            this.damage_calculation(this.player, base_damage, [1]);
         }
         this.heartext.text = this.player.getHealth();
         

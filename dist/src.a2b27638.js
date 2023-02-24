@@ -656,7 +656,6 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   }, {
     key: "resetDeck",
     value: function resetDeck(scene) {
-      console.log(this.graveYardArray.length);
       if (this.deckArray.length <= 0) {
         // push all the cards in graveYard array back to the deck
         for (var i = this.graveYardArray.length; i > 0; i--) {
@@ -734,7 +733,7 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _classCallCheck(this, Enemy);
     _this = _super.call(this, scene, x, y, sprite, frame);
     _this.setScale(2);
-    _this.health = _this.getRandomHealth(50, 70);
+    _this.health = _this.getRandomHealth(10, 30);
     _this.spriteType = "enemy";
     _this.setInteractive();
     _this.heartText = scene.add.text(scene.game.config.width - 20, 0, _this.health, {
@@ -754,8 +753,8 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   // min and max included
   _createClass(Enemy, [{
     key: "action",
-    value: function action(scene) {
-      scene.player.health = scene.player.getHealth() - 5;
+    value: function action() {
+      return Math.floor(Math.random() * 10);
     }
   }, {
     key: "getRandomHealth",
@@ -1229,7 +1228,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         useHandCursor: true
       });
       discardPile.on('pointerdown', function (event) {
-        this.scene.launch(_CST.CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
+        _this.scene.launch(_CST.CST.SCENES.DISCARD_PILE, _this.player.graveYardArray);
       }, this);
 
       // loads all the different types of cards
@@ -1378,6 +1377,37 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       }
     }
   }, {
+    key: "damage_calculation",
+    value: function damage_calculation(character, damage, modifiers) {
+      var _iterator2 = _createForOfIteratorHelper(modifiers),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var modifier = _step2.value;
+          damage = damage * modifier;
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      console.log(damage);
+      character.health = character.health - damage;
+      character.setTint(0xff0000);
+      var damage_num = this.add.text(0, 0, "-" + damage, {
+        color: "red",
+        fontSize: "30px"
+      });
+      damage_num.setPosition(character.x + 40, character.y - 80);
+      this.time.delayedCall(450, this.damage_event, [character, damage_num], this);
+    }
+  }, {
+    key: "damage_event",
+    value: function damage_event(character, damage_num) {
+      character.clearTint();
+      damage_num.destroy();
+    }
+  }, {
     key: "loadCards",
     value: function loadCards() {
       // damage cards
@@ -1462,17 +1492,17 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function keepCard(player) {
       this.keepCardButton.visible = false;
       this.endTurnButton.visible = true;
-      var _iterator2 = _createForOfIteratorHelper(this.player.handArray),
-        _step2;
+      var _iterator3 = _createForOfIteratorHelper(this.player.handArray),
+        _step3;
       try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var card = _step2.value;
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var card = _step3.value;
           card.clearTint();
         }
       } catch (err) {
-        _iterator2.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator2.f();
+        _iterator3.f();
       }
       this.player.selectCardInHand(player);
     }
@@ -1487,26 +1517,27 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // simulate enemies attacking
       for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
-        _config.enemy.enemyOnScene[i].action(this);
+        var base_damage = _config.enemy.enemyOnScene[i].action();
+        this.damage_calculation(this.player, base_damage, [1]);
       }
       this.heartext.text = this.player.getHealth();
 
       // automatic drawing goes here and checking if needing to reshuffle the deck
-      this.player.drawCard(1, this);
+      this.player.drawCard(6 - this.player.handArray.length, this);
       this.player.resetDeck(this);
-      var _iterator3 = _createForOfIteratorHelper(this.player.handArray),
-        _step3;
+      var _iterator4 = _createForOfIteratorHelper(this.player.handArray),
+        _step4;
       try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var card = _step3.value;
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var card = _step4.value;
           if (card.cost > this.player.actionPoints) {
             card.setTint(0xff0000);
           }
         }
       } catch (err) {
-        _iterator3.e(err);
+        _iterator4.e(err);
       } finally {
-        _iterator3.f();
+        _iterator4.f();
       }
     }
 
@@ -1641,7 +1672,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41557" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42711" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

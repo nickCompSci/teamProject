@@ -2,7 +2,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, sprite, frame) {
         super(scene, x, y, sprite, frame);
         this.setScale(2);
-        this.health = this.getRandomHealth(50, 70);
+        this.health = this.getRandomHealth(10, 30);
         this.spriteType = "enemy";
         this.setInteractive();
 
@@ -19,8 +19,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   
     // generates a random number between min and max parameters
     // min and max included
-    action(scene) {
-        scene.player.health = scene.player.getHealth() - 5;
+    action() {
+        return Math.floor(Math.random() * 10);
     }
 
     getRandomHealth(min, max) {
