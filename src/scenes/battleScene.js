@@ -69,7 +69,7 @@ export class BattleScene extends Phaser.Scene {
         // launch the discard pile scene in parallel
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
         discardPile.setScale(1.5).setInteractive({useHandCursor: true});
-        discardPile.on('pointerdown', function (event) {
+        discardPile.on('pointerdown', (event) => {
             this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
         
@@ -222,6 +222,12 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    damage_calculation(base, modifiers) {
+        for (let modifier of modifiers){
+            base = base * modifier;
+        }
+        return damage
+    }
 
     loadCards() {
         // damage cards
@@ -307,7 +313,7 @@ export class BattleScene extends Phaser.Scene {
         this.heartext.text = this.player.getHealth();
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        this.player.drawCard(1, this);
+        this.player.drawCard(6 - this.player.handArray.length, this);
         this.player.resetDeck(this);
         for (let card of this.player.handArray){
             if (card.cost > this.player.actionPoints){
