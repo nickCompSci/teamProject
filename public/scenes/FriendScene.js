@@ -15,7 +15,7 @@ export class friendScene extends Phaser.Scene{
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
-        // Credits title
+        // Friends title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Friends', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
@@ -34,10 +34,13 @@ export class friendScene extends Phaser.Scene{
             console.log("hover")
         })
 
+        backButton.on("pointerout", ()=>{
+            arrowSprite.setVisible(false);
+        })
+
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
             this.scene.start(CST.SCENES.MENU);
-            console.log("click")
         })
     }
 }
