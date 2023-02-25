@@ -141,3 +141,8 @@ function deleteFriend(otherUserIndex) {
     })
 }
 
+function joinFriend(otherUserIndex) {
+    // will call a route that accesses the friends join code and automatically joins
+    window.confirm("clicked join friend");
+
+}
