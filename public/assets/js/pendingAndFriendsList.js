@@ -5,7 +5,7 @@ function showFriends() {
     // where a call to a route occurs to find all friends
     // the result which is looped through and displays each friend in a new line
     // as a list element
-
+    
     document.getElementById("showUsersFriends").style.display = "block";
     document.getElementById("showUsersPending").style.display = "none";
     // data to be sent to the route
@@ -36,3 +36,39 @@ function showFriends() {
     })
 }
 
+function showPending() {
+    // where a call to a route occurs to find any incoming pending requests.
+    // the result is looped through and displays each pending request
+    // along with the username of who sent it.
+
+    document.getElementById("showUsersFriends").style.display = "none";
+    document.getElementById("showUsersPending").style.display = "block";
+    // data to be sent to the route
+    var data = {
+        refreshToken: getCookie('refreshJwt')
+    };
+    $.ajax({
+        type: 'POST',
+        url: "/getPendingRequests",
+        data,
+        success: function (result) {
+            // set the innerhtml to nothing to make sure not to duplicate results
+            document.getElementById("pendingRequests").innerHTML = "";
+            allPendingRequests = result.friendRequests.length;
+            // for loop to generate the list and the font-awesome icons
+            for (let i = 0; i < allPendingRequests.length; i++) {
+                const listElement = document.createElement("li");
+                // add it to the dictionary
+                pendingFriends[i] = allPendingRequests[i];
+                // what the user will see
+                listElement.innerHTML = allPendingRequests[i] + ' <i id="' + allPendingRequests[i]
+                    + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check""></i>\
+                <i onClick="declineRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark"></i>';
+                document.getElementById("pendingRequests").appendChild(listElement);
+            }
+        },
+        error: function (xhr) {
+            window.alert(JSON.stringify(xhr));
+        }
+    })
+}
