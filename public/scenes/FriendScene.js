@@ -18,7 +18,7 @@ export class friendScene extends Phaser.Scene {
             };
             $.ajax({
                 type: 'POST',
-                url: '/lookupFriend',
+                url: '/searchForValidUsername',
                 data,
                 // on success call the callback function
                 success: callback,

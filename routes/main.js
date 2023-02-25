@@ -10,7 +10,7 @@ const router = express.Router();
 
 // route to check if server is active and running
 router.get("/status", (request, response, next) => {
-    response.status(200).json({ status: "Ok, server running"});
+    response.status(200).json({ status: "Ok, server running" });
 });
 
 // route to POST user registration details
@@ -20,7 +20,7 @@ router.post("/registration", passport.authenticate("registration",
         const uri = process.env.NEO4J_URI;
         const user = process.env.NEO4J_USERNAME;
         const password = process.env.NEO4J_PASSWORD;
-        
+
         // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
         const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
         try {
@@ -29,16 +29,16 @@ router.post("/registration", passport.authenticate("registration",
             const writeQuery = `CREATE (n:Person { username: $newPerson })`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { newPerson })
-            );           
-        }catch (error) {
+            );
+        } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
             // Don't forget to close the driver connection when you're finished with it.
             await driver.close();
-        }    
-        
-        response.status(200).json({ message: "registration successful"});
-});
+        }
+
+        response.status(200).json({ message: "registration successful" });
+    });
 
 router.post("/login", async (request, response, next) => {
     passport.authenticate("login", async (err, user, info) => {
@@ -47,7 +47,7 @@ router.post("/login", async (request, response, next) => {
                 const error = new Error("An error occurred logging in.");
                 return next(error);
             }
-            request.login(user, { session : false }, async (error) => {
+            request.login(user, { session: false }, async (error) => {
                 if (error) return next(error);
                 const body = {
                     _id: user._id,
@@ -55,9 +55,9 @@ router.post("/login", async (request, response, next) => {
                 };
                 const jwtKey = process.env.JWT_SIGN_KEY;
                 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
-                const token = jwt.sign({ user: body }, jwtKey, { expiresIn: 300});
+                const token = jwt.sign({ user: body }, jwtKey, { expiresIn: 300 });
                 const refreshToken = jwt.sign({ user: body }, jwtRefreshKey,
-                { expiresIn: 86400});
+                    { expiresIn: 86400 });
                 // store the jwt in a cookie
                 response.cookie("jwt", token);
                 response.cookie("refreshJwt", refreshToken);
@@ -69,7 +69,7 @@ router.post("/login", async (request, response, next) => {
                     _id: user._id
                 };
                 // send the token back to the user
-                return response.status(200).json({ token, refreshToken});
+                return response.status(200).json({ token, refreshToken });
             });
         } catch (error) {
             return next(error);
@@ -85,10 +85,10 @@ router.post("/token", (request, response) => {
     const refreshToken = request.body.refreshToken;
     const decoded = jwt.decode(request.body.refreshToken);
     const email = decoded.user.email;
-    if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)){
+    if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)) {
         const body = { email, _id: tokenList[refreshToken]._id };
         const token = jwt.sign({ user: body }, jwtKey,
-            { expiresIn: 300});
+            { expiresIn: 300 });
         // update the jwt
         response.cookie("jwt", token);
         tokenList[refreshToken].token = token;
@@ -107,7 +107,45 @@ router.post("/logout", (request, response) => {
         response.clearCookie("refreshJwt");
         response.clearCookie("jwt");
     }
-    response.status(200).json({ message: "Successfully Logged out"});
+    response.status(200).json({ message: "Successfully Logged out" });
+});
+
+
+router.post("/searchForValidUsername", (request, response) => {
+
+    function checkIfUsernameExistsCallback(result) {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ found: result }));
+    }
+
+    function checkIfUsernameExists(theUsername, callback) {
+        (async () => {
+            let found = "None";
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+
+            try {
+                const session = driver.session({ database: 'neo4j' });
+                const readQuery = `MATCH (n:Person { username: $theUsername}) RETURN n.username as username`;
+                const readResult = await session.executeRead(tx =>
+                    tx.run(readQuery, { theUsername })
+                );
+
+                readResult.records.forEach(record => {
+                    found = record.get("username");
+                })
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback(found);
+            }
+        })();
+    }
+    checkIfUsernameExists(request.body.username, checkIfUsernameExistsCallback);
 });
 
 module.exports = router;
