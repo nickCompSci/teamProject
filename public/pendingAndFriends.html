@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/8e2ba51c19.js" crossorigin="anonymous"></script>
+    <script src="assets/js/friendsList.js"></script>
+    <style>
+        #showUsersPending,
+        #showUsersFriends {
+            overflow: auto;
+            height: 50%;
+            border: 3px solid white;
+            width: 75%;
+            margin-left: 6%;
+        }
+
+        section {
+            height: 600px;
+            width: 500px
+        }
+
+        #tabs {
+            padding-left: 15%;
+        }
+
+        #tabs li {
+            list-style-type: none;
+            /* Remove bullets */
+            margin: 0;
+            /* Remove margins */
+            display: inline;
+            font-size: 40px;
+
+        }
+
+        #tabs li+li {
+            border-left: 3px solid white;
+            padding-left: 2%;
+        }
+
+        #tabs li {
+            cursor: pointer;
+        }
+
+        #showUsersPending li,
+        #showUsersFriends li {
+            list-style-type: none;
+            /* Remove bullets */
+            padding-bottom: 5%;
+            font-size: 30px;
+            display: block;
+        }
+
+        #showUsersPending ul,
+        #showUsersFriends ul {
+            padding: 2%;
+            margin: 1%;
+        }
+
+        li i {
+            margin-left: 10%;
+        }
+
+        ul li i {
+            float: right;
+        }
+
+        #showUsersFriends {
+            display: none;
+        }
+
+        .fa-solid.fa-user,
+        .fa-solid.fa-trash,
+        .fa-solid.fa-square-check,
+        .fa-sharp.fa-solid.fa-square-xmark,
+        .fa-sharp.fa-solid.fa-right-to-bracket {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <ul id="tabs">
+            <li onClick="showFriends()">Friends</li>
+            <li onClick="showPending()">Pending</li>
+        </ul>
+        <!-- this will hold all current friends of the current user/player -->
+        <div id="showUsersFriends">
+            <ul id="currentFriends">
+            </ul>
+        </div>
+        <!-- this will hold all friend requests sent to current user/player -->
+        <div id="showUsersPending">
+            <ul id="pendingRequests">
+            </ul>
+        </div>
+    </section>
+
+</body>
+
+</html>
