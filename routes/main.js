@@ -256,4 +256,57 @@ router.post("/getPendingFriendRequests", (request, response) => {
     searchForPendingRequests(currentUser, searchForPendingRequestsCallback);
 });
 
+router.post("/acceptOrDeclinePendingRequest", (request, response) => {
+    function createFriendRelationshipCallback(result) {
+        response.setHeader("Content-Type", "application/json");
+        response.end(JSON.stringify({}));
+    }
+
+    function createFriendRelationship(currentUser, otherUser, operation, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            const driver2 = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+
+                if (operation == "accept") {
+                    // must create friend relationship
+                    const session = driver.session({ database: 'neo4j' });
+                    // make sure to create a unique relationship not duplicate
+                    const writeQuery = `
+                        MATCH (a:Person {username: $currentUser}) 
+                        MATCH (b:Person {username: $otherUser})
+                        MERGE (b)-[r:FRIENDS_WITH]->(a);`;
+                    await session.executeWrite(tx =>
+                        tx.run(writeQuery, { currentUser, otherUser })
+                    );
+                    await session.close();
+                }
+                // now must delete the pending request relationship
+                // this must be done when a user declines or accepts a friend request
+                const session2 = driver2.session({ database: 'neo4j' });
+                const deleteQuery = `
+                 MATCH (a:Person {username: $otherUser})-[r:PENDING_REQUEST]->(b:Person {username: $currentUser})
+                    DELETE r;`;
+                await session2.executeWrite(tx =>
+                    tx.run(deleteQuery, { otherUser, currentUser }))
+
+            } catch (error) {
+                console.log(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback("Success");
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    const otherUser = request.body.otherUser
+    const operation = request.body.value;
+    createFriendRelationship(currentUser, otherUser, operation, createFriendRelationshipCallback);
+})
+
 module.exports = router;
