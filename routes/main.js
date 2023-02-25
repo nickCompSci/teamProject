@@ -351,4 +351,41 @@ router.post("/getFriends", (request, response) => {
 
 })
 
+router.post("/deleteFriend", (request, response) => {
+    function deleteFriendCallback(result) {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({}));
+    }
+
+    function deleteFriend(currentUsername, userToDelete, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                // query to delete the specified user
+                const writeQuery = `MATCH (:Person {username: $currentUsername})-[r:FRIENDS_WITH]-(:Person {username: $userToDelete})
+                    DELETE r`;
+                await session.executeWrite(tx =>
+                    tx.run(writeQuery, { currentUsername, userToDelete })
+                );
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback();
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    const otherUser = request.body.otherUser
+    deleteFriend(currentUser, otherUser, deleteFriendCallback);
+
+})
+
 module.exports = router;
