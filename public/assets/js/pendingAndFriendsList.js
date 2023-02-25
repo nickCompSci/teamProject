@@ -63,7 +63,7 @@ function showPending() {
                 // what the user will see
                 listElement.innerHTML = allPendingRequests[i] + ' <i id="' + allPendingRequests[i]
                     + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check""></i>\
-                <i onClick="declineRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark"></i>';
+                <i onClick="declineFriendRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark"></i>';
                 document.getElementById("pendingRequests").appendChild(listElement);
             }
         },
@@ -72,3 +72,27 @@ function showPending() {
         }
     })
 }
+
+function acceptFriendRequest(otherUserIndex) {
+    // data to be sent to the route
+    var data = {
+        refreshToken: getCookie('refreshJwt'),
+        otherUser: pendingFriends[otherUserIndex],
+        value: "accept"
+    };
+    $.ajax({
+        type: 'POST',
+        url: "/acceptOrDeclinePendingRequest",
+        data,
+        // callback function
+        success: function (result) {
+            // make the pending requests update to reflect changes to the user
+            // a form of "refreshing"
+            showPending()
+        },
+        error: function (xhr) {
+            window.alert(JSON.stringify(xhr));
+        }
+    })
+}
+
