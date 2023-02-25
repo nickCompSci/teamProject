@@ -31,7 +31,8 @@ export class LoadScene extends Phaser.Scene{
 
         // Load audio
         this.load.audio("soundtrack", "../assets/resources/soundtrack.mp3");
-
+        this.load.html("searchFriendForm", "../searchFriendForm.html");
+        this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         // Load plugins
         // this.load.scenePlugin({
         //     key: 'rexuiplugin',
