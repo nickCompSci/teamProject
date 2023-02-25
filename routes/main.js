@@ -148,4 +148,71 @@ router.post("/searchForValidUsername", (request, response) => {
     checkIfUsernameExists(request.body.username, checkIfUsernameExistsCallback);
 });
 
+router.post("/sendFriendRequest", (request, response) => {
+
+    function sendFriendRequestCallback(result) {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ found: String(result) }));
+    }
+
+    function sendFriendRequest(toOtherUser, currentUser, callback) {
+        (async () => {
+            let status = "false";
+            let doesExist;
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            const driver2 = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                // query to check if the relationship already exists
+                const readQuery = `MATCH (a:Person {username : $currentUser}),
+                    (b:Person {username: $toOtherUser})
+                    RETURN EXISTS( (a)-[:PENDING_REQUEST]->(b) ) as exist`;
+
+                const readResult = await session.executeRead(tx =>
+                    tx.run(readQuery, { currentUser, toOtherUser })
+                );
+
+                await session.close();
+                readResult.records.forEach(record => {
+
+                    doesExist = record.get("exist");
+                    if (doesExist == true) {
+                        status = "exists";
+                    }
+                })
+
+                if (doesExist == false) {
+                    const session2 = driver2.session({ database: "neo4j" });
+                    // query to create a pending request relationship
+                    const writeQuery = `MATCH (a:Person), (b:Person)
+                        WHERE a.username = $currentUser AND b.username = $toOtherUser
+                        CREATE (a)-[r:PENDING_REQUEST]->(b)
+                        RETURN type(r)`;
+
+                    await session2.executeWrite(tx =>
+                        tx.run(writeQuery, { currentUser, toOtherUser })
+                    );
+                    status = "true";
+                }
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                // will make sure to always close the connection
+                await driver.close();
+                callback(status);
+            }
+        })();
+    }
+
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    const otherUser = request.body.username;
+    sendFriendRequest(otherUser, currentUser, sendFriendRequestCallback);
+});
+
+
 module.exports = router;
