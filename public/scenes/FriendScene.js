@@ -88,8 +88,8 @@ export class friendScene extends Phaser.Scene {
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
-        this.nameInput = this.add.dom(200, 400).createFromCache("friendsForm");
-        this.friendsAndPending = this.add.dom(825, 500).createFromCache("friendsList");
+        this.nameInput = this.add.dom(200, 400).createFromCache("searchFriendForm");
+        this.friendsAndPending = this.add.dom(825, 500).createFromCache("pendingAndFriends");
 
         const scene = this;
         showFriends(); // on load call the friends function to load in the friends list
@@ -155,5 +155,8 @@ export class friendScene extends Phaser.Scene {
             // Moves back to the main menu when the back button is clicked
             this.scene.start(CST.SCENES.MENU);
         })
+    }
+    reset(){
+        this.scene.start(CST.SCENES.FRIENDS)
     }
 }

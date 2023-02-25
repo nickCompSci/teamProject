@@ -18,7 +18,7 @@ function showFriends() {
         data,
         // callback function
         success: function (result) {
-            allFriends = result.friends.length;
+            allFriends = result.friends;
             document.getElementById("currentFriends").innerHTML = "";
             for (let i = 0; i < allFriends.length; i++) {
                 // create a list element
@@ -54,7 +54,7 @@ function showPending() {
         success: function (result) {
             // set the innerhtml to nothing to make sure not to duplicate results
             document.getElementById("pendingRequests").innerHTML = "";
-            allPendingRequests = result.friendRequests.length;
+            allPendingRequests = result.friendRequests;
             // for loop to generate the list and the font-awesome icons
             for (let i = 0; i < allPendingRequests.length; i++) {
                 const listElement = document.createElement("li");

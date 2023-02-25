@@ -66,7 +66,8 @@ router.post("/login", async (request, response, next) => {
                     token,
                     refreshToken,
                     email: user.email,
-                    _id: user._id
+                    _id: user._id,
+                    username: user.username
                 };
                 // send the token back to the user
                 return response.status(200).json({ token, refreshToken });
