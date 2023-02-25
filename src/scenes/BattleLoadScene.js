@@ -1,11 +1,11 @@
 import { CST } from "../CST";
 import HandCard from "../helpers/classes/cards/handCard";
-import { BattleScene } from "./battleScene";
+import { BattleScene } from "./BattleScene";
 
-export class LoadScene extends Phaser.Scene {
+export class BattleLoadScene extends Phaser.Scene {
     constructor() {
         super({
-            key: CST.SCENES.LOAD
+            key: CST.SCENES.BATTLE_LOAD
         })
     }
 

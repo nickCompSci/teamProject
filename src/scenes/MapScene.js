@@ -1,7 +1,7 @@
 /**
 This file is used to create the map scene.
 */
-import Map from "../classes/map";
+import Map from "../helpers/classes/map";
 import { CST } from "../CST";
 export class MapScene extends Phaser.Scene{
     constructor(){
@@ -215,6 +215,7 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
+                    scene.scene.start(CST.SCENES.BATTLE_LOAD);
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }
