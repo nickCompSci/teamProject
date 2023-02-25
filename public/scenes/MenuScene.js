@@ -32,6 +32,9 @@ export class MenuScene extends Phaser.Scene{
 
         let friendsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 350, 'Friends', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
+        let battleButton = this.add.text(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 + 350, 'Battle', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let mapButton = this.add.text(this.game.renderer.width/ 2 + 400 , this.game.renderer.height / 2 + 350, 'Map', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
         // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
 
@@ -128,20 +131,34 @@ export class MenuScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.CREDITS)
             console.log("click")
         })
+        battleButton.setInteractive();
 
-        // Friends Button
-        friendsButton.setInteractive();
-
-        friendsButton.on("pointerover", ()=>{
+        battleButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
-            arrowSprite.x = friendsButton.x - friendsButton.width +100;
-            arrowSprite.y = friendsButton.y + friendsButton.height / 4;
+            arrowSprite.x = battleButton.x - battleButton.width +100;
+            arrowSprite.y = battleButton.y + battleButton.height / 4;
         })
 
-        friendsButton.on("pointerup", ()=>{
+        battleButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.FRIENDS)
+            this.scene.start(CST.SCENES.BATTLE)
             console.log("click")
-        })        
+        })
+
+        // Map Button
+        mapButton.setInteractive();
+
+        mapButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = mapButton.x - mapButton.width +50;
+            arrowSprite.y = mapButton.y + mapButton.height / 4 ;
+        })
+
+        mapButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.MAP)
+            console.log("click")
+        })
     }
+
 }

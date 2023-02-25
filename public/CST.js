@@ -10,6 +10,10 @@ export const CST = {
         JOIN: "JOIN",
         CREATE: "CREATE",
         LOBBY: "LOBBY",
-        FRIENDS: "FRIENDS"
+        FRIENDS: "FRIENDS",
+        BATTLE_LOAD: "BATTLE_LOAD",
+        BATTLE: "BATTLE",
+        DISCARD_PILE: "DISCARD_PILE",
+        MAP: "MAP"
     }
 }

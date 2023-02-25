@@ -9,6 +9,8 @@ import { JoinGameScene } from "./JoinGameScene.js";
 import { CreateGameScene } from "./CreateGameScene.js";
 import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
+import { BattleScene } from "./BattleScene.js";
+import { MapScene } from "./MapScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -28,11 +30,23 @@ export class LoadScene extends Phaser.Scene{
         // Load images
         this.load.image("background", "../assets/resources/tower2.jpg");
         this.load.image("arrow", "../assets/resources/arrow.png")
-
+        this.load.image("tower", "../assets/resources/background.png");
         // Load audio
         this.load.audio("soundtrack", "../assets/resources/soundtrack.mp3");
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
+
+        this.load.image("player2", "../assets/resources/player2.png");
+        this.load.image("player", "../assets/resources/player.png");
+        this.load.image("player_map", "../assets/resources/player_map.png")
+
+        this.load.image("map", "../assets/resources/tower_floor_map.png");
+        this.load.image("shop", "../assets/resources/shop.png");
+        this.load.image("random", "../assets/resources/random.png");
+        this.load.image("cards", "../assets/resources/cards_new.png");
+        this.load.image("door", "../assets/resources/doorway.png");
+        this.load.image("up", "../assets/resources/up_arrow.png")
+        this.load.image("pointer", "../assets/resources/pointer.png")
         // Load plugins
         // this.load.scenePlugin({
         //     key: 'rexuiplugin',
