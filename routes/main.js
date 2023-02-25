@@ -309,4 +309,46 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
     createFriendRelationship(currentUser, otherUser, operation, createFriendRelationshipCallback);
 })
 
+router.post("/getFriends", (request, response) => {
+    function retrieveAllFriendsCallback(result) {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ friends: result }));
+    }
+
+    function retrieveAllFriends(currentUsername, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            const listOfFriends = [];
+            let aFriend;
+            // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                const readQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(People)
+                    RETURN People.username as users`;
+                const readResult = await session.executeRead(tx =>
+                    tx.run(readQuery, { currentUsername })
+                );
+                readResult.records.forEach(record => {
+                    // the users who are a friend of this user
+                    aFriend = record.get("users");
+                    listOfFriends.push(aFriend);
+                })
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback(listOfFriends);
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    retrieveAllFriends(currentUser, retrieveAllFriendsCallback);
+
+})
+
 module.exports = router;
