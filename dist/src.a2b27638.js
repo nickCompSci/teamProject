@@ -329,11 +329,6 @@ var DiscardPileScene = /*#__PURE__*/function (_Phaser$Scene) {
         this.scene.stop(_CST.CST.SCENES.DISCARD_PILE);
       }, this);
     }
-  }, {
-    key: "damageCardFilter",
-    value: function damageCardFilter() {
-      console.log("Hello");
-    }
   }]);
   return DiscardPileScene;
 }(Phaser.Scene);
@@ -1180,6 +1175,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("heart", "./assets/sprites/heart.png");
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("discardPile", "./assets/sprites/discardPile.png");
+      this.load.image("player", "./assets/sprites/player.png");
       this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
         frameWidth: _config.enemy.spriteWidth,
         frameHeight: _config.enemy.spriteHeight
@@ -1199,7 +1195,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      this.player = new _player.default(this, 0, 0, "guy");
+      this.player = new _player.default(this, 0, 0, "player");
       this.player.setPosition(gameWidth / 4, gameHeight / 1.65);
       this.player.setScale(3);
       var heart = this.add.image(0, 0, "heart");

@@ -28,7 +28,8 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("guy", "./assets/sprites/player_green_glasses.png");
         this.load.image("heart", "./assets/sprites/heart.png");
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
-        this.load.image("discardPile", "./assets/sprites/discardPile.png")
+        this.load.image("discardPile", "./assets/sprites/discardPile.png");
+        this.load.image("player", "./assets/sprites/player.png")
         this.load.spritesheet("enemy", "./assets/sprites/enemySpritesheet.png", {
             frameWidth: enemy.spriteWidth,
             frameHeight: enemy.spriteHeight
@@ -49,7 +50,7 @@ export class BattleScene extends Phaser.Scene {
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
         
-        this.player = new Player(this, 0, 0, "guy");
+        this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/4, gameHeight/1.65);
         this.player.setScale(3);
 

@@ -59,7 +59,4 @@ export class DiscardPileScene extends Phaser.Scene {
         }, this);
     }
 
-    damageCardFilter() {
-        console.log("Hello");
-    }
 }
