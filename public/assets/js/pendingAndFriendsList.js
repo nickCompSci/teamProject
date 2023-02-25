@@ -118,3 +118,26 @@ function declineFriendRequest(otherUserIndex) {
     })
 }
 
+function deleteFriend(otherUserIndex) {
+    // call to a route to delete a friend from a users/players friend list
+
+    // data to be sent to the route
+    var data = {
+        refreshToken: getCookie('refreshJwt'),
+        otherUser: friendsList[otherUserIndex]
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/deleteFriend",
+        data,
+        // callback function
+        success: function (result) {
+            // reload the friends list for the user
+            showFriends()
+        },
+        error: function (xhr) {
+            window.alert(JSON.stringify(xhr));
+        }
+    })
+}
+
