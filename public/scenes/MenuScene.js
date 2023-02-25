@@ -131,6 +131,22 @@ export class MenuScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.CREDITS)
             console.log("click")
         })
+
+        // Friends Button
+        friendsButton.setInteractive();
+
+        friendsButton.on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = friendsButton.x - friendsButton.width +100;
+            arrowSprite.y = friendsButton.y + friendsButton.height / 4;
+        })
+
+        friendsButton.on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.scene.start(CST.SCENES.FRIENDS)
+            console.log("click")
+        })
+
         battleButton.setInteractive();
 
         battleButton.on("pointerover", ()=>{
