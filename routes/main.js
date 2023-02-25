@@ -214,5 +214,46 @@ router.post("/sendFriendRequest", (request, response) => {
     sendFriendRequest(otherUser, currentUser, sendFriendRequestCallback);
 });
 
+router.post("/getPendingFriendRequests", (request, response) => {
+    // retrieve all pending requests relating to current user
+    // send back a list as result
+
+    function searchForPendingRequestsCallback(result) {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ friendRequests: result }));
+    }
+
+    function searchForPendingRequests(currentUsername, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            // the users/players who sent a friend request to this user
+            const listOfRequesters = [];
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                const readQuery = `MATCH (:Person {username: $currentUsername})<-[:PENDING_REQUEST]-(People)
+                    RETURN People.username as users`;
+                const readResult = await session.executeRead(tx =>
+                    tx.run(readQuery, { currentUsername })
+                );
+                readResult.records.forEach(record => {
+                    let userWhoSentFriendRequest = record.get("users");
+                    listOfRequesters.push(userWhoSentFriendRequest);
+                })
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback(listOfRequesters);
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    searchForPendingRequests(currentUser, searchForPendingRequestsCallback);
+});
 
 module.exports = router;

@@ -49,7 +49,7 @@ function showPending() {
     };
     $.ajax({
         type: 'POST',
-        url: "/getPendingRequests",
+        url: "/getPendingFriendRequests",
         data,
         success: function (result) {
             // set the innerhtml to nothing to make sure not to duplicate results
