@@ -96,3 +96,25 @@ function acceptFriendRequest(otherUserIndex) {
     })
 }
 
+function declineFriendRequest(otherUserIndex) {
+    // data to be sent to the route
+    var data = {
+        refreshToken: getCookie('refreshJwt'),
+        otherUser: pendingFriends[otherUserIndex],
+        value: "decline"
+    };
+    $.ajax({
+        type: 'POST',
+        url: "/acceptOrDeclinePendingRequest",
+        data,
+        success: function (result) {
+            // make the pending requests update to reflect changes to the user
+            // a form of "refreshing"
+            showPending()
+        },
+        error: function (xhr) {
+            window.alert(JSON.stringify(xhr));
+        }
+    })
+}
+
