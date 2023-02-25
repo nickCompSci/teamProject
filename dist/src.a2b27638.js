@@ -463,6 +463,50 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$Z) {
   return Zone;
 }(Phaser.GameObjects.Zone);
 exports.default = Zone;
+},{}],"src/helpers/classes/healthBar.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var HealthBar = /*#__PURE__*/function () {
+  function HealthBar(scene, x, y, maxHealth, health) {
+    _classCallCheck(this, HealthBar);
+    this.bar = new Phaser.GameObjects.Graphics(scene);
+    this.x = x;
+    this.y = y;
+    this.maxHealth = maxHealth;
+    this.health = health;
+    this.show_health();
+    scene.add.existing(this.bar);
+  }
+  _createClass(HealthBar, [{
+    key: "show_health",
+    value: function show_health() {
+      this.bar.clear();
+
+      //  BG
+      this.bar.fillStyle(0xffffff);
+      this.bar.fillRect(this.x, this.y, 104, 16);
+
+      //  Health
+      this.bar.fillStyle(0x000000);
+      this.bar.fillRect(this.x + 2, this.y + 2, 100, 12);
+      var percentage = 100 * (this.health / this.maxHealth);
+      this.bar.fillStyle(0xff0000);
+      this.bar.fillRect(this.x + 2, this.y + 2, percentage, 12);
+    }
+  }]);
+  return HealthBar;
+}();
+exports.default = HealthBar;
 },{}],"src/helpers/classes/player.js":[function(require,module,exports) {
 "use strict";
 
@@ -517,21 +561,16 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
         _step;
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var cards = _step.value;
-          cards.on("pointerdown", function (pointer) {
-            // this is referring to the clicked object rather than player now
-            if (player.keepCards.includes(this)) {
-              // removes the card from list 
-              player.keepCards.splice(player.keepCards.indexOf(this), 1);
-              this.clearTint();
-            } else {
-              if (player.keepCards.length < player.keepCardsLimit) {
-                player.keepCards.push(this);
-                // add a visual effect when clicked
-                this.setTint(0x999999);
-              }
-            }
-          });
+          var card = _step.value;
+          // remove the event listener from the card
+          card.removeListener("pointerdown", card.clickHandler);
+
+          // flag on card to keep track on whether it's being clicked
+          card.isBeingClicked = false;
+
+          // add the event listener back to the card
+          card.clickHandler = this.keepingCards.bind(this, card);
+          card.on("pointerdown", card.clickHandler);
         }
       } catch (err) {
         _iterator.e(err);
@@ -540,52 +579,88 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       }
     }
   }, {
+    key: "keepingCards",
+    value: function keepingCards(card) {
+      if (card.isBeingClicked) {
+        // removes the card from list 
+        this.keepCards.splice(this.keepCards.indexOf(card), 1);
+        card.clearTint();
+        card.isBeingClicked = false;
+      } else {
+        if (this.keepCards.length < this.keepCardsLimit) {
+          this.keepCards.push(card);
+          card.isBeingClicked = true;
+          // add a visual effect when clicked
+          card.setTint(0x999999);
+        }
+      }
+    }
+  }, {
     key: "moveCardsBackInDeck",
     value: function moveCardsBackInDeck(scene) {
-      // get indexes of cards not in this.keepCards List
-      var indexList = [];
+      // remove event listener from all cards
       var _iterator2 = _createForOfIteratorHelper(this.handArray),
         _step2;
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var cards = _step2.value;
-          if (!this.keepCards.includes(cards)) {
-            var _index = this.handArray.indexOf(cards);
+          cards.removeListener("pointerdown", cards.clickHandler);
+        }
+
+        // get indexes of cards not in this.keepCards List
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      var indexList = [];
+      var _iterator3 = _createForOfIteratorHelper(this.handArray),
+        _step3;
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var _cards = _step3.value;
+          if (!this.keepCards.includes(_cards)) {
+            var _index = this.handArray.indexOf(_cards);
             indexList.push(_index);
           }
         }
 
         // remove the indexes in reverse order not to mess up the loop
       } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
-      }
-      for (var index = indexList.length - 1; index >= 0; index--) {
-        this.deckArray.push(this.handArray[indexList[index]]);
-        this.handArray[indexList[index]].setActive(false).setVisible(false);
-        this.handArray.splice(indexList[index], 1);
-      }
-
-      // remove tint of cards remaining in hand
-      var _iterator3 = _createForOfIteratorHelper(this.handArray),
-        _step3;
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var _cards = _step3.value;
-          _cards.clearTint();
-        }
-
-        // set up the deck sprites and deckArray and organise the cards on screen
-      } catch (err) {
         _iterator3.e(err);
       } finally {
         _iterator3.f();
       }
+      for (var index = indexList.length - 1; index >= 0; index--) {
+        this.deckArray.push(this.handArray[indexList[index]]);
+        this.handArray[indexList[index]].setVisible(false);
+        this.handArray.splice(indexList[index], 1);
+      }
+
+      // set up the deck sprites and deckArray and organise the cards on screen
       this.shuffle();
       this.deckSetUp(scene);
       scene.arrangeCardsInCenter(this.handArray);
       this.enableDragOnCards();
+      this.keepCards = [];
+
+      // remove tint of cards remaining in hand 
+      // reset the click flag and add back the event listener 
+      var _iterator4 = _createForOfIteratorHelper(this.handArray),
+        _step4;
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var _cards2 = _step4.value;
+          _cards2.isBeingClicked = false;
+          _cards2.clickHandler = this.keepingCards.bind(this, _cards2);
+          _cards2.on("pointerdown", _cards2.clickHandler);
+          _cards2.clearTint();
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
     }
 
     // draw an amount of cards
@@ -651,7 +726,6 @@ var Player = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   }, {
     key: "resetDeck",
     value: function resetDeck(scene) {
-      console.log(this.graveYardArray.length);
       if (this.deckArray.length <= 0) {
         // push all the cards in graveYard array back to the deck
         for (var i = this.graveYardArray.length; i > 0; i--) {
@@ -729,7 +803,7 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _classCallCheck(this, Enemy);
     _this = _super.call(this, scene, x, y, sprite, frame);
     _this.setScale(2);
-    _this.health = _this.getRandomHealth(50, 70);
+    _this.health = _this.getRandomHealth(10, 30);
     _this.spriteType = "enemy";
     _this.setInteractive();
     _this.heartText = scene.add.text(scene.game.config.width - 20, 0, _this.health, {
@@ -749,8 +823,8 @@ var Enemy = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   // min and max included
   _createClass(Enemy, [{
     key: "action",
-    value: function action(scene) {
-      scene.player.health = scene.player.getHealth() - 5;
+    value: function action() {
+      return Math.floor(Math.random() * 10);
     }
   }, {
     key: "getRandomHealth",
@@ -1130,6 +1204,7 @@ var _CST = require("../CST.js");
 var _button = _interopRequireDefault(require("../helpers/classes/button.js"));
 var _config = require("../helpers/config.js");
 var _zone = _interopRequireDefault(require("../helpers/classes/zone.js"));
+var _healthBar = _interopRequireDefault(require("../helpers/classes/healthBar.js"));
 var _player = _interopRequireDefault(require("../helpers/classes/player.js"));
 var _enemy = _interopRequireDefault(require("../helpers/classes/enemy.js"));
 var _damageCard = _interopRequireDefault(require("../helpers/classes/cards/damageCard.js"));
@@ -1138,6 +1213,9 @@ var _reloadCard = _interopRequireDefault(require("../helpers/classes/cards/reloa
 var _healingCard = _interopRequireDefault(require("../helpers/classes/cards/healingCard.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -1172,7 +1250,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.load.image("background", "./assets/background.png");
       this.load.image("card_holder", "./assets/card_holder.jpg");
       this.load.image("guy", "./assets/sprites/player_green_glasses.png");
-      this.load.image("heart", "./assets/sprites/heart.png");
+      //this.load.image("heart", "./assets/sprites/heart.png");
       this.load.image("cardBack", "./assets/sprites/cardBack.png");
       this.load.image("discardPile", "./assets/sprites/discardPile.png");
       this.load.image("player", "./assets/sprites/player.png");
@@ -1195,18 +1273,17 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       card_bg.setScale(0.325);
       bg.setPosition(gameWidth / 2, gameHeight / 2.6);
       bg.setScale(0.65);
-      this.player = new _player.default(this, 0, 0, "player");
-      this.player.setPosition(gameWidth / 4, gameHeight / 1.65);
+      this.player = new _player.default(this, 0, 0, "guy");
+      this.player.setPosition(gameWidth / 3.5, gameHeight / 1.7);
       this.player.setScale(3);
-      var heart = this.add.image(0, 0, "heart");
-      this.heartext = this.add.text(0, 0, this.player.getHealth(), {
-        color: "black",
-        fontSize: "30px"
-      });
-      heart.setScale(4);
-      this.heartext.setPosition(-18, -18);
-      var health = this.add.container(0, 0, [heart, this.heartext]);
-      health.setPosition(gameWidth / 20, gameHeight / 2.2);
+
+      //let heart = this.add.image(0, 0, "heart");
+      //this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
+      //heart.setScale(4);
+      //this.heartext.setPosition(-18, -18);
+      //let health = this.add.container(0, 0, [heart, this.heartext]);
+      //health.setPosition(gameWidth/20, gameHeight/2.2);
+      this.playerHealth = new _healthBar.default(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health);
       var chamber = this.add.circle(0, 0, 30, 0xffcc00);
       this.actiontext = this.add.text(0, 0, this.player.getActionPoints(), {
         color: "black",
@@ -1222,7 +1299,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         useHandCursor: true
       });
       discardPile.on('pointerdown', function (event) {
-        this.scene.launch(_CST.CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
+        _this.scene.launch(_CST.CST.SCENES.DISCARD_PILE, _this.player.graveYardArray);
       }, this);
 
       // loads all the different types of cards
@@ -1231,7 +1308,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       this.keepCardButton = new _button.default(gameWidth, gameHeight / 2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
       // zone where cards can be dropped and activated
-      var dropZone = new _zone.default(this, 500, 250, 665, 500);
+      //let dropZone = new Zone(this, 500, 250, 665, 665);
+      var dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
       // shuffles the deck and sets up the visual for the deck cards
       this.player.shuffle();
@@ -1248,23 +1326,23 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
       // card event listeners for pointer interactions
       this.input.on('dragstart', function (pointer, gameObject) {
         gameObject.tooltip.removeTooltip();
-        this.tweens.add({
+        _this.tweens.add({
           targets: gameObject,
           angle: 0,
           x: pointer.x,
           y: pointer.y,
           duration: 50
         });
-        this.tweens.add({
-          targets: this.background,
+        _this.tweens.add({
+          targets: _this.background,
           alpha: 0.3,
           duration: 50
         });
-        var index = this.player.handArray.indexOf(gameObject);
+        var index = _this.player.handArray.indexOf(gameObject);
         if (index !== -1) {
-          this.player.handArray.splice(index, 1);
+          _this.player.handArray.splice(index, 1);
         }
-        this.arrangeCardsInCenter(this.player.handArray);
+        _this.arrangeCardsInCenter(_this.player.handArray);
       }, this);
       this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
         gameObject.x = dragX;
@@ -1273,9 +1351,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover over listener
       this.input.on('gameobjectover', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+        if (gameObject.type === "Sprite" && _this.player.handArray.includes(gameObject)) {
           var yOffSet = 50;
-          this.tweens.add({
+          _this.tweens.add({
             targets: gameObject,
             angle: 0,
             y: gameObject.startPosition.y - yOffSet,
@@ -1291,8 +1369,8 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // hover out listener
       this.input.on('gameobjectout', function (pointer, gameObject) {
-        if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
-          this.tweens.add({
+        if (gameObject.type === "Sprite" && _this.player.handArray.includes(gameObject)) {
+          _this.tweens.add({
             targets: gameObject,
             y: gameObject.startPosition.y,
             angle: gameObject.startPosition.angle,
@@ -1305,15 +1383,21 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         }
       }, this);
       this.input.on('dragenter', function (pointer, gameObject, dropZone) {
-        dropZone.renderActiveOutline();
+        //dropZone.renderActiveOutline();
+        gameObject.setTint(0xffa500);
       });
       this.input.on('dragleave', function (pointer, gameObject, dropZone) {
-        dropZone.renderNormalOutline();
+        //dropZone.renderNormalOutline();
+        gameObject.clearTint();
+        if (gameObject.cost > _this.player.actionPoints) {
+          gameObject.setTint(0xff0000);
+        }
       });
       this.input.on('drop', function (pointer, gameObject, dropZone) {
         if (_this.player.getActionPoints() >= gameObject.getCost()) {
           gameObject.input.enabled = false;
           gameObject.tooltip.removeTooltip();
+          gameObject.clearTint();
 
           // setting card in the middle 
           gameObject.displayHeight = _config.gameOptions.cardHeight;
@@ -1329,9 +1413,25 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
           }, 500);
           _this.player.actionPoints = _this.player.getActionPoints() - gameObject.getCost();
           _this.actiontext.text = _this.player.getActionPoints();
-          dropZone.renderNormalOutline(_this);
+          //dropZone.renderNormalOutline(this);
+
           _this.cameras.main.shake(100, 0.02);
+          var _iterator = _createForOfIteratorHelper(_this.player.handArray),
+            _step;
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var card = _step.value;
+              if (card.cost > _this.player.actionPoints) {
+                card.setTint(0xff0000);
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
         } else {
+          gameObject.setTint(0xff0000);
           _this.dragend(pointer, gameObject, false);
         }
       });
@@ -1346,6 +1446,37 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
         gameObject.displayWidth = _config.gameOptions.cardWidth;
         this.arrangeCardsInCenter(this.player.handArray);
       }
+    }
+  }, {
+    key: "damage_calculation",
+    value: function damage_calculation(character, damage, modifiers) {
+      var _iterator2 = _createForOfIteratorHelper(modifiers),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var modifier = _step2.value;
+          damage = damage * modifier;
+        }
+        // console.log(damage);
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      character.health = character.health - damage;
+      character.setTint(0xff0000);
+      var damage_num = this.add.text(0, 0, "-" + damage, {
+        color: "red",
+        fontSize: "30px"
+      });
+      damage_num.setPosition(character.x + 40, character.y - 80);
+      this.time.delayedCall(450, this.damage_event, [character, damage_num], this);
+    }
+  }, {
+    key: "damage_event",
+    value: function damage_event(character, damage_num) {
+      character.clearTint();
+      damage_num.destroy();
     }
   }, {
     key: "loadCards",
@@ -1432,6 +1563,9 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
     value: function keepCard(player) {
       this.keepCardButton.visible = false;
       this.endTurnButton.visible = true;
+      // for (let card of this.player.handArray){
+      //     card.clearTint();
+      // }
       this.player.selectCardInHand(player);
     }
 
@@ -1445,13 +1579,29 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
 
       // simulate enemies attacking
       for (var i = 0; i < _config.enemy.enemyOnScene.length; i++) {
-        _config.enemy.enemyOnScene[i].action(this);
+        var base_damage = _config.enemy.enemyOnScene[i].action();
+        this.damage_calculation(this.player, base_damage, [1]);
       }
-      this.heartext.text = this.player.getHealth();
+      this.playerHealth.health = this.player.health;
+      this.playerHealth.show_health();
 
       // automatic drawing goes here and checking if needing to reshuffle the deck
-      this.player.drawCard(1, this);
+      this.player.drawCard(5 - this.player.handArray.length, this);
       this.player.resetDeck(this);
+      var _iterator3 = _createForOfIteratorHelper(this.player.handArray),
+        _step3;
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var card = _step3.value;
+          if (card.cost > this.player.actionPoints) {
+            card.setTint(0xff0000);
+          }
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
     }
 
     // spawning in enemies and their life
@@ -1480,7 +1630,7 @@ var BattleScene = /*#__PURE__*/function (_Phaser$Scene) {
   return BattleScene;
 }(Phaser.Scene);
 exports.BattleScene = BattleScene;
-},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
+},{"../CST.js":"src/CST.js","../helpers/classes/button.js":"src/helpers/classes/button.js","../helpers/config.js":"src/helpers/config.js","../helpers/classes/zone.js":"src/helpers/classes/zone.js","../helpers/classes/healthBar.js":"src/helpers/classes/healthBar.js","../helpers/classes/player.js":"src/helpers/classes/player.js","../helpers/classes/enemy.js":"src/helpers/classes/enemy.js","../helpers/classes/cards/damageCard.js":"src/helpers/classes/cards/damageCard.js","../helpers/classes/cards/comboCard.js":"src/helpers/classes/cards/comboCard.js","../helpers/classes/cards/reloadCard.js":"src/helpers/classes/cards/reloadCard.js","../helpers/classes/cards/healingCard.js":"src/helpers/classes/cards/healingCard.js"}],"src/scenes/loadScene.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1585,7 +1735,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63726" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54787" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

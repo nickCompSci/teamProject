@@ -2,6 +2,7 @@ import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
 import { gameOptions, enemy} from "../helpers/config.js";
 import Zone from "../helpers/classes/zone.js";
+import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
@@ -26,7 +27,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("background", "./assets/background.png");
         this.load.image("card_holder", "./assets/card_holder.jpg");
         this.load.image("guy", "./assets/sprites/player_green_glasses.png");
-        this.load.image("heart", "./assets/sprites/heart.png");
+        //this.load.image("heart", "./assets/sprites/heart.png");
         this.load.image("cardBack", "./assets/sprites/cardBack.png");
         this.load.image("discardPile", "./assets/sprites/discardPile.png");
         this.load.image("player", "./assets/sprites/player.png")
@@ -50,16 +51,17 @@ export class BattleScene extends Phaser.Scene {
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
         
-        this.player = new Player(this, 0, 0, "player");
-        this.player.setPosition(gameWidth/4, gameHeight/1.65);
+        this.player = new Player(this, 0, 0, "guy");
+        this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(3);
 
-        let heart = this.add.image(0, 0, "heart");
-        this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
-        heart.setScale(4);
-        this.heartext.setPosition(-18, -18);
-        let health = this.add.container(0, 0, [heart, this.heartext]);
-        health.setPosition(gameWidth/20, gameHeight/2.2);
+        //let heart = this.add.image(0, 0, "heart");
+        //this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
+        //heart.setScale(4);
+        //this.heartext.setPosition(-18, -18);
+        //let health = this.add.container(0, 0, [heart, this.heartext]);
+        //health.setPosition(gameWidth/20, gameHeight/2.2);
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health)
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
@@ -70,7 +72,7 @@ export class BattleScene extends Phaser.Scene {
         // launch the discard pile scene in parallel
         let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
         discardPile.setScale(1.5).setInteractive({useHandCursor: true});
-        discardPile.on('pointerdown', function (event) {
+        discardPile.on('pointerdown', (event) => {
             this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
         
@@ -81,7 +83,8 @@ export class BattleScene extends Phaser.Scene {
         this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         // zone where cards can be dropped and activated
-        let dropZone = new Zone(this, 500, 250, 665, 500);
+        //let dropZone = new Zone(this, 500, 250, 665, 665);
+        let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
@@ -96,7 +99,7 @@ export class BattleScene extends Phaser.Scene {
         this.spawnEnemyOnScene();
 
         // card event listeners for pointer interactions
-        this.input.on('dragstart', function (pointer, gameObject) {
+        this.input.on('dragstart', (pointer, gameObject) => {
             gameObject.tooltip.removeTooltip();
             this.tweens.add({
                 targets: gameObject,
@@ -120,13 +123,13 @@ export class BattleScene extends Phaser.Scene {
 
         }, this);
 
-        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             gameObject.x = dragX;
             gameObject.y = dragY;
         });
 
         // hover over listener
-        this.input.on('gameobjectover', function(pointer, gameObject) {
+        this.input.on('gameobjectover', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
                 let yOffSet = 50;
                 this.tweens.add({
@@ -145,7 +148,7 @@ export class BattleScene extends Phaser.Scene {
         }, this);
 
         // hover out listener
-        this.input.on('gameobjectout', function(pointer, gameObject) {
+        this.input.on('gameobjectout', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
                 this.tweens.add({
                     targets: gameObject,
@@ -160,18 +163,24 @@ export class BattleScene extends Phaser.Scene {
             }
        }, this);
 
-        this.input.on('dragenter', function(pointer, gameObject, dropZone) {
-            dropZone.renderActiveOutline();
+        this.input.on('dragenter', (pointer, gameObject, dropZone) => {
+            //dropZone.renderActiveOutline();
+            gameObject.setTint(0xffa500);
         });
 
-        this.input.on('dragleave', function(pointer, gameObject, dropZone) {
-            dropZone.renderNormalOutline();
+        this.input.on('dragleave', (pointer, gameObject, dropZone) => {
+            //dropZone.renderNormalOutline();
+            gameObject.clearTint();
+            if (gameObject.cost > this.player.actionPoints) {
+                gameObject.setTint(0xff0000);
+            }
         }); 
 
         this.input.on('drop', (pointer, gameObject, dropZone) => {
             if (this.player.getActionPoints() >= gameObject.getCost()) {
                 gameObject.input.enabled = false;
                 gameObject.tooltip.removeTooltip();
+                gameObject.clearTint();
         
                 // setting card in the middle 
                 gameObject.displayHeight = gameOptions.cardHeight;
@@ -189,10 +198,16 @@ export class BattleScene extends Phaser.Scene {
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 this.actiontext.text = this.player.getActionPoints();
-                dropZone.renderNormalOutline(this);
+                //dropZone.renderNormalOutline(this);
         
                 this.cameras.main.shake(100, 0.02);
+                for (let card of this.player.handArray){
+                    if (card.cost > this.player.actionPoints){
+                        card.setTint(0xff0000);
+                    }
+                }
             } else {
+                gameObject.setTint(0xff0000);
                 this.dragend(pointer, gameObject, false);
             }
         });
@@ -210,6 +225,22 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    damage_calculation(character, damage, modifiers) {
+        for (let modifier of modifiers){
+            damage = damage * modifier;
+        }
+        // console.log(damage);
+        character.health = character.health - damage;
+        character.setTint(0xff0000);
+        let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
+        damage_num.setPosition(character.x + 40, character.y - 80);
+        this.time.delayedCall(450, this.damage_event, [character, damage_num], this);
+    }
+
+    damage_event(character, damage_num){
+        character.clearTint();
+        damage_num.destroy();
+    }
 
     loadCards() {
         // damage cards
@@ -275,6 +306,9 @@ export class BattleScene extends Phaser.Scene {
     keepCard(player) {
         this.keepCardButton.visible = false;
         this.endTurnButton.visible = true;
+        // for (let card of this.player.handArray){
+        //     card.clearTint();
+        // }
         this.player.selectCardInHand(player);
     }
     
@@ -287,13 +321,20 @@ export class BattleScene extends Phaser.Scene {
         
         // simulate enemies attacking
         for (let i=0; i < enemy.enemyOnScene.length; i++) {
-            enemy.enemyOnScene[i].action(this);
+            let base_damage = enemy.enemyOnScene[i].action();
+            this.damage_calculation(this.player, base_damage, [1]);
         }
-        this.heartext.text = this.player.getHealth();
+        this.playerHealth.health = this.player.health;
+        this.playerHealth.show_health();
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        this.player.drawCard(1, this);
+        this.player.drawCard(5 - this.player.handArray.length, this);
         this.player.resetDeck(this);
+        for (let card of this.player.handArray){
+            if (card.cost > this.player.actionPoints){
+                card.setTint(0xff0000);
+            }
+        }
     }
     
     // spawning in enemies and their life

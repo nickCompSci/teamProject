@@ -21,27 +21,42 @@ export default class Player extends Phaser.GameObjects.Sprite {
     selectCardInHand(player) {
         // disable drag first on all cards
         this.disableDragOnCards();
-        
-        for (let cards of this.handArray) {
-            cards.on("pointerdown", function(pointer) {
-                // this is referring to the clicked object rather than player now
-                if (player.keepCards.includes(this)) {
-                        // removes the card from list 
-                    player.keepCards.splice(player.keepCards.indexOf(this), 1);
-                    this.clearTint();
-                } else {
-                    if (player.keepCards.length < player.keepCardsLimit) {
-                        player.keepCards.push(this);
-                        // add a visual effect when clicked
-                        this.setTint(0x999999);
-                    }
-                }
-            });
-        }
 
+        for (let card of this.handArray) {
+            // remove the event listener from the card
+            card.removeListener("pointerdown", card.clickHandler);
+
+            // flag on card to keep track on whether it's being clicked
+            card.isBeingClicked = false;
+
+            // add the event listener back to the card
+            card.clickHandler = this.keepingCards.bind(this, card);
+            card.on("pointerdown", card.clickHandler);
+        }
+    }
+
+    keepingCards(card) {
+        if (card.isBeingClicked) {
+            // removes the card from list 
+            this.keepCards.splice(this.keepCards.indexOf(card), 1);
+            card.clearTint();
+            card.isBeingClicked = false;
+        } else {
+            if (this.keepCards.length < this.keepCardsLimit) {
+                this.keepCards.push(card);
+                card.isBeingClicked = true;
+                // add a visual effect when clicked
+                card.setTint(0x999999);
+            }
+        }
     }
 
     moveCardsBackInDeck(scene) {
+        // remove event listener from all cards
+        for (let cards of this.handArray) {
+            cards.removeListener("pointerdown", cards.clickHandler);
+        }
+
         // get indexes of cards not in this.keepCards List
         let indexList = [];
         for (let cards of this.handArray) {
@@ -54,13 +69,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // remove the indexes in reverse order not to mess up the loop
         for (let index=indexList.length-1; index >= 0; index--) {
             this.deckArray.push(this.handArray[indexList[index]]);
-            this.handArray[indexList[index]].setActive(false).setVisible(false);
+            this.handArray[indexList[index]].setVisible(false);
             this.handArray.splice(indexList[index], 1);
-        }
-
-        // remove tint of cards remaining in hand
-        for (let cards of this.handArray) {
-            cards.clearTint();
         }
 
         // set up the deck sprites and deckArray and organise the cards on screen
@@ -68,7 +78,16 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.deckSetUp(scene);
         scene.arrangeCardsInCenter(this.handArray);
         this.enableDragOnCards();
-
+        this.keepCards = [];
+        
+        // remove tint of cards remaining in hand 
+        // reset the click flag and add back the event listener 
+        for (let cards of this.handArray) {
+            cards.isBeingClicked = false;
+            cards.clickHandler = this.keepingCards.bind(this, cards);
+            cards.on("pointerdown", cards.clickHandler);
+            cards.clearTint();
+        }
     }
     
     // draw an amount of cards
@@ -128,7 +147,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     resetDeck(scene) {
-        console.log(this.graveYardArray.length);
         if (this.deckArray.length <= 0) {
             // push all the cards in graveYard array back to the deck
             for (let i=this.graveYardArray.length; i > 0; i--) {
