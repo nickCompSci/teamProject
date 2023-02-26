@@ -12,6 +12,7 @@ export class CreateGameScene extends Phaser.Scene{
     // Creates any images, text, etc.
     create(){
         function addJoinCodeToUserNode(joinCode, callback){
+            // data to be sent to the server route
             var data = {
                 refreshToken: getCookie('refreshJwt'),
                 joinCode : joinCode,
@@ -29,10 +30,10 @@ export class CreateGameScene extends Phaser.Scene{
         }
 
         function addJoinCodeToUserNodeCallback(result){
-            // does this need to do anything?
-            // console.log("Returned to callback function");
+            // no need to do anything here for now
         }   
         function deleteJoinCodeRelationship(joinCode,callback){
+            // data to be sent to the server route
             var data = {
                 refreshToken: getCookie('refreshJwt'),
                 joinCode : joinCode,
@@ -50,7 +51,7 @@ export class CreateGameScene extends Phaser.Scene{
         }
         
         function deleteJoinCodeRelationshipCallback(result){
-            // console.log("returned from delete route");
+            // no need to do anything here for now
         }
      
         // Adds background image to the scene - (x, y, image)
@@ -62,6 +63,7 @@ export class CreateGameScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         let joinCode = Math.random().toString(36).substring(2, 8);
+        // send the joinCode to a function to send POST request to create a relationship
         addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
 
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Join code: ${joinCode}`, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5);
@@ -85,8 +87,9 @@ export class CreateGameScene extends Phaser.Scene{
         })
 
         backButton.on("pointerup", ()=>{
-            // Moves back to the main menu when the back button is clicked
+            // call the function to send post request to server
             deleteJoinCodeRelationship(joinCode, deleteJoinCodeRelationshipCallback);
+            // Moves back to the main menu when the back button is clicked
             this.scene.start(CST.SCENES.MENU);
         })
 
