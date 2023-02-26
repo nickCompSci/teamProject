@@ -76,6 +76,7 @@ export class friendScene extends Phaser.Scene {
             }
         }
 
+
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
@@ -92,6 +93,14 @@ export class friendScene extends Phaser.Scene {
         this.friendsAndPending = this.add.dom(825, 500).createFromCache("pendingAndFriends");
 
         const scene = this;
+        // this will refresh the friends tab every 15 seconds, only if the friends tab is currently
+        // active
+        const interval = setInterval(function () {
+            if (window.getComputedStyle(document.getElementById('showUsersFriends'), null).display == "block") {
+                showFriends()
+            }
+        }, 15000);
+
         showFriends(); // on load call the friends function to load in the friends list
 
         const searchButton = this.add.text(100, 525, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
@@ -153,10 +162,49 @@ export class friendScene extends Phaser.Scene {
 
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
+            clearInterval(interval)
             this.scene.start(CST.SCENES.MENU);
         })
+
+        // called whenever anywhere is clicked
+        document.onclick = function (event) {
+            if (event === undefined) event = window.event;
+            let joining;
+            var target = 'target' in event ? event.target : event.srcElement;
+            for (let index in friendsList) {
+                if (friendsList[index] == target.id) {
+                    // if the element's color attribute is green then they are online
+                    if (window.getComputedStyle(document.getElementById(target.id), null).color == "rgb(0, 128, 0)") {
+                        if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
+                            alert("Joining now!");
+                            // code for connecting 2 players:
+                            // 
+                            // 
+                            // 
+                            // 
+                            // 
+                            clearInterval(interval)
+                            joining = "true";
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    joining = "offline"
+                }
+            }
+            if (joining == "offline") {
+                confirm(target.id + " is not online! ");
+            } else if (joining == "true") {
+                scene.loadLobby();
+            }
+        }
     }
-    reset(){
+    reset() {
         this.scene.start(CST.SCENES.FRIENDS)
+    }
+    loadLobby() {
+        this.scene.start(CST.SCENES.LOBBY)
     }
 }

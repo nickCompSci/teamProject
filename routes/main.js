@@ -311,9 +311,9 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
 })
 
 router.post("/getFriends", (request, response) => {
-    function retrieveAllFriendsCallback(result) {
+    function retrieveAllFriendsCallback(listOfFriends, friendsCurrentlyInLobby) {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ friends: result }));
+        response.end(JSON.stringify({ friends: listOfFriends, friendsInLobby: friendsCurrentlyInLobby }));
     }
 
     function retrieveAllFriends(currentUsername, callback) {
@@ -323,26 +323,39 @@ router.post("/getFriends", (request, response) => {
             const user = process.env.NEO4J_USERNAME;
             const password = process.env.NEO4J_PASSWORD;
             const listOfFriends = [];
-            let aFriend;
+            const friendsCurrentlyInLobby = [];
             // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
-                const readQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(People)
-                    RETURN People.username as users`;
-                const readResult = await session.executeRead(tx =>
-                    tx.run(readQuery, { currentUsername })
+                // query to get all friends of the specified user
+                const retreiveFriendsQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(People)
+                    RETURN People.username as users ORDER BY users ASC`;
+                const retreiveFriendsQueryResult = await session.executeRead(tx =>
+                    tx.run(retreiveFriendsQuery, { currentUsername })
                 );
-                readResult.records.forEach(record => {
+                retreiveFriendsQueryResult.records.forEach(record => {
                     // the users who are a friend of this user
-                    aFriend = record.get("users");
-                    listOfFriends.push(aFriend);
+                    listOfFriends.push(record.get("users"));
                 })
+                // query to check if a join code relationship if active
+                const checkJoinCodeQuery = `
+                    MATCH (:Person {username: $currentUsername})<-[:JOIN_CODE]-(People)
+                    RETURN People.username as everyone;
+                    `;
+                const checkJoinCodeQueryResult = await session.executeWrite(tx =>
+                    tx.run(checkJoinCodeQuery, { currentUsername })
+                );
+                checkJoinCodeQueryResult.records.forEach(record => {
+                    // friends currently sitting in a lobby
+                    friendsCurrentlyInLobby.push(record.get("everyone"));
+                })
+
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
                 await driver.close();
-                callback(listOfFriends);
+                callback(listOfFriends, friendsCurrentlyInLobby);
             }
         })();
     }

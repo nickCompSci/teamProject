@@ -5,7 +5,6 @@ function showFriends() {
     // where a call to a route occurs to find all friends
     // the result which is looped through and displays each friend in a new line
     // as a list element
-    
     document.getElementById("showUsersFriends").style.display = "block";
     document.getElementById("showUsersPending").style.display = "none";
     // data to be sent to the route
@@ -18,19 +17,26 @@ function showFriends() {
         data,
         // callback function
         success: function (result) {
-            allFriends = result.friends;
+            const allFriends = result.friends;
+            const inLobbyPlayers = result.friendsInLobby;
+            // accessing this has the friends usernames
             document.getElementById("currentFriends").innerHTML = "";
             for (let i = 0; i < allFriends.length; i++) {
                 // create a list element
                 const listElement = document.createElement("li");
                 // add the friend to the dictionary
                 friendsList[i] = allFriends[i];
-                // what will be displayed to the user,
-                // font-awesome icons and friend username
                 listElement.innerHTML = allFriends[i] + ' <i id="' + allFriends[i]
-                    + '" onClick="joinFriend(' + i + ')" class="fa-sharp fa-solid fa-right-to-bracket"></i>\
-                    <i onClick="deleteFriend('+ i + ')" class="fa-solid fa-trash"></i>';
+                    + '" class="fa-sharp fa-solid fa-right-to-bracket"></i>\
+                        <i onClick="deleteFriend('+ i + ')" class="fa-solid fa-trash"></i>';
+
                 document.getElementById("currentFriends").appendChild(listElement);
+
+                // if the player is waiting in a lobby then they are online, make the
+                // join icon green
+                if (inLobbyPlayers.includes(allFriends[i])){
+                    document.getElementById(allFriends[i]).style.color = "green";
+                }
             }
         }
     })
@@ -141,8 +147,21 @@ function deleteFriend(otherUserIndex) {
     })
 }
 
-function joinFriend(otherUserIndex) {
-    // will call a route that accesses the friends join code and automatically joins
-    window.confirm("clicked join friend");
+// function joinFriend(otherUserIndex) {
+//     // will call a route that accesses the friends join code and automatically joins
+//     // window.confirm("clicked join friend");
+//     // upon pressing this
+//     // check if the id that called it is green
+//     // if yes then allow to join the session
 
-}
+//     // if not give a pop up saying this user is not online
+//     let theUsername = friendsList[otherUserIndex];
+
+//     console.log(window.getComputedStyle(document.getElementById(theUsername),null).color);
+//     if (window.getComputedStyle(document.getElementById(theUsername),null).color == "rgb(0, 128, 0)"){
+//         window.confirm('Are you sure you want to join '+theUsername+'?');
+
+//     }else{
+//         window.confirm(theUsername + " is not online.");
+//     }
+// }
