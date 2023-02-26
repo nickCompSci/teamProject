@@ -31,7 +31,28 @@ export class CreateGameScene extends Phaser.Scene{
         function addJoinCodeToUserNodeCallback(result){
             // does this need to do anything?
             // console.log("Returned to callback function");
-        }        
+        }   
+        function deleteJoinCodeRelationship(joinCode,callback){
+            var data = {
+                refreshToken: getCookie('refreshJwt'),
+                joinCode : joinCode,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/deleteJoinRelationship',
+                data,
+                success: callback,
+                error: function (xhr) {
+                    window.alert(JSON.stringify(xhr));
+                    window.location.replace('/game.html');
+                }                
+            });
+        }
+        
+        function deleteJoinCodeRelationshipCallback(result){
+            // console.log("returned from delete route");
+        }
+     
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
@@ -65,6 +86,7 @@ export class CreateGameScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
+            deleteJoinCodeRelationship(joinCode, deleteJoinCodeRelationshipCallback);
             this.scene.start(CST.SCENES.MENU);
         })
 
