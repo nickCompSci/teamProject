@@ -389,4 +389,52 @@ router.post("/deleteFriend", (request, response) => {
 
 })
 
+router.post("/joinCodeRelationship", (request, response) => {
+    function joinCodeRelationshipCallback(result) {
+        // at the moment wont return nothing
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({}));
+    }
+
+    function joinCodeRelationship(currentUsername, joinCode, callback) {
+        (async () => {
+            // need to create the JOIN_CODE relationship to all friends of the current user
+            // can make it unique hence overwrite previous ones?
+            // main concern is what if a user backs out and reloads the scene 3 times?
+            // above should be covered by the below statement
+            // what happens to the relationship when a user backs out of the lobby scene??
+
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                // query create unique JOIN_CODE relationship
+                const writeQuery = `
+                    MATCH (a:Person {username: $currentUsername})-[r:FRIENDS_WITH]-(n:Person)
+                    MERGE (a)-[nr:JOIN_CODE{theCode: $joinCode }]->(n);`;
+                await session.executeWrite(tx =>
+                    tx.run(writeQuery, { currentUsername, joinCode })
+                );
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback();
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    const joinCode = request.body.joinCode
+    joinCodeRelationship(currentUser, joinCode,
+        joinCodeRelationshipCallback);
+
+})
+
+
+
 module.exports = router;
