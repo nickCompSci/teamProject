@@ -11,7 +11,27 @@ export class CreateGameScene extends Phaser.Scene{
 
     // Creates any images, text, etc.
     create(){
+        function addJoinCodeToUserNode(joinCode, callback){
+            var data = {
+                refreshToken: getCookie('refreshJwt'),
+                joinCode : joinCode,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/joinCodeRelationship',
+                data,
+                success: callback,
+                error: function (xhr) {
+                    window.alert(JSON.stringify(xhr));
+                    window.location.replace('/game.html');
+                }                
+            });
+        }
 
+        function addJoinCodeToUserNodeCallback(result){
+            // does this need to do anything?
+            // console.log("Returned to callback function");
+        }        
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
@@ -21,6 +41,7 @@ export class CreateGameScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         let joinCode = Math.random().toString(36).substring(2, 8);
+        addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
 
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Join code: ${joinCode}`, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5);
 
