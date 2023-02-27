@@ -9,6 +9,10 @@ export class CreateGameScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+    }
+
     // Creates any images, text, etc.
     create(){
         function addJoinCodeToUserNode(joinCode, callback){
@@ -62,7 +66,7 @@ export class CreateGameScene extends Phaser.Scene{
 
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please send the code below to your friend:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
-        let joinCode = Math.random().toString(36).substring(2, 8);
+        let joinCode = this.network.peer.id;
         // send the joinCode to a function to send POST request to create a relationship
         addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
 

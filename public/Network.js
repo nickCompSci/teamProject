@@ -1,4 +1,4 @@
-class Network{
+export class Network{
     constructor(){
         this.peer = new Peer();
         this._addPeerListeners();
@@ -37,5 +37,3 @@ class Network{
         })
     }
 }
-
-export default Network;

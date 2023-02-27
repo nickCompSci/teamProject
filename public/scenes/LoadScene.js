@@ -2,6 +2,7 @@
 This file is used to load all the assets for the game.
 */
 import { CST } from "../CST.js";
+import { Network } from "../Network.js";
 import { MenuScene } from "./MenuScene.js";
 import { OptionsScene } from "./OptionsScene.js";
 import { CreditsScene } from "./CreditsScene.js";
@@ -84,9 +85,12 @@ export class LoadScene extends Phaser.Scene{
             console.log(percent);
             })
 
+        // instantiate network object
+        var network = new Network();
+
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: network});
         })
     }
 }

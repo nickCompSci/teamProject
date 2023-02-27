@@ -9,6 +9,10 @@ export class MenuScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+    }
+
     // Used to create our buttons, images, and text
     create(){
 
@@ -70,8 +74,7 @@ export class MenuScene extends Phaser.Scene{
 
         // Signals when the pointer is clicked and released
         createButton.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.CREATE);
-            console.log("click")
+            this.scene.start(CST.SCENES.CREATE, {networkObj: this.network});
         })
 
         // Allows the start button to be interactive
@@ -158,7 +161,7 @@ export class MenuScene extends Phaser.Scene{
 
         battleButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.BATTLE)
+            this.scene.start(CST.SCENES.BATTLE_LOAD);
             console.log("click")
         })
 
