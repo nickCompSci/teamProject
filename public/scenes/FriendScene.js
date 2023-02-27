@@ -65,13 +65,18 @@ export class friendScene extends Phaser.Scene {
         function sendFriendRequestCallback(result) {
 
             if (result.found == "exists") {
-                window.confirm("You already sent a friend request to this player!");
+                scene.sound.play("failedToSendFriendRequest");
+                alert("You already sent a friend request to this player!");
                 scene.reset();
+                
             } else if (result.found == "false") {
-                window.confirm("Invalid username, failed to send friend request");
+                scene.sound.play("failedToSendFriendRequest");
+                alert("Invalid username, failed to send friend request");
                 scene.reset();
             } else {
-                window.confirm("Sent friend request!");
+                scene.sound.play("sentFriendRequest");
+                alert("Sent friend request!");
+
                 scene.reset();
             }
         }
@@ -178,7 +183,7 @@ export class friendScene extends Phaser.Scene {
                         if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                             alert("Joining now!");
                             // code for connecting 2 players:
-                            // 
+                            // join code - 1
                             // 
                             // 
                             // 
