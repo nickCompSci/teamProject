@@ -1,16 +1,18 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registration - Dual Ascent</title>
-    <link href="assets/css/main.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registration - Dual Ascent</title>
+  <link href="assets/css/main.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
+
 <body>
 
-<!--  form the handle registration -->
-<form>
+  <!--  form the handle registration -->
+  <form>
     <h1>Register</h1>
     <label for="email">Email address</label>
     <input type="email" id="email" placeholder="Email address" required autofocus>
@@ -23,12 +25,12 @@
 
     <div class="links"><a onClick="signUp()">Register</a></div>
     <div class="links"><a href="/index.html">Already have an account? Login here.</a></div>
-</form>
+  </form>
 
-<!-- handler when user clicks on link/button to register details -->
-<script>
+  <!-- handler when user clicks on link/button to register details -->
+  <script>
     function signUp() {
-    // data from form which is needed 
+      // data from form which is needed 
       var data = {
         email: document.forms[0].elements[0].value,
         password: document.forms[0].elements[1].value,
@@ -39,17 +41,22 @@
         url: '/registration',
         data,
         success: function (data) {
-        // on successfull registration, redirect to login
+          // on successfull registration, redirect to login
           window.alert('User created successfully');
           window.location.replace('/index.html');
         },
         // on error return registration back to user again
         error: function (xhr) {
-          window.alert(JSON.stringify(xhr));
+          if (xhr.responseJSON.error.keyPattern.email) {
+            window.alert("Something went wrong, User Registration failed!");
+          }else if (xhr.responseJSON.error.keyPattern.username){
+            window.alert("That username already exists!");
+          }
           window.location.replace('registration.html');
         }
       });
     }
   </script>
 </body>
+
 </html>

@@ -45,7 +45,7 @@
         },
         // on error return login page again to user
         error: function (xhr) {
-          window.alert(JSON.stringify(xhr));
+          window.alert(xhr.responseJSON.error.message);
           window.location.replace('/index.html');
         }
       });
