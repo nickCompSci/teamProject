@@ -9,8 +9,8 @@ export class MenuScene extends Phaser.Scene{
         })
     }
 
-    init(networkObj){
-        this.network = networkObj;
+    init(data){
+        this.network = data.networkObj;
     }
 
     // Used to create our buttons, images, and text
@@ -74,7 +74,6 @@ export class MenuScene extends Phaser.Scene{
         // Signals when the pointer is clicked and released
         createButton.on("pointerup", ()=>{
             this.scene.start(CST.SCENES.CREATE, {networkObj: this.network});
-            console.log("click")
         })
 
         // Allows the start button to be interactive

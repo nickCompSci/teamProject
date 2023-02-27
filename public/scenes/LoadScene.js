@@ -86,9 +86,7 @@ export class LoadScene extends Phaser.Scene{
             })
 
         // instantiate network object
-        console.log("Instantiating network..");
         var network = new Network();
-        console.log("Network object instantiated.");
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
