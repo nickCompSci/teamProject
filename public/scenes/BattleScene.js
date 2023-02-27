@@ -1,7 +1,6 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
 import { gameOptions, enemy} from "../helpers/config.js";
-import Zone from "../helpers/classes/zone.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import Enemy from "../helpers/classes/enemy.js";
@@ -27,7 +26,6 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
         this.load.image("guy", "../assets/resources/sprites/player_green_glasses.png");
-        //this.load.image("heart", "../assets/resources/sprites/heart.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
         this.load.spritesheet("enemy", "../assets/resources/sprites/enemySpritesheet.png", {
@@ -53,13 +51,6 @@ export class BattleScene extends Phaser.Scene {
         this.player = new Player(this, 0, 0, "guy");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(3);
-
-        //let heart = this.add.image(0, 0, "heart");
-        //this.heartext = this.add.text(0,0, this.player.getHealth(), {color: "black", fontSize: "30px"});
-        //heart.setScale(4);
-        //this.heartext.setPosition(-18, -18);
-        //let health = this.add.container(0, 0, [heart, this.heartext]);
-        //health.setPosition(gameWidth/20, gameHeight/2.2);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health)
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
@@ -81,8 +72,6 @@ export class BattleScene extends Phaser.Scene {
         this.endTurnButton = new Button(gameWidth, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
-        // zone where cards can be dropped and activated
-        //let dropZone = new Zone(this, 500, 250, 665, 665);
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
         // shuffles the deck and sets up the visual for the deck cards
@@ -163,12 +152,10 @@ export class BattleScene extends Phaser.Scene {
        }, this);
 
         this.input.on('dragenter', (pointer, gameObject, dropZone) => {
-            //dropZone.renderActiveOutline();
             gameObject.setTint(0xffa500);
         });
 
         this.input.on('dragleave', (pointer, gameObject, dropZone) => {
-            //dropZone.renderNormalOutline();
             gameObject.clearTint();
             if (gameObject.cost > this.player.actionPoints) {
                 gameObject.setTint(0xff0000);
@@ -197,7 +184,6 @@ export class BattleScene extends Phaser.Scene {
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 this.actiontext.text = this.player.getActionPoints();
-                //dropZone.renderNormalOutline(this);
         
                 this.cameras.main.shake(100, 0.02);
                 for (let card of this.player.handArray){
