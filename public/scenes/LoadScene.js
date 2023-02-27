@@ -11,6 +11,7 @@ import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { MapScene } from "./MapScene.js";
+import { Network } from "../Network.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -84,9 +85,12 @@ export class LoadScene extends Phaser.Scene{
             console.log(percent);
             })
 
+        // instantiate network object
+        var network = new Network();
+
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {network: network});
         })
     }
 }
