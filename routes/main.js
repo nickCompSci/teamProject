@@ -487,4 +487,16 @@ router.post("/deleteJoinRelationship", (request, response) => {
     deleteJoinRelationship(currentUser, joinCode,
         deleteJoinRelationshipCallback);
 })
+
+
+router.post("/retrieveUsername", (request, response) => {
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ username : currentUser}));
+    // to access in caller - result.username
+})
+
+
 module.exports = router;
