@@ -2,6 +2,7 @@
 This file is used to load all the assets for the game.
 */
 import { CST } from "../CST.js";
+import { Network } from "../Network.js";
 import { MenuScene } from "./MenuScene.js";
 import { OptionsScene } from "./OptionsScene.js";
 import { CreditsScene } from "./CreditsScene.js";
@@ -11,7 +12,6 @@ import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { MapScene } from "./MapScene.js";
-import { Network } from "../Network.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -86,11 +86,13 @@ export class LoadScene extends Phaser.Scene{
             })
 
         // instantiate network object
+        console.log("Instantiating network..");
         var network = new Network();
+        console.log("Network object instantiated.");
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU, {network: network});
+            this.scene.start(CST.SCENES.MENU, {networkObj: network});
         })
     }
 }
