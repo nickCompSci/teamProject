@@ -20,6 +20,10 @@ export class BattleScene extends Phaser.Scene {
     init(data) {
         // data returns a list of preloaded cards
         let cards = data;
+        this.enemy = {
+            enemyList: [],
+            enemyOnScene: []
+        }
     }
 
     preload() {
@@ -30,10 +34,7 @@ export class BattleScene extends Phaser.Scene {
         //this.load.image("heart", "../assets/resources/sprites/heart.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
-        this.load.spritesheet("enemy", "../assets/resources/sprites/enemySpritesheet.png", {
-            frameWidth: enemy.spriteWidth,
-            frameHeight: enemy.spriteHeight
-        });
+        
     }
 
     create() {
@@ -91,10 +92,7 @@ export class BattleScene extends Phaser.Scene {
         this.player.drawCard(gameOptions.startCards, this);
 
         // spawning enemies according to spritesheet randomly
-        for (let i=0; i < enemy.numberOfSprites; i++) {
-            let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
-            enemy.enemyList.push(enemySprite);
-        }
+        
         this.spawnEnemyOnScene();
 
         // card event listeners for pointer interactions
@@ -319,8 +317,8 @@ export class BattleScene extends Phaser.Scene {
         this.player.moveCardsBackInDeck(this);
         
         // simulate enemies attacking
-        for (let i=0; i < enemy.enemyOnScene.length; i++) {
-            let base_damage = enemy.enemyOnScene[i].action();
+        for (let i=0; i < this.enemy.enemyOnScene.length; i++) {
+            let base_damage = this.enemy.enemyOnScene[i].action();
             this.damage_calculation(this.player, base_damage, [1]);
         }
         this.playerHealth.health = this.player.health;
@@ -346,7 +344,7 @@ export class BattleScene extends Phaser.Scene {
         let spawnHeartDistanceY = 0;
 
         for (let i=0; i < numberOfEnemies; i++) {
-            let randomEnemy = enemy.enemyList[Math.floor(Math.random() * enemy.enemyList.length)];
+            let randomEnemy = this.enemy.enemyList[Math.floor(Math.random() * this.enemy.enemyList.length)];
 
             // For some reason, enemies spawn invisible, no clue.
             randomEnemy.enemySpawn();
@@ -357,7 +355,7 @@ export class BattleScene extends Phaser.Scene {
             spawnHeartDistanceY += 100;
             randomEnemy.setDepth(1);
 
-            enemy.enemyOnScene.push(randomEnemy);
+            this.enemy.enemyOnScene.push(randomEnemy);
         }
     }
 }
