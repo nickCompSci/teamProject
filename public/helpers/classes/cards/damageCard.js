@@ -17,20 +17,20 @@ export default class DamageCard extends HandCard {
     activateCard(scene) {
         let card = this;
         if (this.effect.target == "single") {
-            for (let i=0; i < enemy.enemyOnScene.length; i++) {
-                enemy.enemyOnScene[i].once("pointerdown", function(pointer) {
+            for (let i=0; i < scene.enemy.enemyOnScene.length; i++) {
+                scene.enemy.enemyOnScene[i].once("pointerdown", function(pointer) {
                     this.setHealth(this.getHealth() - card.effect.damage);
                     this.heartText.setText(this.getHealth());
 
-                    for (let j=0; j < enemy.enemyOnScene.length; j++) {
-                        enemy.enemyOnScene[j].input.enabled = false;
+                    for (let j=0; j < scene.enemy.enemyOnScene.length; j++) {
+                        scene.enemy.enemyOnScene[j].input.enabled = false;
                     }
                 })
             }
         } else if (this.effect.target == "all") {
-            for (let i=0; i < enemy.enemyOnScene.length; i++) {
-                enemy.enemyOnScene[i].setHealth(enemy.enemyOnScene[i].getHealth() - card.effect.damage);
-                enemy.enemyOnScene[i].heartText.setText(enemy.enemyOnScene[i].getHealth());
+            for (let i=0; i < scene.enemy.enemyOnScene.length; i++) {
+                scene.enemy.enemyOnScene[i].setHealth(scene.enemy.enemyOnScene[i].getHealth() - card.effect.damage);
+                scene.enemy.enemyOnScene[i].heartText.setText(scene.enemy.enemyOnScene[i].getHealth());
             }
         }
     }

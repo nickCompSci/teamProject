@@ -1,13 +1,13 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions, enemy} from "../helpers/config.js";
+import { gameOptions} from "../helpers/config.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
-import Enemy from "../helpers/classes/enemy.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
 import HealingCard from "../helpers/classes/cards/healingCard.js";
+import Enemy from "../helpers/classes/enemy.js";
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -19,6 +19,10 @@ export class BattleScene extends Phaser.Scene {
     init(data) {
         // data returns a list of preloaded cards
         let cards = data;
+        this.enemy = {
+            enemyList: [],
+            enemyOnScene: []
+        }
     }
 
     preload() {
@@ -28,10 +32,14 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("guy", "../assets/resources/sprites/player_green_glasses.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
-        this.load.spritesheet("enemy", "../assets/resources/sprites/enemySpritesheet.png", {
-            frameWidth: enemy.spriteWidth,
-            frameHeight: enemy.spriteHeight
-        });
+        
+        // enemies
+        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
+        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
+        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
+        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
+        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
     }
 
     create() {
@@ -79,11 +87,9 @@ export class BattleScene extends Phaser.Scene {
         this.player.deckSetUp(this);
         this.player.drawCard(gameOptions.startCards, this);
 
-        // spawning enemies according to spritesheet randomly
-        for (let i=0; i < enemy.numberOfSprites; i++) {
-            let enemySprite = new Enemy(this, 0, 0, 'enemy', i);
-            enemy.enemyList.push(enemySprite);
-        }
+        // enemies
+        // check level here, if at top, call boss function
+        this.loadEnemies();
         this.spawnEnemyOnScene();
 
         // card event listeners for pointer interactions
@@ -305,8 +311,8 @@ export class BattleScene extends Phaser.Scene {
         this.player.moveCardsBackInDeck(this);
         
         // simulate enemies attacking
-        for (let i=0; i < enemy.enemyOnScene.length; i++) {
-            let base_damage = enemy.enemyOnScene[i].action();
+        for (let i=0; i < this.enemy.enemyOnScene.length; i++) {
+            let base_damage = this.enemy.enemyOnScene[i].action();
             this.damage_calculation(this.player, base_damage, [1]);
         }
         this.playerHealth.health = this.player.health;
@@ -321,6 +327,29 @@ export class BattleScene extends Phaser.Scene {
             }
         }
     }
+
+    // loading enemy sprites
+    loadEnemies() {
+        // small enemies
+        let snake = new Enemy(this, 0, 0, "snake", 0);
+        let scorpion = new Enemy(this, 0, 0, "scorpion", 0);
+
+        // long x but small
+        let hyena = new Enemy(this, 0, 0, "hyena", 0);
+
+        // large
+        let vulture = new Enemy(this, 0, 0, "vulture", 0);
+        let gorilla = new Enemy(this, 0, 0, "gorilla", 0);
+
+        // boss enemy will have own function
+
+        this.enemy.enemyList.push(snake);
+        this.enemy.enemyList.push(vulture);
+        this.enemy.enemyList.push(hyena);
+        this.enemy.enemyList.push(scorpion);
+        this.enemy.enemyList.push(gorilla);
+
+    }
     
     // spawning in enemies and their life
     spawnEnemyOnScene() {
@@ -332,7 +361,7 @@ export class BattleScene extends Phaser.Scene {
         let spawnHeartDistanceY = 0;
 
         for (let i=0; i < numberOfEnemies; i++) {
-            let randomEnemy = enemy.enemyList[Math.floor(Math.random() * enemy.enemyList.length)];
+            let randomEnemy = this.enemy.enemyList[Math.floor(Math.random() * this.enemy.enemyList.length)];
 
             // For some reason, enemies spawn invisible, no clue.
             randomEnemy.enemySpawn();
@@ -340,10 +369,10 @@ export class BattleScene extends Phaser.Scene {
             randomEnemy.heartText.y += spawnHeartDistanceY;
 
             spawnEnemyDistanceX += 150;
-            spawnHeartDistanceY += 100;
+            spawnHeartDistanceY += 150;
             randomEnemy.setDepth(1);
 
-            enemy.enemyOnScene.push(randomEnemy);
+            this.enemy.enemyOnScene.push(randomEnemy);
         }
     }
 }

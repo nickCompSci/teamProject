@@ -10,6 +10,7 @@ export class BattleLoadScene extends Phaser.Scene {
     }
 
     preload() {
+        // cards
         this.load.image("cannon", "../assets/resources/cards/Cannon.png");
         this.load.image("grenade", "../assets/resources/cards/Grenade.png");
         this.load.image("headshot", "../assets/resources/cards/Headshot.png");
