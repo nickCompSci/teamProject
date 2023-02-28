@@ -86,6 +86,7 @@ export class LoadScene extends Phaser.Scene{
             })
 
             let network;
+            let playerUsername;
             var data = {
                 refreshToken: getCookie('refreshJwt')
             };
@@ -96,6 +97,7 @@ export class LoadScene extends Phaser.Scene{
                 data,
                 // on success call the callback function
                 success: function (result) {
+                    playerUsername = result.username;
                     network = new Network(result.username);
                 },
                 // on error return to game page 
@@ -109,7 +111,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU, {networkObj: network});
+            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
         })
     }
 }

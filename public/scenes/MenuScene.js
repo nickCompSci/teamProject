@@ -11,6 +11,7 @@ export class MenuScene extends Phaser.Scene{
 
     init(data){
         this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
     }
 
     // Used to create our buttons, images, and text
@@ -147,7 +148,7 @@ export class MenuScene extends Phaser.Scene{
 
         friendsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.FRIENDS)
+            this.scene.start(CST.SCENES.FRIENDS, {theirUsername: this.playerUsername})
             console.log("click")
         })
 
