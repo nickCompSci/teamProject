@@ -21,14 +21,40 @@ function showFriends() {
             const inLobbyPlayers = result.friendsInLobby;
             // accessing this has the friends usernames
             document.getElementById("currentFriends").innerHTML = "";
+
+            if( inLobbyPlayers.length > 0){
+                const onlineListElement = document.createElement("li");
+                onlineListElement.innerHTML = "Online ("+inLobbyPlayers.length+"):";
+                document.getElementById("currentFriends").appendChild(onlineListElement);
+                onlineListElement.style.color = "lightgreen";
+
+                for (let i = 0; i < inLobbyPlayers.length; i++){
+                    const listElement = document.createElement("li");
+                    // add the friend to the dictionary
+                    friendsList[i] = inLobbyPlayers[i];
+                    
+                    listElement.innerHTML = inLobbyPlayers[i] + ' <i id="' + inLobbyPlayers[i]
+                        + '" class="fa-sharp fa-solid fa-right-to-bracket" title="Join '+inLobbyPlayers[i]+' if they are online"></i>\
+                            <i onClick="deleteFriend('+ i + ')" class="fa-solid fa-trash" title="Delete '+inLobbyPlayers[i]+' from your friends list"></i>';
+    
+                    document.getElementById("currentFriends").appendChild(listElement);
+                    document.getElementById(inLobbyPlayers[i]).style.color = "green";
+                }
+            }
+
+            const offlineListElement = document.createElement("li");
+            offlineListElement.innerHTML = "Offline ("+allFriends.length+"):";
+            document.getElementById("currentFriends").appendChild(offlineListElement);
+
             for (let i = 0; i < allFriends.length; i++) {
                 // create a list element
                 const listElement = document.createElement("li");
                 // add the friend to the dictionary
                 friendsList[i] = allFriends[i];
+                
                 listElement.innerHTML = allFriends[i] + ' <i id="' + allFriends[i]
-                    + '" class="fa-sharp fa-solid fa-right-to-bracket"></i>\
-                        <i onClick="deleteFriend('+ i + ')" class="fa-solid fa-trash"></i>';
+                    + '" class="fa-sharp fa-solid fa-right-to-bracket" title="Join '+allFriends[i]+' if they are online"></i>\
+                        <i onClick="deleteFriend('+ i + ')" class="fa-solid fa-trash" title="Delete '+allFriends[i]+' from your friends list"></i>';
 
                 document.getElementById("currentFriends").appendChild(listElement);
 
@@ -68,8 +94,8 @@ function showPending() {
                 pendingFriends[i] = allPendingRequests[i];
                 // what the user will see
                 listElement.innerHTML = allPendingRequests[i] + ' <i id="' + allPendingRequests[i]
-                    + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check""></i>\
-                <i onClick="declineFriendRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark"></i>';
+                    + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check" title="Accept '+allPendingRequests[i]+'\'s friend request"></i>\
+                <i onClick="declineFriendRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark" title="Decline '+allPendingRequests[i]+'\'s friend request"></i>';
                 document.getElementById("pendingRequests").appendChild(listElement);
             }
         },

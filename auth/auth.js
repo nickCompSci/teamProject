@@ -31,11 +31,11 @@ passport.use("login", new localStrategy({
     try {
         const user = await UserModel.findOne({ email });
         if (!user) {
-            return done(null, false, { message: "Wrong email or password" });
+            return done(null, false, { message: "Invalid Credentials" });
         }
         const validate = await user.isValidPassword(password);
         if (!validate) {
-            return done(null, false, { message: "Wrong email or password" });
+            return done(null, false, { message: "Invalid Credentials" });
         }
         return done(null, user, { message: "Logged in Successfully" });
     } catch (error) {

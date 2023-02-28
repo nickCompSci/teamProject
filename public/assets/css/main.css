@@ -7,9 +7,13 @@
 /* all text with gameFont */
 * {
     font-family: gameFont;
-        color: white;
+    color: white;
 }
-    
+
+h1 {
+    font-size: 90px;
+}
+
 body {
     background-image: url("../resources/tower2.jpg");
     background-repeat: no-repeat;
@@ -21,13 +25,15 @@ body {
 form {
     text-align: center;
 }
- 
- .container {
+
+.container {
     padding: 25px;
 }
 
 label {
     display: block;
+    font-size: 60px;
+    margin-top: 2.5%;
 }
 
 a {
@@ -37,45 +43,88 @@ a {
 a:link {
     text-decoration: none;
 }
-    
+
 a:visited {
     text-decoration: none;
 }
-    
+
 a:hover {
     text-decoration: none;
-    cursor:pointer;
+    cursor: pointer;
 }
-    
+
 a:active {
     text-decoration: none;
 }
+
 /* when hovering over links, use cursor pointer */
 a.pointer {
     cursor: pointer;
 }
 
 /* design for the input box */
-input[type=email], input[type=password],input[type=text] {
-    width: 25%;
+input[type=email],
+input[type=password],
+input[type=text] {
+    width: 30%;
     margin: 8px 0;
     padding: 12px 20px;
     display: inline-block;
     background: transparent;
     border: none;
-    border-bottom: 2px solid white;
+    border-bottom: 4px solid white;
     color: white;
+    font-size: 25px;
+    font-family: Verdana;
+    font-weight: 650;
 }
 
 /* when an input box is in focus, i.e a user has clicked on it */
 input:focus {
-    outline:2px solid white;
-    border:none;
+    outline: 3px solid white;
+    border: none;
 }
 
 /* placeholder text */
 input::placeholder {
     color: white;
     opacity: 1;
-    font-size: 15px;
+    font-size: 25px;
+    font-weight: 650;
 }
+
+.links {
+    margin-top: 1.5%;
+    font-size: larger;
+}
+
+.links a {
+    padding: 1%;
+}
+
+.links a:hover{
+    outline: 3px solid white;
+}
+
+.links ~ .links a:hover{
+    outline: none;
+    border-bottom: 3px solid white;
+}
+
+@media only screen and (max-width: 1000px) {
+
+    input[type=email],
+    input[type=password],
+    input[type=text] {
+        width: 60%;
+    }
+}
+@media only screen and (max-width: 2000px) {
+
+    input[type=email],
+    input[type=password],
+    input[type=text] {
+        width: 50%;
+    }
+}
+
