@@ -124,7 +124,11 @@ export class friendScene extends Phaser.Scene {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             // check if anything was inputted into the input box
             if (friendUsername.value != "") {
-                if (friendUsername.value == this.playerUsername){
+                if (document.querySelector('#currentFriends #'+friendUsername.value)) {
+                    alert(`This player is already your friend!`);
+                    this.reset();
+                }
+                else if (friendUsername.value == this.playerUsername){
                     alert("Can not send request to yourself!");
                     this.reset();
                 }
@@ -140,7 +144,11 @@ export class friendScene extends Phaser.Scene {
                 console.log(this.playerUsername,friendUsername.value);
                 if (friendUsername.value == this.playerUsername){
                     alert("Can not send request to yourself!");
-                    this.reset();
+                    // document.getElementById("addFriendForm").reset();
+                } //back: was elimating the need to check database for presence of friend???
+                else if (document.querySelector('#currentFriends #'+friendUsername.value)) {
+                    alert(`This player is already your friend!`);
+                    // document.getElementById("addFriendForm").reset();
                 }
                 else{
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -165,12 +173,8 @@ export class friendScene extends Phaser.Scene {
             if (friendUsername.value != "") {
                 // when success is called in the ajax, it will pass the response to
                 // searchForValidUsernameCallback function
-                if (document.querySelector('#currentFriends #'+friendUsername.value)) {
-                    alert(`Can not send friend request to a player who is already your friend!`);
-                    this.reset();
-                } else {
-                    sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
-                }
+                sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
+
             }
         });
 
