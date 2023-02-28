@@ -1,13 +1,13 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions, enemy} from "../helpers/config.js";
+import { gameOptions} from "../helpers/config.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
-import Enemy from "../helpers/classes/enemy.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
 import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
 import HealingCard from "../helpers/classes/cards/healingCard.js";
+import Enemy from "../helpers/classes/enemy.js";
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -33,6 +33,13 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
         
+        // enemies
+        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
+        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
+        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
+        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
+        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
     }
 
     create() {
@@ -80,8 +87,9 @@ export class BattleScene extends Phaser.Scene {
         this.player.deckSetUp(this);
         this.player.drawCard(gameOptions.startCards, this);
 
-        // spawning enemies according to spritesheet randomly
-        
+        // enemies
+        // check level here, if at top, call boss function
+        this.loadEnemies();
         this.spawnEnemyOnScene();
 
         // card event listeners for pointer interactions
@@ -319,6 +327,29 @@ export class BattleScene extends Phaser.Scene {
             }
         }
     }
+
+    // loading enemy sprites
+    loadEnemies() {
+        // small enemies
+        let snake = new Enemy(this, 0, 0, "snake", 0);
+        let scorpion = new Enemy(this, 0, 0, "scorpion", 0);
+
+        // long x but small
+        let hyena = new Enemy(this, 0, 0, "hyena", 0);
+
+        // large
+        let vulture = new Enemy(this, 0, 0, "vulture", 0);
+        let gorilla = new Enemy(this, 0, 0, "gorilla", 0);
+
+        // boss enemy will have own function
+
+        this.enemy.enemyList.push(snake);
+        this.enemy.enemyList.push(vulture);
+        this.enemy.enemyList.push(hyena);
+        this.enemy.enemyList.push(scorpion);
+        this.enemy.enemyList.push(gorilla);
+
+    }
     
     // spawning in enemies and their life
     spawnEnemyOnScene() {
@@ -338,7 +369,7 @@ export class BattleScene extends Phaser.Scene {
             randomEnemy.heartText.y += spawnHeartDistanceY;
 
             spawnEnemyDistanceX += 150;
-            spawnHeartDistanceY += 100;
+            spawnHeartDistanceY += 150;
             randomEnemy.setDepth(1);
 
             this.enemy.enemyOnScene.push(randomEnemy);
