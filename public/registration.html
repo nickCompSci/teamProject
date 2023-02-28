@@ -31,6 +31,7 @@
   <script>
     function signUp() {
       // data from form which is needed 
+      document.body.style.cursor='wait';
       var data = {
         email: document.forms[0].elements[0].value,
         password: document.forms[0].elements[1].value,
