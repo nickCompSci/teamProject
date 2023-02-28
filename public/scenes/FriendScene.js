@@ -94,7 +94,7 @@ export class friendScene extends Phaser.Scene {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Friends title
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '80px' }).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
@@ -102,7 +102,7 @@ export class friendScene extends Phaser.Scene {
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
-        this.nameInput = this.add.dom(200, 400).createFromCache("searchFriendForm");
+        this.nameInput = this.add.dom(200, 350).createFromCache("searchFriendForm");
         this.friendsAndPending = this.add.dom(825, 500).createFromCache("pendingAndFriends");
 
         const scene = this;
@@ -116,8 +116,8 @@ export class friendScene extends Phaser.Scene {
 
         showFriends(); // on load call the friends function to load in the friends list
 
-        const searchButton = this.add.text(100, 525, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
-        const confirmButton = this.add.text(50, 525, "", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
+        const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
+        const confirmButton = this.add.text(50, 500, "", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
         searchButton.setInteractive();
 
         this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -195,7 +195,7 @@ export class friendScene extends Phaser.Scene {
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
             clearInterval(interval)
-            this.scene.restart(CST.SCENES.MENU, { playerUsername: playerUsername });
+            this.scene.restart(CST.SCENES.MENU, { playerUsername: this.playerUsername });
         })
 
         // called whenever anywhere is clicked

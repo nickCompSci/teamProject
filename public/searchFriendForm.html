@@ -29,6 +29,7 @@
 
         label {
             display: block;
+            font-size: 60px;
         }
 
         a {
@@ -70,12 +71,12 @@
             border-bottom: 2px solid white;
             color: white;
             font-size: 20px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Verdana;
         }
 
         /* when an input box is in focus, i.e a user has clicked on it */
         input:focus {
-            outline: 2px solid white;
+            outline: 3px solid white;
             border: none;
         }
 
@@ -84,7 +85,8 @@
             color: white;
             font-family: 'Courier New', Courier, monospace;
             opacity: 1;
-            font-size: 20px;
+            font-size: 25px;
+            font-family: Verdana;
         }
     </style>
 </head>
@@ -93,7 +95,7 @@
     <!-- form with input field that will be used to search for a username -->
     <form id="addFriendForm">
         <div class="container">
-            <h3>Add Friend</h3>
+            <h2>Add Friend</h2>
             <label for="friendUsername">Username:</label>
             <input type="text" name="friendUsername" id="friendUsername" placeholder="Enter a username" required>
         </div>
