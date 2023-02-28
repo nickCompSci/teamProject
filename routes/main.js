@@ -44,8 +44,7 @@ router.post("/login", async (request, response, next) => {
     passport.authenticate("login", async (err, user, info) => {
         try {
             if (err || !user) {
-                const error = new Error("An error occurred logging in.");
-                return next(error);
+                return next(info);
             }
             request.login(user, { session: false }, async (error) => {
                 if (error) return next(error);
@@ -169,6 +168,7 @@ router.post("/sendFriendRequest", (request, response) => {
             try {
                 const session = driver.session({ database: "neo4j" });
                 // query to check if the relationship already exists
+                // from this users standpoint
                 const readQuery = `MATCH (a:Person {username : $currentUser}),
                     (b:Person {username: $toOtherUser})
                     RETURN EXISTS( (a)-[:PENDING_REQUEST]->(b) ) as exist`;
@@ -176,10 +176,8 @@ router.post("/sendFriendRequest", (request, response) => {
                 const readResult = await session.executeRead(tx =>
                     tx.run(readQuery, { currentUser, toOtherUser })
                 );
-
-                await session.close();
+                // await session.close();
                 readResult.records.forEach(record => {
-
                     doesExist = record.get("exist");
                     if (doesExist == true) {
                         status = "exists";
@@ -187,6 +185,25 @@ router.post("/sendFriendRequest", (request, response) => {
                 })
 
                 if (doesExist == false) {
+                    const otherUsersStandpointQuery = `
+                    MATCH (a:Person {username : $currentUser}),
+                    (b:Person {username: $toOtherUser})
+                    RETURN EXISTS( (b)-[:PENDING_REQUEST]->(a) ) as exist`;
+
+                    const otherUsersStandpointResult = await session.executeRead(tx =>
+                        tx.run(otherUsersStandpointQuery, { currentUser, toOtherUser })
+                    );
+                    await session.close();
+                    otherUsersStandpointResult.records.forEach(record => {
+
+                        doesExist = record.get("exist");
+                        if (doesExist == true) {
+                            status = "otherUser";
+                        }
+                    })
+                }
+
+                if (status == "false") {
                     const session2 = driver2.session({ database: "neo4j" });
                     // query to create a pending request relationship
                     const writeQuery = `MATCH (a:Person), (b:Person)
@@ -277,13 +294,16 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
                     // must create friend relationship
                     const session = driver.session({ database: 'neo4j' });
                     // make sure to create a unique relationship not duplicate
-
+                    // have made sure will always be 1 friend relationship
+                    // however - when 1 accepts, the other person's pending breaks
+                    // 1) if system detects 2 people about to both have pending -request
+                    // notify the latter person that they already have a request from that user
                     // make a read query to check if a friend already exists, if it does, do nothing
                     // also need to
                     const writeQuery = `
                         MATCH (a:Person {username: $currentUser}) 
                         MATCH (b:Person {username: $otherUser})
-                        MERGE (b)-[r:FRIENDS_WITH]->(a);`;
+                        MERGE (b)-[r:FRIENDS_WITH]-(a);`;
                     await session.executeWrite(tx =>
                         tx.run(writeQuery, { currentUser, otherUser })
                     );
@@ -344,7 +364,7 @@ router.post("/getFriends", (request, response) => {
                 // query to check if a join code relationship if active
                 const checkJoinCodeQuery = `
                     MATCH (:Person {username: $currentUsername})<-[:JOIN_CODE]-(People)
-                    RETURN People.username as everyone;
+                    RETURN People.username as everyone ORDER BY everyone ASC;
                     `;
                 const checkJoinCodeQueryResult = await session.executeWrite(tx =>
                     tx.run(checkJoinCodeQuery, { currentUsername })
@@ -352,6 +372,11 @@ router.post("/getFriends", (request, response) => {
                 checkJoinCodeQueryResult.records.forEach(record => {
                     // friends currently sitting in a lobby
                     friendsCurrentlyInLobby.push(record.get("everyone"));
+                    // listOfFriends.remove(record.get("everyone"));
+                    const index = listOfFriends.indexOf(record.get("everyone"));
+                    if (index > -1){
+                        listOfFriends.splice(index,1)
+                    }
                 })
 
             } catch (error) {
@@ -494,7 +519,7 @@ router.post("/retrieveUsername", (request, response) => {
     const currentUser = tokenList[refreshToken].username;
     response.setHeader('Content-Type', 'application/json');
     // return the username to route caller
-    response.end(JSON.stringify({ username : currentUser}));
+    response.end(JSON.stringify({ username: currentUser }));
     // to access in caller - result.username
 })
 

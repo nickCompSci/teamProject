@@ -22,8 +22,8 @@ const ProfileSchema = new Schema({
         type : String,
         required : true,
         unique : true,
-        minLength : 3,
-        maxLength : 20 }
+        minLength : 1,
+        maxLength : 12 }
 });
 
 // pre-save hook which is called everytime before a

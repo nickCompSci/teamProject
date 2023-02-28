@@ -74,9 +74,9 @@ export class LoadScene extends Phaser.Scene{
         */
 
         // Simulate load times (for testing)
-        for(let i = 0; i < 200; i++){
-            this.load.image("background" + i, "../assets/resources/tower2.jpg");
-        }
+        // for(let i = 0; i < 10; i++){
+        //     this.load.image("background" + i, "../assets/resources/tower2.jpg");
+        // }
 
         // Used to create the progress bar
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.45, 'Loading game...', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
@@ -86,6 +86,7 @@ export class LoadScene extends Phaser.Scene{
             })
 
             let network;
+            let playerUsername;
             var data = {
                 refreshToken: getCookie('refreshJwt')
             };
@@ -96,6 +97,7 @@ export class LoadScene extends Phaser.Scene{
                 data,
                 // on success call the callback function
                 success: function (result) {
+                    playerUsername = result.username;
                     network = new Network(result.username);
                 },
                 // on error return to game page 
@@ -109,7 +111,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU, {networkObj: network});
+            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
         })
     }
 }

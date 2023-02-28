@@ -9,6 +9,10 @@ export class friendScene extends Phaser.Scene {
         })
     }
 
+    init(data) {
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
+    }
     // Creates any images, text, etc.
     create() {
         function searchForValidUsername(usernameToSearch, callback) {
@@ -33,6 +37,7 @@ export class friendScene extends Phaser.Scene {
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
                 window.confirm("Invalid Username, please try again");
+                document.getElementById("addFriendForm").reset();
             } else {
                 // a user with the username was found
                 // remove searchButton and make confirm button interactive
@@ -52,7 +57,7 @@ export class friendScene extends Phaser.Scene {
                 type: 'POST',
                 url: '/sendFriendRequest',
                 data,
-                // callabck function if successful
+                // callback function if successful
                 success: callback,
                 // on error return to game page 
                 error: function (xhr) {
@@ -68,15 +73,19 @@ export class friendScene extends Phaser.Scene {
                 scene.sound.play("failedToSendFriendRequest");
                 alert("You already sent a friend request to this player!");
                 scene.reset();
-                
+
             } else if (result.found == "false") {
                 scene.sound.play("failedToSendFriendRequest");
                 alert("Invalid username, failed to send friend request");
                 scene.reset();
-            } else {
+            } else if (result.found == "otherUser") {
+                scene.sound.play("failedToSendFriendRequest");
+                alert("This user has already sent you a friend request");
+                scene.reset();
+            }
+            else {
                 scene.sound.play("sentFriendRequest");
                 alert("Sent friend request!");
-
                 scene.reset();
             }
         }
@@ -86,7 +95,7 @@ export class friendScene extends Phaser.Scene {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Friends title
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '80px' }).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
@@ -94,7 +103,7 @@ export class friendScene extends Phaser.Scene {
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
-        this.nameInput = this.add.dom(200, 400).createFromCache("searchFriendForm");
+        this.nameInput = this.add.dom(200, 350).createFromCache("searchFriendForm");
         this.friendsAndPending = this.add.dom(825, 500).createFromCache("pendingAndFriends");
 
         const scene = this;
@@ -108,8 +117,8 @@ export class friendScene extends Phaser.Scene {
 
         showFriends(); // on load call the friends function to load in the friends list
 
-        const searchButton = this.add.text(100, 525, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
-        const confirmButton = this.add.text(50, 525, "", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
+        const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
+        const confirmButton = this.add.text(50, 500, "", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
         searchButton.setInteractive();
 
         this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -117,18 +126,38 @@ export class friendScene extends Phaser.Scene {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             // check if anything was inputted into the input box
             if (friendUsername.value != "") {
-                // when success is called in the ajax, it will pass the response to
-                // searchForValidUsernameCallback function
-                searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
+                if (document.querySelector('#currentFriends #' + friendUsername.value)) {
+                    alert(`This player is already your friend!`);
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
+                }
+                else if (friendUsername.value == this.playerUsername) {
+                    alert("Can not send request to yourself!");
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
+                }
+                else {
+                    searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
+                }
             }
         });
 
         searchButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
-                // when success is called in the ajax, it will pass the response to
-                // searchForValidUsernameCallback function
-                searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
+                if (friendUsername.value == this.playerUsername) {
+                    alert("Can not send request to yourself!");
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
+                }
+                else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
+                    alert(`This player is already your friend!`);
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
+                }
+                else {
+                    searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
+                }
             }
         });
 
@@ -146,8 +175,8 @@ export class friendScene extends Phaser.Scene {
             if (friendUsername.value != "") {
                 // when success is called in the ajax, it will pass the response to
                 // searchForValidUsernameCallback function
-                console.log("sending the friend request now");
                 sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
+
             }
         });
 
@@ -158,7 +187,6 @@ export class friendScene extends Phaser.Scene {
             arrowSprite.setVisible(true);
             arrowSprite.x = backButton.x - backButton.width + 60;
             arrowSprite.y = backButton.y + backButton.height / 4;
-            console.log("hover")
         })
 
         backButton.on("pointerout", () => {
@@ -167,8 +195,8 @@ export class friendScene extends Phaser.Scene {
 
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
-            clearInterval(interval)
-            this.scene.start(CST.SCENES.MENU);
+            clearInterval(interval);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // called whenever anywhere is clicked
@@ -192,7 +220,7 @@ export class friendScene extends Phaser.Scene {
                             joining = "true";
                             break;
                         }
-                        else{
+                        else {
                             break;
                         }
                     }
@@ -207,9 +235,9 @@ export class friendScene extends Phaser.Scene {
         }
     }
     reset() {
-        this.scene.start(CST.SCENES.FRIENDS)
+        this.scene.restart(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
     }
     loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY)
+        this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername })
     }
 }

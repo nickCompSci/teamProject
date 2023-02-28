@@ -29,6 +29,7 @@
 <!-- script to handle when user presses login link -->
 <script>
     function signIn() {
+      document.body.style.cursor='wait';
         // obtain the email and password field
       var data = {
         email: document.forms[0].elements[0].value,
@@ -45,7 +46,7 @@
         },
         // on error return login page again to user
         error: function (xhr) {
-          window.alert(JSON.stringify(xhr));
+          window.alert(xhr.responseJSON.error.message);
           window.location.replace('/index.html');
         }
       });
