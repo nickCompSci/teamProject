@@ -168,6 +168,7 @@ router.post("/sendFriendRequest", (request, response) => {
             try {
                 const session = driver.session({ database: "neo4j" });
                 // query to check if the relationship already exists
+                // from this users standpoint
                 const readQuery = `MATCH (a:Person {username : $currentUser}),
                     (b:Person {username: $toOtherUser})
                     RETURN EXISTS( (a)-[:PENDING_REQUEST]->(b) ) as exist`;
@@ -175,10 +176,8 @@ router.post("/sendFriendRequest", (request, response) => {
                 const readResult = await session.executeRead(tx =>
                     tx.run(readQuery, { currentUser, toOtherUser })
                 );
-
-                await session.close();
+                // await session.close();
                 readResult.records.forEach(record => {
-
                     doesExist = record.get("exist");
                     if (doesExist == true) {
                         status = "exists";
@@ -186,6 +185,25 @@ router.post("/sendFriendRequest", (request, response) => {
                 })
 
                 if (doesExist == false) {
+                    const otherUsersStandpointQuery = `
+                    MATCH (a:Person {username : $currentUser}),
+                    (b:Person {username: $toOtherUser})
+                    RETURN EXISTS( (b)-[:PENDING_REQUEST]->(a) ) as exist`;
+
+                    const otherUsersStandpointResult = await session.executeRead(tx =>
+                        tx.run(otherUsersStandpointQuery, { currentUser, toOtherUser })
+                    );
+                    await session.close();
+                    otherUsersStandpointResult.records.forEach(record => {
+
+                        doesExist = record.get("exist");
+                        if (doesExist == true) {
+                            status = "otherUser";
+                        }
+                    })
+                }
+
+                if (status == "false") {
                     const session2 = driver2.session({ database: "neo4j" });
                     // query to create a pending request relationship
                     const writeQuery = `MATCH (a:Person), (b:Person)
@@ -276,13 +294,16 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
                     // must create friend relationship
                     const session = driver.session({ database: 'neo4j' });
                     // make sure to create a unique relationship not duplicate
-
+                    // have made sure will always be 1 friend relationship
+                    // however - when 1 accepts, the other person's pending breaks
+                    // 1) if system detects 2 people about to both have pending -request
+                    // notify the latter person that they already have a request from that user
                     // make a read query to check if a friend already exists, if it does, do nothing
                     // also need to
                     const writeQuery = `
                         MATCH (a:Person {username: $currentUser}) 
                         MATCH (b:Person {username: $otherUser})
-                        MERGE (b)-[r:FRIENDS_WITH]->(a);`;
+                        MERGE (b)-[r:FRIENDS_WITH]-(a);`;
                     await session.executeWrite(tx =>
                         tx.run(writeQuery, { currentUser, otherUser })
                     );
@@ -493,7 +514,7 @@ router.post("/retrieveUsername", (request, response) => {
     const currentUser = tokenList[refreshToken].username;
     response.setHeader('Content-Type', 'application/json');
     // return the username to route caller
-    response.end(JSON.stringify({ username : currentUser}));
+    response.end(JSON.stringify({ username: currentUser }));
     // to access in caller - result.username
 })
 

@@ -68,15 +68,19 @@ export class friendScene extends Phaser.Scene {
                 scene.sound.play("failedToSendFriendRequest");
                 alert("You already sent a friend request to this player!");
                 scene.reset();
-                
+
             } else if (result.found == "false") {
                 scene.sound.play("failedToSendFriendRequest");
                 alert("Invalid username, failed to send friend request");
                 scene.reset();
-            } else {
+            } else if (result.found == "otherUser") {
+                scene.sound.play("failedToSendFriendRequest");
+                alert("This user has already sent you a friend request");
+                scene.reset();
+            }
+            else {
                 scene.sound.play("sentFriendRequest");
                 alert("Sent friend request!");
-
                 scene.reset();
             }
         }
@@ -146,8 +150,7 @@ export class friendScene extends Phaser.Scene {
             if (friendUsername.value != "") {
                 // when success is called in the ajax, it will pass the response to
                 // searchForValidUsernameCallback function
-                console.log("sending the friend request now");
-                sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
+                sendFriendRequest(friendUsername.value, sendFriendRequestCallback); 
             }
         });
 
@@ -192,7 +195,7 @@ export class friendScene extends Phaser.Scene {
                             joining = "true";
                             break;
                         }
-                        else{
+                        else {
                             break;
                         }
                     }
