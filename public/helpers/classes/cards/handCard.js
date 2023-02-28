@@ -2,14 +2,16 @@ import { gameOptions } from "../../config.js";
 
 // Cards that appear in the player's hand
 export default class HandCard extends Phaser.GameObjects.Sprite {
-    constructor(name, cost, cardType, effect, scene, x, y, sprite) {
+    constructor(name, cost, cardType, effect, rarity, scene, x, y, sprite) {
         super(scene, x, y, sprite);
         this.name = name;
         this.cost = cost;
         this.effect = effect;
         this.cardType = cardType;
+        this.rarity = rarity
     }
 
+    // edits card's appearances in hand
     cardInHand(scene) {
         this.visible = !this.visible;
         this.setInteractive();

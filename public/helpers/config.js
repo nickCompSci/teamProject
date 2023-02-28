@@ -13,11 +13,3 @@ export const cardBackDimensions = {
     backHeight: 205
 }
 
-export const enemy = {
-    spriteWidth: 73.3,
-    spriteHeight: 103,
-    numberOfSprites: 3,
-    enemyList: [],
-    enemyOnScene: []
-}
-

@@ -22,7 +22,7 @@ import {DiscardPileScene} from "./scenes/DiscardPileScene.js"
 let game = new Phaser.Game({
     width: 1000,
     height: 800,
-    scale: { parent: 'phaser-container', mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scale: { parent: 'phaser-container', mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
         LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene, LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene
     ],
