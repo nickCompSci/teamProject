@@ -36,6 +36,7 @@ export class friendScene extends Phaser.Scene {
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
                 window.confirm("Invalid Username, please try again");
+                document.getElementById("addFriendForm").reset();
             } else {
                 // a user with the username was found
                 // remove searchButton and make confirm button interactive
@@ -43,6 +44,8 @@ export class friendScene extends Phaser.Scene {
                 confirmButton.setText("Send Request");
                 confirmButton.setInteractive();
             }
+
+            
         }
 
         function sendFriendRequest(usernameToSendRequestTo, callback) {
@@ -55,7 +58,7 @@ export class friendScene extends Phaser.Scene {
                 type: 'POST',
                 url: '/sendFriendRequest',
                 data,
-                // callabck function if successful
+                // callback function if successful
                 success: callback,
                 // on error return to game page 
                 error: function (xhr) {
@@ -126,11 +129,13 @@ export class friendScene extends Phaser.Scene {
             if (friendUsername.value != "") {
                 if (document.querySelector('#currentFriends #'+friendUsername.value)) {
                     alert(`This player is already your friend!`);
-                    this.reset();
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
                 }
                 else if (friendUsername.value == this.playerUsername){
                     alert("Can not send request to yourself!");
-                    this.reset();
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
                 }
                 else{
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -141,21 +146,19 @@ export class friendScene extends Phaser.Scene {
         searchButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
-                console.log(this.playerUsername,friendUsername.value);
                 if (friendUsername.value == this.playerUsername){
                     alert("Can not send request to yourself!");
-                    // document.getElementById("addFriendForm").reset();
-                } //back: was elimating the need to check database for presence of friend???
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
+                } 
                 else if (document.querySelector('#currentFriends #'+friendUsername.value)) {
                     alert(`This player is already your friend!`);
-                    // document.getElementById("addFriendForm").reset();
+                    // reset the form
+                    document.getElementById("addFriendForm").reset();
                 }
                 else{
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
                 }
-                // when success is called in the ajax, it will pass the response to
-                // searchForValidUsernameCallback function
-
             }
         });
 
@@ -195,7 +198,7 @@ export class friendScene extends Phaser.Scene {
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
             clearInterval(interval)
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.restart(CST.SCENES.MENU,{playerUsername: playerUsername});
         })
 
         // called whenever anywhere is clicked
@@ -234,7 +237,8 @@ export class friendScene extends Phaser.Scene {
         }
     }
     reset() {
-        this.scene.start(CST.SCENES.FRIENDS)
+        console.log("reset");
+        this.scene.restart(CST.SCENES.FRIENDS,{playerUsername: playerUsername})
     }
     loadLobby() {
         this.scene.start(CST.SCENES.LOBBY)
