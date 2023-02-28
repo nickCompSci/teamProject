@@ -75,7 +75,7 @@ export class MenuScene extends Phaser.Scene{
 
         // Signals when the pointer is clicked and released
         createButton.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.CREATE, {networkObj: this.network});
+            this.scene.start(CST.SCENES.CREATE, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Allows the start button to be interactive
@@ -148,7 +148,7 @@ export class MenuScene extends Phaser.Scene{
 
         friendsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.FRIENDS, {theirUsername: this.playerUsername})
+            this.scene.start(CST.SCENES.FRIENDS, {networkObj:this.network ,theirUsername: this.playerUsername})
             console.log("click")
         })
 

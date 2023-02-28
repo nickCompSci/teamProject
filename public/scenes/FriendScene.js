@@ -10,7 +10,8 @@ export class friendScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.playerUsername = data.theirUsername;
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
     }
     // Creates any images, text, etc.
     create() {
@@ -195,7 +196,7 @@ export class friendScene extends Phaser.Scene {
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
             clearInterval(interval);
-            this.scene.start(CST.SCENES.MENU, { playerUsername: this.playerUsername });
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // called whenever anywhere is clicked
@@ -234,9 +235,9 @@ export class friendScene extends Phaser.Scene {
         }
     }
     reset() {
-        this.scene.restart(CST.SCENES.FRIENDS, { playerUsername: this.playerUsername })
+        this.scene.restart(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
     }
     loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY)
+        this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername })
     }
 }
