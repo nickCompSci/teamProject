@@ -150,7 +150,11 @@ export class friendScene extends Phaser.Scene {
             if (friendUsername.value != "") {
                 // when success is called in the ajax, it will pass the response to
                 // searchForValidUsernameCallback function
-                sendFriendRequest(friendUsername.value, sendFriendRequestCallback); 
+                if (document.querySelector('#currentFriends #'+friendUsername.value)) {
+                    alert(`Can not send friend request to a player who is already your friend!`);
+                } else {
+                    sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
+                }
             }
         });
 
