@@ -194,8 +194,8 @@ export class friendScene extends Phaser.Scene {
 
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
-            clearInterval(interval)
-            this.scene.restart(CST.SCENES.MENU, { playerUsername: this.playerUsername });
+            clearInterval(interval);
+            this.scene.start(CST.SCENES.MENU, { playerUsername: this.playerUsername });
         })
 
         // called whenever anywhere is clicked
