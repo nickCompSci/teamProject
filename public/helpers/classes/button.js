@@ -9,7 +9,7 @@ export default class Button extends Phaser.GameObjects.Text {
             x: 8,
             y: 15
         }
-        this.setOrigin(1, 0.5);
+        this.setOrigin(0, 0.5);
         this.setPadding(this.padding.x, this.padding.y);
         this.setStyle({ backgroundColor: bgColour});
         this.setInteractive( { useHandCursor: true});
