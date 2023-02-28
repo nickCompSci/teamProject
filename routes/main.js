@@ -364,7 +364,7 @@ router.post("/getFriends", (request, response) => {
                 // query to check if a join code relationship if active
                 const checkJoinCodeQuery = `
                     MATCH (:Person {username: $currentUsername})<-[:JOIN_CODE]-(People)
-                    RETURN People.username as everyone;
+                    RETURN People.username as everyone ORDER BY everyone ASC;
                     `;
                 const checkJoinCodeQueryResult = await session.executeWrite(tx =>
                     tx.run(checkJoinCodeQuery, { currentUsername })
@@ -372,6 +372,11 @@ router.post("/getFriends", (request, response) => {
                 checkJoinCodeQueryResult.records.forEach(record => {
                     // friends currently sitting in a lobby
                     friendsCurrentlyInLobby.push(record.get("everyone"));
+                    // listOfFriends.remove(record.get("everyone"));
+                    const index = listOfFriends.indexOf(record.get("everyone"));
+                    if (index > -1){
+                        listOfFriends.splice(index,1)
+                    }
                 })
 
             } catch (error) {
