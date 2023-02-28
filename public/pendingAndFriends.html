@@ -98,9 +98,12 @@
 
 <body>
     <section>
-        <ul id="tabs">
-            <li onClick="showFriends()">Friends</li>
-            <li onClick="showPending()">Pending</li>
+        <ul id="tabs" >
+            <li onClick="showFriends()" title="Friend tab, view your friends here">Friends
+            </li>
+
+            <li onClick="showPending()" title="Pending tab, view incoming friend requests">Pending
+            </li>
         </ul>
         <!-- this will hold all current friends of the current user/player -->
         <div id="showUsersFriends">
