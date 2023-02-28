@@ -77,8 +77,8 @@ export class BattleScene extends Phaser.Scene {
         // loads all the different types of cards
         this.loadCards();
         
-        this.endTurnButton = new Button(gameWidth, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
-        this.keepCardButton = new Button(gameWidth, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
+        this.endTurnButton = new Button(0, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
+        this.keepCardButton = new Button(0, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
@@ -185,7 +185,7 @@ export class BattleScene extends Phaser.Scene {
 
                 // remove the card from the scene after 500ms
                 setTimeout(function() { 
-                    gameObject.setActive(false).setVisible(false); 
+                    gameObject.setActive(false).setVisible(false).clearTint(); 
                 }, 500);
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
@@ -235,6 +235,25 @@ export class BattleScene extends Phaser.Scene {
         damage_num.destroy();
     }
 
+    healing_calculation(character, healing, modifiers) {
+        // list of 1 for empty modifiers
+        for (let modifier of modifiers) {
+            healing = healing * modifier;
+        }
+        console.log(healing);
+        character.health += healing;
+        console.log(character.health);
+        character.setTint(0x90EE90);
+        let healing_num = this.add.text(0, 0, "+" + healing, {color: "#90EE90", fontSize: "30px"});
+        healing_num.setPosition(character.x - 40, character.y - 80);
+        this.time.delayedCall(450, this.healing_event, [cahracter, healing_num], this);
+    }
+
+    healing_event(character, healing_num) {
+        character.clearTint();
+        healing_num.destroy();
+    }
+
     loadCards() {
         // damage cards
         let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 10, target: "single"}, "blue", this, 0, 0, "cannonball");
@@ -265,7 +284,7 @@ export class BattleScene extends Phaser.Scene {
         let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
         let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", this, 0, 0, "ricochet");
         let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
-        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: -8}, "blue", this, 0, 0, "bayonet");
+        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
         let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
         let nanotech = new ComboCard("nanotech", 3, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", this, 0, 0, "nanotech");
 
@@ -278,7 +297,7 @@ export class BattleScene extends Phaser.Scene {
        
         // reload cards
         let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -10}, "purple", this, 0, 0, "overload");
+        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: 10}, "purple", this, 0, 0, "overload");
         let lock_and_load = new ReloadCard("lock_and_load", 0, "reload", {amount: 2, cards: 2}, "blue", this, 0, 0, "lock_and_load");
         let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", this, 0, 0, "bandolier");
         let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
@@ -308,7 +327,7 @@ export class BattleScene extends Phaser.Scene {
     
     }
     
-   
+    
     arrangeCardsInCenter(handArray) {
         // arranges for the cards to be organised around the bottom middle of the screen
         let bottomOfScreen = this.game.config.height;

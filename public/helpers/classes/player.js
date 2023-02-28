@@ -69,7 +69,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // remove the indexes in reverse order not to mess up the loop
         // pushes non-chosen cards to discard pile
         for (let index=indexList.length-1; index >= 0; index--) {
-            this.handArray[indexList[index]].angle = 0;
             this.graveYardArray.push(this.handArray[indexList[index]]);
             this.handArray[indexList[index]].setVisible(false);
             this.handArray.splice(indexList[index], 1);
@@ -111,7 +110,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             let randomIndex = Math.floor(Math.random() * this.handArray.length); 
             let randomCard = this.handArray[randomIndex];
 
-            randomCard.setActive(false).setVisible(false);
+            randomCard.setActive(false).setVisible(false).clearTint();
             this.handArray.splice(randomIndex, 1);
             this.graveYardArray.push(randomCard);
             scene.arrangeCardsInCenter(this.handArray);
