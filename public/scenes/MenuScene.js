@@ -50,6 +50,7 @@ export class MenuScene extends Phaser.Scene{
             this.isMusicPlaying = true;
             this.sound.pauseOnBlur = false;
             this.sound.play("soundtrack", { loop: true });
+            this.sound.setVolume(0.5)
         }
 
         /*

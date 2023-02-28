@@ -277,6 +277,9 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
                     // must create friend relationship
                     const session = driver.session({ database: 'neo4j' });
                     // make sure to create a unique relationship not duplicate
+
+                    // make a read query to check if a friend already exists, if it does, do nothing
+                    // also need to
                     const writeQuery = `
                         MATCH (a:Person {username: $currentUser}) 
                         MATCH (b:Person {username: $otherUser})
@@ -484,4 +487,16 @@ router.post("/deleteJoinRelationship", (request, response) => {
     deleteJoinRelationship(currentUser, joinCode,
         deleteJoinRelationshipCallback);
 })
+
+
+router.post("/retrieveUsername", (request, response) => {
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ username : currentUser}));
+    // to access in caller - result.username
+})
+
+
 module.exports = router;

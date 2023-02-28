@@ -57,8 +57,8 @@ export class LoadScene extends Phaser.Scene{
 
         // this.load.plugin('rextexteditplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js', true)
         // this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
-
-
+        this.load.audio("sentFriendRequest", ['../assets/resources/sounds/sentRequest.mp3', '../assets/resources/sounds/sentRequest.ogg']);
+        this.load.audio("failedToSendFriendRequest", ['../assets/resources/sounds/failedSentRequest.mp3', '../assets/resources/sounds/failedSentRequest.ogg']);
         // Progress Bar
         let loadingBar = this.add.graphics({
             fillStyle: {
@@ -85,8 +85,27 @@ export class LoadScene extends Phaser.Scene{
             console.log(percent);
             })
 
+            let network;
+            var data = {
+                refreshToken: getCookie('refreshJwt')
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/retrieveUsername',
+                data,
+                // on success call the callback function
+                success: function (result) {
+                    network = new Network(result.username);
+                },
+                // on error return to game page 
+                error: function (xhr) {
+                    window.alert(JSON.stringify(xhr));
+                    window.location.replace('/');
+                }
+            });   
         // instantiate network object
-        var network = new Network();
+
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{

@@ -1,5 +1,26 @@
 export class Network{
-    constructor(){
+    constructor(username){
+        // var data = {
+        //     refreshToken: getCookie('refreshJwt')
+        // };
+        // $.ajax({
+        //     type: 'POST',
+        //     url: '/retrieveUsername',
+        //     data,
+        //     // on success call the callback function
+        //     success: function (result) {
+        //         console.log("*****************************************");
+        //         console.log(result.username);
+        //         // this.peer = new Peer();
+        //         // this._addPeerListeners();
+        //     },
+        //     // on error return to game page 
+        //     error: function (xhr) {
+        //         window.alert(JSON.stringify(xhr));
+        //         window.location.replace('/game.html');
+        //     }
+        // });   
+        console.log(username);
         this.peer = new Peer();
         this._addPeerListeners();
     }
