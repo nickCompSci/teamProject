@@ -85,7 +85,8 @@
         .fa-solid.fa-trash,
         .fa-solid.fa-square-check,
         .fa-sharp.fa-solid.fa-square-xmark,
-        .fa-sharp.fa-solid.fa-right-to-bracket {
+        .fa-sharp.fa-solid.fa-right-to-bracket,
+        .fa-solid.fa-arrows-rotate {
             cursor: pointer;
         }
         #currentFriends li, #pendingRequests li{
@@ -99,11 +100,15 @@
             color: lightgreen;
         }
 
+        .fa-solid.fa-arrows-rotate{
+            padding-left: 40%;
+            padding-top: 5%;
+        }
     </style>
 </head>
 
 <body>
-    <section>
+    <section id="toDoWithFriends">
         <ul id="tabs" >
             <li onClick="showFriends()" title="Friend tab, view your friends here">Friends
             </li>
@@ -111,6 +116,7 @@
             <li onClick="showPending()" title="Pending tab, view incoming friend requests">Pending
             </li>
         </ul>
+        
         <!-- this will hold all current friends of the current user/player -->
         <div id="showUsersFriends">
             <ul id="currentFriends">
@@ -121,6 +127,7 @@
             <ul id="pendingRequests">
             </ul>
         </div>
+        <i class="fa-solid fa-arrows-rotate" title="Refresh your friends list" onClick="showFriends()"></i>
     </section>
 
 </body>
