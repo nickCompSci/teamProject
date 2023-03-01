@@ -9,6 +9,11 @@ export class LobbyScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
+    }
+
     // Creates any images, text, etc.
     create(){
 
@@ -43,7 +48,7 @@ export class LobbyScene extends Phaser.Scene{
 
         startGameButton.on("pointerup", ()=>{
             // Moves to the game scene when the start game button is clicked
-            this.scene.start(CST.SCENES.GAME);
+            this.scene.start(CST.SCENES.GAME, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Back Button
@@ -57,7 +62,7 @@ export class LobbyScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
     }
 }

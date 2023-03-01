@@ -204,18 +204,16 @@ export class friendScene extends Phaser.Scene {
             if (event === undefined) event = window.event;
             let joining;
             var target = 'target' in event ? event.target : event.srcElement;
+            if (target.className == "fa-sharp fa-solid fa-right-to-bracket" ){
             for (let index in friendsList) {
-                if (friendsList[index] == target.id) {
+                // error here - cant get to error for joining offline player, also think broke the delete and accept
+                // new request functionality fix
+                if (friendsList[index] == target.id ) {
                     // if the element's color attribute is green then they are online
                     if (window.getComputedStyle(document.getElementById(target.id), null).color == "rgb(0, 128, 0)") {
                         if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                             alert("Joining now!");
-                            // code for connecting 2 players:
-                            // join code - 1
-                            // 
-                            // 
-                            // 
-                            // 
+                            this.network.connect(target.id);
                             clearInterval(interval)
                             joining = "true";
                             break;
@@ -226,7 +224,7 @@ export class friendScene extends Phaser.Scene {
                     }
                     joining = "offline"
                 }
-            }
+            }}
             if (joining == "offline") {
                 confirm(target.id + " is not online! ");
             } else if (joining == "true") {
