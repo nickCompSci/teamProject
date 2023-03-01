@@ -28,7 +28,8 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
         this.load.image("player", "../assets/resources/sprites/otherplayer.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
-        this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
+        this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
+        this.load.image("deck", "../assets/resources/sprites/deck.png");
         
         // enemies
         this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
@@ -50,6 +51,7 @@ export class BattleScene extends Phaser.Scene {
 
         card_bg.setPosition(gameWidth/2, gameHeight);
         card_bg.setScale(0.325);
+        card_bg.displayWidth = 777;
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
         bg.displayWidth = 777;
@@ -59,6 +61,17 @@ export class BattleScene extends Phaser.Scene {
         this.player.setScale(1.5);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
+        this.deck = this.add.sprite(23, 550, "deck");
+        this.deck.setOrigin(0, 0);
+        this.deckAmount = this.add.text(this.deck.x + this.deck.width, this.deck.y + this.deck.height, this.player.deckArray.length);
+        this.deckAmount.setOrigin(0, 0);
+
+        // loads all the different types of cards
+        this.loadCards();
+        // shuffles the deck and sets up the visual for the deck cards
+        this.player.shuffle();
+        this.player.drawCard(gameOptions.startCards, this);
+
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
         this.actiontext.setPosition(-10, -18);
@@ -66,26 +79,18 @@ export class BattleScene extends Phaser.Scene {
         actions.setPosition(gameWidth/20, gameHeight/1.75);
 
         // launch the discard pile scene in parallel
-        let discardPile = this.add.sprite(-35, gameHeight, "discardPile").setOrigin(0, 1);
-        discardPile.setScale(1.5).setInteractive({useHandCursor: true});
-        discardPile.on('pointerdown', (event) => {
+        this.discardPile = this.add.sprite(23, 750, "discardPile").setOrigin(0, 1);
+        this.discardPile.setInteractive({useHandCursor: true});
+        this.discardPile.on('pointerdown', (event) => {
             this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
-        
-        // loads all the different types of cards
-        this.loadCards();
+        this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length);
         
         this.endTurnButton = new Button(0, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
-        // shuffles the deck and sets up the visual for the deck cards
-        this.player.shuffle();
-        this.player.deckSetUp(this);
-        this.player.drawCard(gameOptions.startCards, this);
-
-        // enemies
         // check level here, if at top, call boss function
         //this.loadEnemies();
         this.spawnEnemyOnScene();
@@ -179,6 +184,7 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.y = dropZone.y + dropZone.y / 3;
                 
                 this.player.graveYardArray.push(gameObject);
+                this.player.discardPileUpdate(this);
                 gameObject.activateCard(this);
 
                 // remove the card from the scene after 500ms
@@ -233,8 +239,8 @@ export class BattleScene extends Phaser.Scene {
         for (let modifier of modifiers) {
             healing = healing * modifier;
         }
+
         character.health += healing;
-        // dont go over the limit
         if (character.health > character.maxHealth) {
             character.health = character.maxHealth;
         }
@@ -247,6 +253,10 @@ export class BattleScene extends Phaser.Scene {
 
     armour_calculation(character, armour) {
         character.armour += armour;
+        if (character.armour > character.maxArmour) {
+            character.armour = character.maxArmour
+        }
+
         character.setTint(0x808080);
         let armour_num = this.add.text(0, 0, "+" + armour, {color: "#808080", fontSize: "30px"});
         armour_num.setPosition(character.x - 40, character.y - 80);

@@ -106,6 +106,7 @@ export default class ComboCard extends HandCard {
         this.setInteractive();
         scene.player.actionPoints += this.cost;
         scene.actiontext.text = scene.player.actionPoints; 
+        scene.player.discardPileUpdate(scene);
     }
 
     getLabel() {
