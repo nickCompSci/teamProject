@@ -26,7 +26,7 @@ export class BattleLoadScene extends Phaser.Scene {
         // healing
         this.load.image("kevlar", "../assets/resources/cards/Kevlar.png");
         this.load.image("medkit", "../assets/resources/cards/Medkit.png");
-        this.load.image("armour_plate", "../assets/resources/cards/Armour_plate.png");
+        this.load.image("armour_plate", "../assets/resources/cards/Armour_Plate.png");
         this.load.image("stim_pack", "../assets/resources/cards/Stim_Pack.png");
         this.load.image("morphine", "../assets/resources/cards/Morphine.png");
         this.load.image("bourbon", "../assets/resources/cards/Bourbon.png");
@@ -34,7 +34,7 @@ export class BattleLoadScene extends Phaser.Scene {
         // reload
         this.load.image("overload", "../assets/resources/cards/Overload.png");
         this.load.image("reload", "../assets/resources/cards/Reload.png");
-        this.load.image("ammo_cache", "../assets/resources/cards/Ammo_cache.png");
+        this.load.image("ammo_cache", "../assets/resources/cards/Ammo_Cache.png");
         this.load.image("bandolier", "../assets/resources/cards/Bandolier.png");
         this.load.image("holster", "../assets/resources/cards/Holster.png");
         this.load.image("lock_and_load", "../assets/resources/cards/Lock_and_Load.png");

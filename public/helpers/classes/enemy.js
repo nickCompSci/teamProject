@@ -5,6 +5,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.y = scene.game.config.height * 0.6;
         this.setScale(2);
         this.health = health;
+        this.maxArmour = 20;
+        this.armour = 0;
+        this.damageModifiers = [1];
         this.spriteType = "enemy";
         this.setInteractive();
     

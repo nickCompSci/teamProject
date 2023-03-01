@@ -220,7 +220,7 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
-                    scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername });
+                    scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }
