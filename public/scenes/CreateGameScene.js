@@ -11,6 +11,7 @@ export class CreateGameScene extends Phaser.Scene{
 
     init(data){
         this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
     }
 
     // Creates any images, text, etc.
@@ -94,7 +95,7 @@ export class CreateGameScene extends Phaser.Scene{
             // call the function to send post request to server
             deleteJoinCodeRelationship(joinCode, deleteJoinCodeRelationshipCallback);
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Submit Button
@@ -111,7 +112,7 @@ export class CreateGameScene extends Phaser.Scene{
             // Submit username to the database
             // I'm not sure when join code will be generated
             // Move to the lobby scene
-            this.scene.start(CST.SCENES.LOBBY);
+            this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
         })
     }
 }

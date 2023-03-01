@@ -100,7 +100,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     // draw an amount of cards
     drawCard(amountOfCards, scene) {
         for (let i=0; i < amountOfCards; i++) {
-            this.resetDeck(scene);
+            //this.resetDeck(scene);
             let lastCard = this.deckTrackerArray.pop();
             lastCard.setActive(false).setVisible(false);
 

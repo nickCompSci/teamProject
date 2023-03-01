@@ -10,6 +10,11 @@ export class MapScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
+    }
+
     // Creates any images, text, etc.
     create(){
 
@@ -36,7 +41,7 @@ export class MapScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // adds icons for map
@@ -215,7 +220,7 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
-                    scene.scene.start(CST.SCENES.BATTLE_LOAD);
+                    scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername });
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }

@@ -9,6 +9,11 @@ export class CreditsScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
+    }
+
     // Creates any images, text, etc.
     create(){
 
@@ -53,7 +58,7 @@ export class CreditsScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
             console.log("click")
         })
     }

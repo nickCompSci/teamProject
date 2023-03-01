@@ -205,17 +205,12 @@ export class friendScene extends Phaser.Scene {
             let joining;
             var target = 'target' in event ? event.target : event.srcElement;
             for (let index in friendsList) {
-                if (friendsList[index] == target.id) {
+                if (friendsList[index] == target.id && target.class == "fa-solid fa-trash") {
                     // if the element's color attribute is green then they are online
                     if (window.getComputedStyle(document.getElementById(target.id), null).color == "rgb(0, 128, 0)") {
                         if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                             alert("Joining now!");
-                            // code for connecting 2 players:
-                            // join code - 1
-                            // 
-                            // 
-                            // 
-                            // 
+                            this.network.connect(target.id);
                             clearInterval(interval)
                             joining = "true";
                             break;
