@@ -236,36 +236,48 @@ router.post("/getPendingFriendRequests", (request, response) => {
     // retrieve all pending requests relating to current user
     // send back a list as result
 
-    function searchForPendingRequestsCallback(result) {
+    function searchForPendingRequestsCallback(incomingRequests,sentRequests) {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ friendRequests: result }));
+        response.end(JSON.stringify({ friendRequests: incomingRequests, sentRequests : sentRequests }));
     }
 
     function searchForPendingRequests(currentUsername, callback) {
         (async () => {
             // connection details
+            const incomingRequests = [];
+            const sentRequests = [];
+
             const uri = process.env.NEO4J_URI;
             const user = process.env.NEO4J_USERNAME;
             const password = process.env.NEO4J_PASSWORD;
             // the users/players who sent a friend request to this user
-            const listOfRequesters = [];
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
-                const readQuery = `MATCH (:Person {username: $currentUsername})<-[:PENDING_REQUEST]-(People)
+                const incomingQuery = `MATCH (:Person {username: $currentUsername})<-[:PENDING_REQUEST]-(People)
                     RETURN People.username as users`;
-                const readResult = await session.executeRead(tx =>
-                    tx.run(readQuery, { currentUsername })
+                const incomingQueryResult = await session.executeRead(tx =>
+                    tx.run(incomingQuery, { currentUsername })
                 );
-                readResult.records.forEach(record => {
+                incomingQueryResult.records.forEach(record => {
                     let userWhoSentFriendRequest = record.get("users");
-                    listOfRequesters.push(userWhoSentFriendRequest);
+                    incomingRequests.push(userWhoSentFriendRequest);
                 })
+                const sentQuery = `MATCH (:Person {username: $currentUsername})-[:PENDING_REQUEST]->(People)
+                RETURN People.username as users`;
+                const sentQueryResult = await session.executeRead(tx =>
+                    tx.run(sentQuery, { currentUsername })
+                );
+                sentQueryResult.records.forEach(record => {
+                    let otherUser = record.get("users");
+                    sentRequests.push(otherUser);
+                })
+
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
                 await driver.close();
-                callback(listOfRequesters);
+                callback(incomingRequests,sentRequests);
             }
         })();
     }
@@ -333,6 +345,44 @@ router.post("/acceptOrDeclinePendingRequest", (request, response) => {
     createFriendRelationship(currentUser, otherUser, operation, createFriendRelationshipCallback);
 })
 
+router.post("/cancelRequest", (request, response) => {
+    function cancelRequestCallback(result) {
+        response.setHeader("Content-Type", "application/json");
+        response.end(JSON.stringify({}));
+    }
+
+    function cancelRequest(currentUser, otherUser, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            const driver2 = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+
+                // now must delete the pending request relationship
+                // this must be done when a user declines or accepts a friend request
+                const session2 = driver2.session({ database: 'neo4j' });
+                const deleteQuery = `
+                 MATCH (a:Person {username: $otherUser})<-[r:PENDING_REQUEST]-(b:Person {username: $currentUser})
+                    DELETE r;`;
+                await session2.executeWrite(tx =>
+                    tx.run(deleteQuery, { otherUser, currentUser }))
+
+            } catch (error) {
+                console.log(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback("Success");
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    const otherUser = request.body.otherUser
+    cancelRequest(currentUser, otherUser, cancelRequestCallback);
+})
 router.post("/getFriends", (request, response) => {
     function retrieveAllFriendsCallback(listOfFriends, friendsCurrentlyInLobby) {
         response.setHeader('Content-Type', 'application/json');
@@ -405,7 +455,6 @@ router.post("/deleteFriend", (request, response) => {
             const uri = process.env.NEO4J_URI;
             const user = process.env.NEO4J_USERNAME;
             const password = process.env.NEO4J_PASSWORD;
-
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
@@ -414,6 +463,11 @@ router.post("/deleteFriend", (request, response) => {
                     DELETE r`;
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, userToDelete })
+                );
+                const writeQuery2 =`MATCH (:Person {username: $currentUsername})-[r:JOIN_CODE]-(:Person {username: $userToDelete})
+                DELETE r`;
+                await session.executeWrite(tx =>
+                    tx.run(writeQuery2, { currentUsername, userToDelete })
                 );
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
