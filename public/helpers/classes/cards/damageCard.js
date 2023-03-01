@@ -21,6 +21,7 @@ export default class DamageCard extends HandCard {
         if (this.effect.target === "single") {
             for (let enemy of scene.enemies) {
                 // remove event listener from enemy
+                enemy.enemyArrow.setVisible(true);
                 enemy.removeListener("pointerdown", enemy.clickHandler);
 
                 // flag on enemy to keep track on whether it's being clicked
@@ -29,6 +30,7 @@ export default class DamageCard extends HandCard {
                 // add the event listener back to the enemy
                 enemy.clickHandler = this.damageEnemy.bind(this, enemy, scene);
                 enemy.on("pointerdown", enemy.clickHandler);
+
             }
         } else if (this.effect.target === "all") {
             this.dealDamageToAllEnemies(scene);
@@ -67,6 +69,7 @@ export default class DamageCard extends HandCard {
         }
 
         for (let enemy of scene.enemies) {
+            enemy.enemyArrow.setVisible(false);
             enemy.isBeingClicked = false;
             enemy.clickHandler = this.damageEnemy.bind(this, enemy, scene);
             enemy.on("pointerdown", enemy.clickHandler);

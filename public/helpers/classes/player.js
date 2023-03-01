@@ -14,7 +14,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.damageModifiers = [1];
         this.handArray = [];
         this.deckArray = [];
-        this.deckTrackerArray = [];
         this.graveYardArray = [];
         this.spriteType = "player";
         this.keepCards = [];
@@ -85,7 +84,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         // set up the deck sprites and deckArray and organise the cards on screen
         this.shuffle();
-        this.deckSetUp(scene);
+        this.deckUpdate(scene);
+        this.discardPileUpdate(scene);
         scene.arrangeCardsInCenter(this.handArray);
         this.enableDragOnCards();
         this.keepCards = [];
@@ -103,14 +103,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
     // draw an amount of cards
     drawCard(amountOfCards, scene) {
         for (let i=0; i < amountOfCards; i++) {
-            //this.resetDeck(scene);
-            let lastCard = this.deckTrackerArray.pop();
-            lastCard.setActive(false).setVisible(false);
+            this.resetDeck(scene);
 
             let drawCard = this.deckArray.pop();
             this.handArray.push(drawCard);
             drawCard.cardInHand(scene);
             scene.arrangeCardsInCenter(this.handArray);
+            this.deckUpdate(scene);
         }
     }
 
@@ -123,6 +122,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.handArray.splice(randomIndex, 1);
             this.graveYardArray.push(randomCard);
             scene.arrangeCardsInCenter(this.handArray);
+            this.discardPileUpdate(scene);
         }
     }
 
@@ -138,26 +138,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
     
-    deckSetUp(scene) {
-        let x = scene.game.config.width / 25;
-        let y = scene.game.config.height / 1.24;
+    deckUpdate(scene) {
+        scene.deckAmount.text = this.deckArray.length;
+    }
 
-        // need to remove all sprites currently active
-        if (this.deckTrackerArray.length > 0) {
-            for (let j=0; j < this.deckTrackerArray.length; j++) {
-                this.deckTrackerArray[j].destroy();
-            }
-        }
-
-        for (let i=0; i < this.deckArray.length; i++) {
-            let cardBack = scene.add.sprite(x, y, 'cardBack');
-            cardBack.setOrigin(0.5, 1);
-            cardBack.displayWidth = cardBackDimensions.backWidth / 2;
-            cardBack.displayHeight = cardBackDimensions.backHeight / 2;
-            
-            this.deckTrackerArray.push(cardBack);
-            x += 3;
-        }
+    discardPileUpdate(scene) {
+        scene.discardPileAmount.text = this.graveYardArray.length;
     }
     
     // implementing Durstenfeld shffle, an optimised version of Fisher-Yates
@@ -176,7 +162,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 this.deckArray.push(card);
             }
             this.shuffle();
-            this.deckSetUp(scene);
+            this.deckUpdate(scene);
+            this.discardPileUpdate(scene);
         }
     }
 
@@ -208,5 +195,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     getSpriteType() {
         return this.spriteType;
+    }
+
+    starterDeck() {
+        
     }
 }

@@ -55,8 +55,10 @@ export default class ComboCard extends HandCard {
             // modify the card's damage to the target of the combo
             if (this.effect.effect === "multiply") {
                 card.effect.damage *= this.effect.amount;
+                card.setTint(0x86C5D8); //lightblue
             } else if (this.effect.effect === "addition") {
                 card.effect.damage += this.effect.amount;
+                card.setTint(0x86C5D8); //lightblue
             } else if (this.effect.effect === "convert") {
                 if (card.effect.target === "all") {
                     // if damage card is already targetting all
@@ -64,10 +66,10 @@ export default class ComboCard extends HandCard {
                 } else {
                     // convert single to all
                     card.effect.target = "all";
+                    card.setTint(0x86C5D8); //lightblue
                 }
             }
             card.isBeingCombo = false;
-            card.setTint(0x86C5D8); //lightblue
 
         // doubling healing cards
         } else if ((card.isBeingCombo && this.effect.target === "healing") && (card.cardType === this.effect.target)) {
@@ -106,6 +108,7 @@ export default class ComboCard extends HandCard {
         this.setInteractive();
         scene.player.actionPoints += this.cost;
         scene.actiontext.text = scene.player.actionPoints; 
+        scene.player.discardPileUpdate(scene);
     }
 
     getLabel() {

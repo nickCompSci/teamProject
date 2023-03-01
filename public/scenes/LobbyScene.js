@@ -70,7 +70,7 @@ export class LobbyScene extends Phaser.Scene{
         // send the joinCode to a function to send POST request to create a relationship
         addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
 
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5).setInteractive();
 
         // Networking!
         // PLACEHOLDER - Lists current players connected to game
@@ -112,5 +112,14 @@ export class LobbyScene extends Phaser.Scene{
             deleteJoinCodeRelationship(this.network.peer.id);
             this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
+
+        // Add event listener to enable copying of the text
+        joinCodeText.on('pointerdown', function (pointer) {
+            if (pointer.leftButtonDown()) {
+                var joinCode = joinCodeText.text.split(':')[1].trim(); // extract the join code
+                navigator.clipboard.writeText(joinCode); // copy the join code to clipboard
+                window.alert("Join code copied to clipboard!");
+            }
+        });
     }
 }
