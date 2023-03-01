@@ -90,7 +90,7 @@ export class MenuScene extends Phaser.Scene{
 
         // Signals when the pointer is clicked and released
         joinButton.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.JOIN);
+            this.scene.start(CST.SCENES.JOIN, {networkObj:this.network, playerUsername: this.playerUsername});
             console.log("click")
         })
 
