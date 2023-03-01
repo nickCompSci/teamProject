@@ -40,6 +40,7 @@ export class DiscardPileScene extends Phaser.Scene {
             for (let cards of this.graveYardArray) {
                 cards.setVisible(true);
                 let discardCard = this.add.existing(cards);
+                discardCard.angle = 0;
                 discardCard.x = startX + (xCounter * xOffset);
                 discardCard.y = startY + (yCounter * yOffSet);
                 discardCard.setOrigin(0, 0);
