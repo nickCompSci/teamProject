@@ -405,7 +405,6 @@ router.post("/deleteFriend", (request, response) => {
             const uri = process.env.NEO4J_URI;
             const user = process.env.NEO4J_USERNAME;
             const password = process.env.NEO4J_PASSWORD;
-
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
@@ -414,6 +413,11 @@ router.post("/deleteFriend", (request, response) => {
                     DELETE r`;
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, userToDelete })
+                );
+                const writeQuery2 =`MATCH (:Person {username: $currentUsername})-[r:JOIN_CODE]-(:Person {username: $userToDelete})
+                DELETE r`;
+                await session.executeWrite(tx =>
+                    tx.run(writeQuery2, { currentUsername, userToDelete })
                 );
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
