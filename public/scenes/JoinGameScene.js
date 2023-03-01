@@ -61,16 +61,17 @@ export class JoinGameScene extends Phaser.Scene{
         lobbyButton.on("pointerup", ()=>{
             let code = this.codeInput.getChildByName("code");
             if (code.value != "") {
-                // Search database for code
-                let isValidCode = true // function to return true or false depending on if the code is valid or not
+                // function to return true or false depending on if the code is valid or not
                 if (isValidCode) {
                     console.log("Success: Valid code found");
                     // Make network connection
                     this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
                 } else {
+                    // Code does not exist
                     alert("Code not found");
                 }
             } else {
+                // Code field is blank
                 alert("Code can not be blank")
             }
         })
