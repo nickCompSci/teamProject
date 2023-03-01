@@ -78,7 +78,8 @@ export class LobbyScene extends Phaser.Scene{
 
         // Networking!
         // PLACEHOLDER - Lists current players connected to game
-        let playerList = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Player 1 (You)', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        let username = this.network.peer.id
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, username, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.80, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -99,7 +100,7 @@ export class LobbyScene extends Phaser.Scene{
 
         startGameButton.on("pointerup", ()=>{
             // Moves to the game scene when the start game button is clicked
-            this.scene.start(CST.SCENES.GAME, {networkObj: this.network, playerUsername: this.playerUsername });
+            this.scene.start(CST.SCENES.MAP, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Back Button
