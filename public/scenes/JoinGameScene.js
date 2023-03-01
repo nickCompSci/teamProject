@@ -23,24 +23,9 @@ export class JoinGameScene extends Phaser.Scene{
         // Join Game title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, 'Please enter a join code:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, 'Please enter a code below:', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        // Input code box
-        let codeBox = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, "Code", {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setOrigin(0.5, 0.5)
-
-        // Code box
-        codeBox.setInteractive();
-
-        // codeBox.on("pointerdown", ()=>{
-        //     this.rexUI.edit(codeBox);
-        // });
-
-        /** codeBox.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = codeBox.x - codeBox.width + 40;
-            arrowSprite.y = codeBox.y + codeBox.height / 4;
-            console.log("hover")
-        }); */
+        this.codeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height * 0.45).createFromCache("enterCodeForm");
 
         // Submit button
         let lobbyButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 230, 'Join Lobby', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
@@ -74,10 +59,11 @@ export class JoinGameScene extends Phaser.Scene{
         })
 
         lobbyButton.on("pointerup", ()=>{
-            // Networking!
-            // Checks to see if code matches any existing games
-            // If it does, then the scene is changed to a lobby scene that shows the other players in the game
-            // If it doesn't, then an error message is displayed
+            let code = this.codeInput.getChildByName("code");
+            if (code.value != "") {
+                // Search database for valid code and make network connection
+                document.getElementById("enterCodeForm")
+            }
             this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
         })
     }
