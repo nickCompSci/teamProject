@@ -191,7 +191,6 @@ export class BattleScene extends Phaser.Scene {
         
                 this.cameras.main.shake(100, 0.02);
                 for (let card of this.player.handArray){
-                    
                     if (card.cost > this.player.actionPoints){
                         card.setTint(0xff0000);
                     } else {
