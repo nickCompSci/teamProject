@@ -96,6 +96,18 @@ export class BattleScene extends Phaser.Scene {
         //this.loadEnemies();
         this.spawnEnemyOnScene();
 
+        // trying to fix the clicking on cards issue where the card goes out of bounds
+        // this.input.on("pointerdown", (pointer, gameObject) => {
+        //     if (scene.player.handArray.includes(gameObject)) {
+        //         scene.arrangeCardsInCenter(scene.player.handArray);
+        //     }
+        // });
+
+        // this.input.on("pointerup", (pointer, gameObject) => {
+        //     handArray.push(gameObject);
+        //     scene.arrangeCardsInCenter(scene.player.handArray)
+        // }) 
+
         // card event listeners for pointer interactions
         this.input.on('dragstart', (pointer, gameObject) => {
             gameObject.tooltip.removeTooltip();
@@ -162,7 +174,7 @@ export class BattleScene extends Phaser.Scene {
        }, this);
 
         this.input.on('dragenter', (pointer, gameObject, dropZone) => {
-            gameObject.setTint(0xffa500);
+            gameObject.setTint(0x32CD32);
         });
 
         this.input.on('dragleave', (pointer, gameObject, dropZone) => {
