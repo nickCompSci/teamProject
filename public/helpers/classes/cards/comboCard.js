@@ -47,39 +47,35 @@ export default class ComboCard extends HandCard {
             scene.player.discardCard(this.effect.discard, scene);
         }
 
-        // enable cards to be interactable
-        scene.player.enableDragOnCards();
     }
 
     comboCards(card, scene) {
         // check if combo card is targetting damage cards
         if ((card.isBeingCombo && this.effect.target === "damage") && (card.cardType === this.effect.target)) {
-            // multiply the chosen card's damage
+            // modify the card's damage to the target of the combo
             if (this.effect.effect === "multiply") {
                 card.effect.damage *= this.effect.amount;
-            // add the chosen card's damage
             } else if (this.effect.effect === "addition") {
                 card.effect.damage += this.effect.amount;
-            }
-
-            // convert the chosen card's target to replace single
-            if (this.effect.effect === "convert") {
+            } else if (this.effect.effect === "convert") {
+                // convert single to all
                 card.effect.target = "all";
             }
+            card.isBeingCombo = false;
+            // lightblue
+            card.setTint(0x86C5D8);
 
         // this is just for nanotech
         } else if ((card.isBeingCombo && this.effect.target === "healing") && (card.cardType === this.effect.target)) {
-            console.log("it works");
-            if (this.effect.effect === "multiply") {
-                card.effect.amount *= this.effect.amount;
-                // set the card's effect armour to be the new health amount
-                card.effect.otherTarget = "armour";
-                card.effect.otherAmount = card.effect.amount;
-            }
-        }
+            card.effect.amount *= this.effect.amount;
+            card.isBeingCombo = false;
+            card.setTint(0x86C5D8);
+        } 
         
-        // lightblue
-        card.setTint(0x86C5D8);
+        // remove the event listener from all cards
+        for (let cards of scene.player.handArray) {
+            cards.removeListener("pointerdown", cards.comboHandler);
+        }
 
         // reset the click flag and add back the event listener
         for (let cards of scene.player.handArray) {
@@ -89,6 +85,8 @@ export default class ComboCard extends HandCard {
         }
         
         scene.arrangeCardsInCenter(scene.player.handArray);
+        // enable cards to be interactable
+        scene.player.enableDragOnCards();
     }
 
     getLabel() {
