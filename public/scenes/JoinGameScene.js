@@ -62,9 +62,10 @@ export class JoinGameScene extends Phaser.Scene{
             let code = this.codeInput.getChildByName("code");
             if (code.value != "") {
                 // function to return true or false depending on if the code is valid or not
+                let isValidCode = true; // bypass isValidCode for now as feature not implemented
                 if (isValidCode) {
                     console.log("Success: Valid code found");
-                    // Make network connection
+                    this.network.connect(code.value);
                     this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
                 } else {
                     // Code does not exist
