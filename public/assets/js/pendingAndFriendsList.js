@@ -22,10 +22,10 @@ function showFriends() {
             // accessing this has the friends usernames
             document.getElementById("currentFriends").innerHTML = "";
 
+            const onlineListElement = document.createElement("li");
+            onlineListElement.innerHTML = "Online (" + inLobbyPlayers.length + "):";
+            document.getElementById("currentFriends").appendChild(onlineListElement);
             if (inLobbyPlayers.length > 0) {
-                const onlineListElement = document.createElement("li");
-                onlineListElement.innerHTML = "Online (" + inLobbyPlayers.length + "):";
-                document.getElementById("currentFriends").appendChild(onlineListElement);
                 onlineListElement.style.color = "lightgreen";
 
                 for (let i = 0; i < inLobbyPlayers.length; i++) {
@@ -44,6 +44,8 @@ function showFriends() {
 
             const offlineListElement = document.createElement("li");
             offlineListElement.innerHTML = "Offline (" + allFriends.length + "):";
+            offlineListElement.style.borderTop = "2px solid grey";
+            offlineListElement.style.paddingTop = "5%";
             document.getElementById("currentFriends").appendChild(offlineListElement);
 
             for (let i = 0; i < allFriends.length; i++) {
