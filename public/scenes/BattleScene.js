@@ -57,11 +57,7 @@ export class BattleScene extends Phaser.Scene {
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(1.5);
-<<<<<<< HEAD
-        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health);
-=======
-        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
->>>>>>> b125863dba201fbe604ae1a67322013ecd47deee
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour);
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
@@ -227,6 +223,7 @@ export class BattleScene extends Phaser.Scene {
         let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
         damage_num.setPosition(character.x + 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
+
     }
 
     healing_calculation(character, healing, modifiers) {

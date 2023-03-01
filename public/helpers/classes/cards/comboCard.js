@@ -65,12 +65,20 @@ export default class ComboCard extends HandCard {
             // lightblue
             card.setTint(0x86C5D8);
 
-        // this is just for nanotech
+        // doubling healing cards
         } else if ((card.isBeingCombo && this.effect.target === "healing") && (card.cardType === this.effect.target)) {
             card.effect.amount *= this.effect.amount;
             card.isBeingCombo = false;
             card.setTint(0x86C5D8);
-        } 
+        } else {
+            scene.player.graveYardArray.splice(scene.player.graveYardArray.indexOf(this), 1);
+            scene.player.handArray.push(this);
+            scene.player.actionPoints += this.actionPoints;
+            this.cardInHand(scene);
+            scene.arrangeCardsInCenter(scene.player.handArray);
+            card.isBeingCombo = false;
+            card.removeListener("pointerdown", card.comboHandler);
+        }
         
         // remove the event listener from all cards
         for (let cards of scene.player.handArray) {
