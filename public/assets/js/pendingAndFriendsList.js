@@ -96,8 +96,8 @@ function showPending() {
         success: function (result) {
             // set the innerhtml to nothing to make sure not to duplicate results
             document.getElementById("pendingRequests").innerHTML = "";
-            allPendingRequests = result.friendRequests;
-            allSentRequests = result.sentRequests;
+            const allPendingRequests = result.friendRequests;
+            const allSentRequests = result.sentRequests;
             // for loop to generate the list and the font-awesome icons
             const incomingElement = document.createElement("li");
             incomingElement.innerHTML = "Incoming (" + allPendingRequests.length + "):"
