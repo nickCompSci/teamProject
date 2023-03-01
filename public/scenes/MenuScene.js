@@ -133,7 +133,7 @@ export class MenuScene extends Phaser.Scene{
 
         creditsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.CREDITS)
+            this.scene.start(CST.SCENES.CREDITS, {networkObj:this.network, playerUsername: this.playerUsername})
             console.log("click")
         })
 

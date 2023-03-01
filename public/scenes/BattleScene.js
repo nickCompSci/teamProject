@@ -1,6 +1,6 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions} from "../helpers/config.js";
+import { gameOptions } from "../helpers/config.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
@@ -183,7 +183,7 @@ export class BattleScene extends Phaser.Scene {
 
                 // remove the card from the scene after 500ms
                 setTimeout(function() { 
-                    gameObject.setActive(false).setVisible(false); 
+                    gameObject.setActive(false).setVisible(false).clearTint(); 
                 }, 500);
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
@@ -222,24 +222,50 @@ export class BattleScene extends Phaser.Scene {
         character.setTint(0xff0000);
         let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
         damage_num.setPosition(character.x + 40, character.y - 80);
-        this.time.delayedCall(450, this.damage_event, [character, damage_num], this);
+        this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
     }
 
-    damage_event(character, damage_num){
+    healing_calculation(character, healing, modifiers) {
+        // list of 1 for empty modifiers
+        for (let modifier of modifiers) {
+            healing = healing * modifier;
+        }
+        character.health += healing;
+        // dont go over the limit
+        if (character.health > character.maxHealth) {
+            character.health = character.maxHealth;
+        }
+        console.log(healing);
+        character.setTint(0x90EE90);
+        let healing_num = this.add.text(0, 0, "+" + healing, {color: "#90EE90", fontSize: "30px"});
+        healing_num.setPosition(character.x - 40, character.y - 80);
+        this.time.delayedCall(450, this.clearNumAndTintEvent, [character, healing_num], this);
+    }
+
+    armour_calculation(character, armour) {
+        character.armour += armour;
+        character.setTint(0x808080);
+        let armour_num = this.add.text(0, 0, "+" + armour, {color: "#808080", fontSize: "30px"});
+        armour_num.setPosition(character.x - 40, character.y - 80);
+        this.time.delayedCall(450, this.clearNumAndTintEvent, [character, armour_num], this);
+        console.log("Player's armour: " + character.armour);
+    } 
+
+    clearNumAndTintEvent(character, num) {
         character.clearTint();
-        damage_num.destroy();
+        num.destroy();
     }
 
     loadCards() {
         // damage cards
-        let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 10, target: "single"}, "blue", this, 0, 0, "cannonball");
+        let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 8, target: "single", discard: 1}, "blue", this, 0, 0, "cannonball");
         let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", this, 0, 0, "grenade");
         let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", this, 0, 0, "high_noon");
         let fire_rain = new DamageCard("fire_rain", 3, "damage", {damage: 8, target: "random", randomAmount: 3, discard: 1}, "blue", this, 0, 0, "fire_rain");
         let minigun = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", this, 0, 0, "minigun");
         let launcher = new DamageCard("launcher", 2, "damage", {damage: 6, target: "all"}, "blue", this, 0, 0, "launcher");
         let ballistic = new DamageCard("ballistic", 1, "damage", {damage: this.player.armour, target: "single"}, "white", this, 0, 0, "ballistic");
-        let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single"}, "white", this, 0, 0, "reinforce");
+        let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single", armour: 5}, "white", this, 0, 0, "reinforce");
         let blast = new DamageCard("blast", 2, "damage", {damage: 10, target: "single", cards: 1}, "blue", this, 0, 0, "blast");
         let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
         let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
@@ -260,9 +286,9 @@ export class BattleScene extends Phaser.Scene {
         let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
         let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", this, 0, 0, "ricochet");
         let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
-        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: -8}, "blue", this, 0, 0, "bayonet");
+        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
         let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
-        let nanotech = new ComboCard("nanotech", 3, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", this, 0, 0, "nanotech");
+        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", this, 0, 0, "nanotech");
 
         this.player.deckArray.push(headshot);
         this.player.deckArray.push(ricochet);
@@ -273,7 +299,7 @@ export class BattleScene extends Phaser.Scene {
        
         // reload cards
         let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -10}, "purple", this, 0, 0, "overload");
+        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: 10, overload: true}, "purple", this, 0, 0, "overload");
         let lock_and_load = new ReloadCard("lock_and_load", 0, "reload", {amount: 2, cards: 2}, "blue", this, 0, 0, "lock_and_load");
         let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", this, 0, 0, "bandolier");
         let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
@@ -288,11 +314,11 @@ export class BattleScene extends Phaser.Scene {
 
         // healing cards
         let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
-        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 6}, "white", this, 0, 0, "kevlar");
+        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 5}, "white", this, 0, 0, "kevlar");
         let stim_pack = new HealingCard("stim_pack", 1, "healing", {target: "health", amount: 14}, "white", this, 0, 0, "stim_pack");
         let armour_plate = new HealingCard("armour_plate", 2, "healing", {target: "armour", amount: 10}, "blue", this, 0, 0, "armour_plate");
         let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
-        let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, otherTarget: "armour", otherAmount: 8}, "blue", this, 0, 0, "morphine");
+        let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", this, 0, 0, "morphine");
 
         this.player.deckArray.push(medkit);
         this.player.deckArray.push(kevlar);
@@ -303,7 +329,7 @@ export class BattleScene extends Phaser.Scene {
     
     }
     
-   
+    
     arrangeCardsInCenter(handArray) {
         // arranges for the cards to be organised around the bottom middle of the screen
         let bottomOfScreen = this.game.config.height;

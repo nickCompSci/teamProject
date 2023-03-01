@@ -66,15 +66,14 @@ function showFriends() {
                 if (inLobbyPlayers.includes(allFriends[i])) {
                     document.getElementById(allFriends[i]).style.color = "green";
                 }
-                if(document.getElementsByClassName("fa-solid fa-arrows-rotate")){
-                    var element = document.getElementsByClassName("fa-solid fa-arrows-rotate");
-                    element[0].remove()
-                }
-                const iconElement = document.createElement("i");
-                iconElement.innerHTML = '<i class="fa-solid fa-arrows-rotate" title="Refresh your friends list" onClick="showFriends()"></i>';
-                document.getElementById("toDoWithFriends").appendChild(iconElement);
-
             }
+            if(document.getElementsByClassName("fa-solid fa-arrows-rotate")){
+                var element = document.getElementsByClassName("fa-solid fa-arrows-rotate");
+                element[0].remove()
+            }
+            const iconElement = document.createElement("i");
+            iconElement.innerHTML = '<i class="fa-solid fa-arrows-rotate" title="Refresh your friends list" onClick="showFriends()"></i>';
+            document.getElementById("toDoWithFriends").appendChild(iconElement);
         }
     })
 }
