@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const routes = require("./routes/main");
+const crypto = require('crypto');
 
 // setting up a mongo connection using mongoose
 const uri = process.env.MONGO_CONNECTION_URL;

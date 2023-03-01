@@ -7,7 +7,7 @@ import { MenuScene } from "./MenuScene.js";
 import { OptionsScene } from "./OptionsScene.js";
 import { CreditsScene } from "./CreditsScene.js";
 import { JoinGameScene } from "./JoinGameScene.js";
-import { CreateGameScene } from "./CreateGameScene.js";
+// import { CreateGameScene } from "./CreateGameScene.js";
 import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
@@ -91,12 +91,12 @@ export class LoadScene extends Phaser.Scene{
 
             $.ajax({
                 type: 'POST',
-                url: '/retrieveUsername',
+                url: '/obtainUserId',
                 data,
                 // on success call the callback function
                 success: function (result) {
                     playerUsername = result.username;
-                    network = new Network(result.username);
+                    network = new Network(result.encrypted);
                 },
                 // on error return to game page 
                 error: function (xhr) {

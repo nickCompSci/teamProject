@@ -1,5 +1,6 @@
+
 export class Network{
-    constructor(username){   
+    constructor(username){  
         this.peer = new Peer(username);
         this._addPeerListeners();
     }

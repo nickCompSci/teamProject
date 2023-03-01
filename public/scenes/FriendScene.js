@@ -12,6 +12,7 @@ export class friendScene extends Phaser.Scene {
     init(data) {
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
+
     }
     // Creates any images, text, etc.
     create() {
@@ -125,12 +126,16 @@ export class friendScene extends Phaser.Scene {
                 if (document.querySelector('#currentFriends #' + friendUsername.value)) {
                     alert(`This player is already your friend!`);
                     // reset the form
-                    document.getElementById("addFriendForm").reset();
+                    // document.getElementById("addFriendForm").reset();
+                    clearInterval(interval)
+                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else if (friendUsername.value == this.playerUsername) {
                     alert("Can not send request to yourself!");
                     // reset the form
-                    document.getElementById("addFriendForm").reset();
+                    // document.getElementById("addFriendForm").reset();
+                    clearInterval(interval)
+                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else {
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -141,15 +146,20 @@ export class friendScene extends Phaser.Scene {
         searchButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
+                console.log(friendUsername.value,this.playerUsername);
                 if (friendUsername.value == this.playerUsername) {
                     alert("Can not send request to yourself!");
                     // reset the form
-                    document.getElementById("addFriendForm").reset();
+                    // document.getElementById("addFriendForm").reset();
+                    clearInterval(interval)
+                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
                     alert(`This player is already your friend!`);
                     // reset the form
-                    document.getElementById("addFriendForm").reset();
+                    // document.getElementById("addFriendForm").reset();
+                    clearInterval(interval)
+                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else {
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -164,14 +174,17 @@ export class friendScene extends Phaser.Scene {
         })
         searchButton.on("pointerout", () => {
             arrowSprite.setVisible(false);
+
         })
 
         confirmButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
+
                 // when success is called in the ajax, it will pass the response to
                 // searchForValidUsernameCallback function
                 sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
+                clearInterval(interval)
                 scene.reset();
             }
 
@@ -225,12 +238,14 @@ export class friendScene extends Phaser.Scene {
             if (joining == "offline") {
                 confirm(target.id + " is not online! ");
             } else if (joining == "true") {
+                clearInterval(interval)
                 scene.loadLobby();
             }
         }
     }
     reset() {
-        this.scene.restart(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+        this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+        
     }
     loadLobby() {
         this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername })
