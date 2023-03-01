@@ -366,8 +366,12 @@ export class BattleScene extends Phaser.Scene {
         this.playerHealth.show_health(this.player.health);
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        this.player.drawCard(5 - this.player.handArray.length, this);
-        this.player.resetDeck(this);
+        while (this.player.handArray.length < 5){
+            if (this.player.deckArray.length === 0){
+                this.player.resetDeck(this);
+            }
+            this.player.drawCard(1, this);
+        }
         for (let card of this.player.handArray){
             if (card.cost > this.player.actionPoints){
                 card.setTint(0xff0000);

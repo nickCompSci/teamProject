@@ -9,6 +9,11 @@ export class JoinGameScene extends Phaser.Scene{
         })
     }
 
+    init(data){
+        this.network = data.networkObj;
+        this.playerUsername = data.playerUsername;
+    }
+
     // Creates any images, text, etc.
     create(){
 
@@ -56,7 +61,7 @@ export class JoinGameScene extends Phaser.Scene{
         })
 
         backButton.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Submit Button
@@ -73,7 +78,7 @@ export class JoinGameScene extends Phaser.Scene{
             // Checks to see if code matches any existing games
             // If it does, then the scene is changed to a lobby scene that shows the other players in the game
             // If it doesn't, then an error message is displayed
-            this.scene.start(CST.SCENES.LOBBY);
+            this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
         })
     }
 }
