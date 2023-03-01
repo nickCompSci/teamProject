@@ -14,10 +14,6 @@ export class LobbyScene extends Phaser.Scene{
         this.playerUsername = data.playerUsername;
     }
 
-    // init(data){
-    //     this.network = data.networkObj;
-    // }
-
     // Creates any images, text, etc.
     create(){
 
@@ -113,6 +109,7 @@ export class LobbyScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
+            deleteJoinCodeRelationship(this.network.peer.id);
             this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
         })
     }

@@ -251,3 +251,29 @@ export class friendScene extends Phaser.Scene {
         this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername })
     }
 }
+
+// console.log(scene.network);
+// console.log(target.id);
+// var data = {
+//     otherUsername: target.id
+// };
+// $.ajax({
+//     type: 'POST',
+//     url: '/testerRoute',
+//     data,
+//     // on success call the callback function
+//     success: function (result) {
+//         console.log(result.otherUser);
+//         scene.network.connect(result.otherUser);
+//         scene.network.send("hello my name is poap");
+//         scene.network.send("testing again!");
+//     },
+//     // on error return to game page 
+//     error: function (xhr) {
+//         window.alert(JSON.stringify(xhr));
+//         window.location.replace('/game.html');
+//     }
+// });
+// // target.id wont work as its not the encrypted version 
+
+// joining = "true";
