@@ -58,26 +58,24 @@ export default class ComboCard extends HandCard {
             } else if (this.effect.effect === "addition") {
                 card.effect.damage += this.effect.amount;
             } else if (this.effect.effect === "convert") {
-                // convert single to all
-                card.effect.target = "all";
+                if (card.effect.target === "all") {
+                    // if damage card is already targetting all
+                    this.bringBackComboCard(card, scene);
+                } else {
+                    // convert single to all
+                    card.effect.target = "all";
+                }
             }
             card.isBeingCombo = false;
-            // lightblue
-            card.setTint(0x86C5D8);
+            card.setTint(0x86C5D8); //lightblue
 
         // doubling healing cards
         } else if ((card.isBeingCombo && this.effect.target === "healing") && (card.cardType === this.effect.target)) {
             card.effect.amount *= this.effect.amount;
             card.isBeingCombo = false;
             card.setTint(0x86C5D8);
-        } else {
-            scene.player.graveYardArray.splice(scene.player.graveYardArray.indexOf(this), 1);
-            scene.player.handArray.push(this);
-            scene.player.actionPoints += this.actionPoints;
-            this.cardInHand(scene);
-            scene.arrangeCardsInCenter(scene.player.handArray);
-            card.isBeingCombo = false;
-            card.removeListener("pointerdown", card.comboHandler);
+        } else if (card.isBeingCombo) {
+            this.bringBackComboCard(card, scene)
         }
         
         // remove the event listener from all cards
@@ -93,8 +91,21 @@ export default class ComboCard extends HandCard {
         }
         
         scene.arrangeCardsInCenter(scene.player.handArray);
-        // enable cards to be interactable
+        // enable cards to be draggable
         scene.player.enableDragOnCards();
+    }
+
+    // if selected non-valid card, brings back the card and adds back AP
+    // sets the card back to interactive as well
+    bringBackComboCard(card, scene) {
+        card.isBeingCombo = false;
+        scene.player.graveYardArray.splice(scene.player.graveYardArray.indexOf(this), 1);
+        scene.player.handArray.push(this);
+        scene.arrangeCardsInCenter(scene.player.handArray);
+        this.setVisible(true);
+        this.setInteractive();
+        scene.player.actionPoints += this.cost;
+        scene.actiontext.text = scene.player.actionPoints; 
     }
 
     getLabel() {
