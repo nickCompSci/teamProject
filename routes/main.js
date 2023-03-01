@@ -3,6 +3,7 @@ const passport = require("passport");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const neo4j = require('neo4j-driver');
+const crypto = require('crypto');
 // current/active jwt tokens
 const tokenList = {};
 //create express router
@@ -12,6 +13,23 @@ const router = express.Router();
 router.get("/status", (request, response, next) => {
     response.status(200).json({ status: "Ok, server running" });
 });
+
+router.post("/obtainUserId", (request, response) => {
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+
+    const algorithm = 'aes-256-cbc';
+    const password = 'my secret key';
+    const key = crypto.scryptSync(password, 'salt', 32);
+    const iv = Buffer.alloc(16, 0);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(currentUser, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ username: currentUser, encrypted: encrypted }));
+    // to access in caller - result.username
+})
 
 // route to POST user registration details
 router.post("/registration", passport.authenticate("registration",
