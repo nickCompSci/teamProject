@@ -38,6 +38,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
         this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
         this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
+        this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
     }
 
     create() {
@@ -436,6 +437,8 @@ export class BattleScene extends Phaser.Scene {
 
             spawnEnemyDistanceX += 200;
             enemy.setDepth(1);
+           
+            enemy.updateArrow();
         }
     }
 }

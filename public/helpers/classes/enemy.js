@@ -10,6 +10,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.damageModifiers = [1];
         this.spriteType = "enemy";
         this.setInteractive();
+        this.enemyArrow = scene.add.image(this.x, this.y - this.height - 25, "enemyArrow").setScale(2).setVisible(false);
     
         scene.add.existing(this);
     }
@@ -18,6 +19,11 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     // min and max included
     action() {
         return Math.floor(Math.random() * 10);
+    }
+
+    updateArrow() {
+        this.enemyArrow.x = this.x;
+        this.enemyArrow.y = this.y - this.height - 25;
     }
 
     spawn() {
