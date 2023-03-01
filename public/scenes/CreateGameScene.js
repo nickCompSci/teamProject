@@ -94,7 +94,7 @@ export class CreateGameScene extends Phaser.Scene{
             // call the function to send post request to server
             deleteJoinCodeRelationship(joinCode, deleteJoinCodeRelationshipCallback);
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU);
+            this.scene.start(CST.SCENES.MENU,{networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // Submit Button
