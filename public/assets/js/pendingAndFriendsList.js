@@ -1,5 +1,6 @@
 const pendingFriends = {};
 const friendsList = {};
+const sentRequests = {};
 
 function showFriends() {
     // where a call to a route occurs to find all friends
@@ -89,16 +90,38 @@ function showPending() {
             // set the innerhtml to nothing to make sure not to duplicate results
             document.getElementById("pendingRequests").innerHTML = "";
             allPendingRequests = result.friendRequests;
+            allSentRequests = result.sentRequests;
             // for loop to generate the list and the font-awesome icons
-            for (let i = 0; i < allPendingRequests.length; i++) {
-                const listElement = document.createElement("li");
-                // add it to the dictionary
-                pendingFriends[i] = allPendingRequests[i];
-                // what the user will see
-                listElement.innerHTML = allPendingRequests[i] + ' <i id="' + allPendingRequests[i]
-                    + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check" title="Accept ' + allPendingRequests[i] + '\'s friend request"></i>\
-                <i onClick="declineFriendRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark" title="Decline ' + allPendingRequests[i] + '\'s friend request"></i>';
-                document.getElementById("pendingRequests").appendChild(listElement);
+            const incomingElement = document.createElement("li");
+            incomingElement.innerHTML = "Incoming (" + allPendingRequests.length + "):"
+            document.getElementById("pendingRequests").appendChild(incomingElement);
+            if (allPendingRequests.length > 0) {
+                for (let i = 0; i < allPendingRequests.length; i++) {
+                    const listElement = document.createElement("li");
+                    // add it to the dictionary
+                    pendingFriends[i] = allPendingRequests[i];
+                    // what the user will see
+                    listElement.innerHTML = allPendingRequests[i] + ' <i id="' + allPendingRequests[i]
+                        + '" onClick="acceptFriendRequest(' + i + ')" class="fa-solid fa-square-check green" title="Accept ' + allPendingRequests[i] + '\'s friend request"></i>\
+                <i onClick="declineFriendRequest(' + i + ')" class="fa-sharp fa-solid fa-square-xmark red" title="Decline ' + allPendingRequests[i] + '\'s friend request"></i>';
+                    document.getElementById("pendingRequests").appendChild(listElement);
+                }
+            }
+            const sentElement = document.createElement("li");
+            sentElement.innerHTML = "Sent (" + allSentRequests.length + "):"
+            sentElement.style.borderTop = "2px solid grey";
+            sentElement.style.paddingTop = "5%";
+            document.getElementById("pendingRequests").appendChild(sentElement);
+            if (allSentRequests.length > 0){
+                for (let i = 0; i < allSentRequests.length; i++) {
+                    const listElement = document.createElement("li");
+                    // add it to the dictionary
+                    sentRequests[i] = allSentRequests[i];
+                    // what the user will see
+                    // remember to create new function to remove the request
+                    listElement.innerHTML = allSentRequests[i] + '<i onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
+                    document.getElementById("pendingRequests").appendChild(listElement);
+                }
             }
         },
         error: function (xhr) {
@@ -167,6 +190,25 @@ function deleteFriend(otherUser) {
         success: function (result) {
             // reload the friends list for the user
             showFriends()
+        },
+        error: function (xhr) {
+            window.alert(JSON.stringify(xhr));
+        }
+    })
+}
+function cancelFriendRequest(otherUser) {
+    var data = {
+        refreshToken: getCookie('refreshJwt'),
+        otherUser: otherUser
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/cancelRequest",
+        data,
+        // callback function
+        success: function (result) {
+            // reload the friends list for the user
+            showPending()
         },
         error: function (xhr) {
             window.alert(JSON.stringify(xhr));

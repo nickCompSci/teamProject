@@ -149,7 +149,6 @@ export class MenuScene extends Phaser.Scene{
         friendsButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
             this.scene.start(CST.SCENES.FRIENDS, {networkObj:this.network ,playerUsername: this.playerUsername})
-            console.log(this.playerUsername);
             console.log("click")
         })
 

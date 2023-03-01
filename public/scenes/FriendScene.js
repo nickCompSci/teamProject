@@ -12,7 +12,6 @@ export class friendScene extends Phaser.Scene {
     init(data) {
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
-        console.log(this.playerUsername);
     }
     // Creates any images, text, etc.
     create() {
@@ -127,7 +126,6 @@ export class friendScene extends Phaser.Scene {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             // check if anything was inputted into the input box
             if (friendUsername.value != "") {
-                console.log(friendUsername.value,this.playerUsername);
                 if (document.querySelector('#currentFriends #' + friendUsername.value)) {
                     alert(`This player is already your friend!`);
                     // reset the form
@@ -147,7 +145,6 @@ export class friendScene extends Phaser.Scene {
         searchButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
-                console.log(friendUsername.value,this.playerUsername);
                 if (friendUsername.value == this.playerUsername) {
                     alert("Can not send request to yourself!");
                     // reset the form
