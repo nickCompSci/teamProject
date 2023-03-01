@@ -26,7 +26,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("HUD", "../assets/resources/hud_bg.png");
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        this.load.image("player", "../assets/resources/sprites/player.png");
+        this.load.image("player", "../assets/resources/sprites/otherplayer.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png")
         
@@ -52,11 +52,16 @@ export class BattleScene extends Phaser.Scene {
         card_bg.setScale(0.325);
         bg.setPosition(gameWidth/2, gameHeight/2.6);
         bg.setScale(0.65);
+        bg.displayWidth = 777;
         
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(1.5);
+<<<<<<< HEAD
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health);
+=======
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
+>>>>>>> b125863dba201fbe604ae1a67322013ecd47deee
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
@@ -213,14 +218,11 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
-    damage_calculation(character, damage, modifiers) {
-        // list of 1 for empty modifiers
-        for (let modifier of modifiers){
+    damage_calculation(character, damage) {
+        for (let modifier of character.damageModifiers){
             damage = damage * modifier;
         }
-        console.log(damage);
         character.health = character.health - damage;
-        console.log(character.health);
         character.setTint(0xff0000);
         let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
         damage_num.setPosition(character.x + 40, character.y - 80);
@@ -386,10 +388,9 @@ export class BattleScene extends Phaser.Scene {
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
             let base_damage = this.enemies[i].action();
-            this.damage_calculation(this.player, base_damage, [1]);
+            this.damage_calculation(this.player, base_damage);
         }
-        this.playerHealth.health = this.player.health;
-        this.playerHealth.show_health(this.player.health);
+        this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
         while (this.player.handArray.length < 5){
@@ -421,10 +422,10 @@ export class BattleScene extends Phaser.Scene {
             // For some reason, enemies spawn invisible, no clue.
             enemy.spawn();
             enemy.x += spawnEnemyDistanceX;
-            let enemyhealth = new HealthBar(this, enemy.x - 40, this.player.y + 100, enemy.health, enemy.health);
+            let enemyhealth = new HealthBar(this, enemy.x - 40, this.player.y + 100, enemy.health, enemy.health, enemy.armour, enemy.maxArmour);
             this.healthbars. push(enemyhealth);
 
-            spawnEnemyDistanceX += 150;
+            spawnEnemyDistanceX += 200;
             enemy.setDepth(1);
         }
     }

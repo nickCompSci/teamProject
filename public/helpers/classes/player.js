@@ -9,6 +9,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.armour = 0;
         this.maxActionPoints = 6;
         this.actionPoints = this.maxActionPoints;
+        this.maxArmour = 25;
+        this.armour = 0;
+        this.damageModifiers = [1];
         this.handArray = [];
         this.deckArray = [];
         this.deckTrackerArray = [];
