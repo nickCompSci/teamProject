@@ -1,6 +1,7 @@
 const pendingFriends = {};
 const friendsList = {};
 const sentRequests = {};
+const inLobbyList = {};
 
 function showFriends() {
     // where a call to a route occurs to find all friends
@@ -32,14 +33,15 @@ function showFriends() {
                 for (let i = 0; i < inLobbyPlayers.length; i++) {
                     const listElement = document.createElement("li");
                     // add the friend to the dictionary
-                    friendsList[i] = inLobbyPlayers[i];
+                    inLobbyList[i] = inLobbyPlayers[i];
+                    console.log(inLobbyList);
 
                     listElement.innerHTML = inLobbyPlayers[i] + ' <i id="' + inLobbyPlayers[i]
-                        + '" class="fa-sharp fa-solid fa-right-to-bracket" title="Join ' + inLobbyPlayers[i] + ' if they are online"></i>\
+                        + '" class="fa-sharp fa-solid fa-right-to-bracket green" title="Join ' + inLobbyPlayers[i] + ' if they are online"></i>\
                             <i onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + inLobbyPlayers[i] + ' from your friends list"></i>';
 
                     document.getElementById("currentFriends").appendChild(listElement);
-                    document.getElementById(inLobbyPlayers[i]).style.color = "green";
+                    // document.getElementById(inLobbyPlayers[i]).style.color = "green";
                 }
             }
 
@@ -54,10 +56,9 @@ function showFriends() {
                 const listElement = document.createElement("li");
                 // add the friend to the dictionary
                 friendsList[i] = allFriends[i];
-
-                listElement.innerHTML = allFriends[i] + ' <i id="' + allFriends[i]
-                    + '"class="fa-sharp fa-solid fa-right-to-bracket" title="Join ' + allFriends[i] + ' if they are online"></i>\
-                        <i onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
+                console.log(friendsList);
+                listElement.innerHTML = allFriends[i] + '<i id="' + allFriends[i]
+                + '" onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
 
                 document.getElementById("currentFriends").appendChild(listElement);
 

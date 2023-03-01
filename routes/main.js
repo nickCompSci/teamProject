@@ -31,21 +31,21 @@ router.post("/obtainUserId", (request, response) => {
     // to access in caller - result.username
 })
 
-// router.post("/testerRoute", (request, response) => {
-//     const otherUser = request.body.otherUsername;
-//     console.log(request.body.otherUsername);
-//     const algorithm = 'aes-256-cbc';
-//     const password = 'my secret key';
-//     const key = crypto.scryptSync(password, 'salt', 32);
-//     const iv = Buffer.alloc(16, 0);
-//     const cipher = crypto.createCipheriv(algorithm, key, iv);
-//     let encrypted = cipher.update(otherUser, 'utf8', 'hex');
-//     encrypted += cipher.final('hex');
-//     response.setHeader('Content-Type', 'application/json');
-//     // return the username to route caller
-//     response.end(JSON.stringify({ otherUser: encrypted }));
-//     // to access in caller - result.username
-// })
+router.post("/testerRoute", (request, response) => {
+    const otherUser = request.body.otherUsername;
+    console.log(request.body.otherUsername);
+    const algorithm = 'aes-256-cbc';
+    const password = 'my secret key';
+    const key = crypto.scryptSync(password, 'salt', 32);
+    const iv = Buffer.alloc(16, 0);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(otherUser, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ otherUser: encrypted }));
+    // to access in caller - result.username
+})
 
 // route to POST user registration details
 router.post("/registration", passport.authenticate("registration",

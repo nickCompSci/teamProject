@@ -128,14 +128,14 @@ export class friendScene extends Phaser.Scene {
                     // reset the form
                     // document.getElementById("addFriendForm").reset();
                     clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else if (friendUsername.value == this.playerUsername) {
                     alert("Can not send request to yourself!");
                     // reset the form
                     // document.getElementById("addFriendForm").reset();
                     clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else {
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -146,20 +146,21 @@ export class friendScene extends Phaser.Scene {
         searchButton.on("pointerdown", () => {
             let friendUsername = this.nameInput.getChildByName("friendUsername");
             if (friendUsername.value != "") {
-                console.log(friendUsername.value,this.playerUsername);
+                console.log(friendUsername.value, this.playerUsername);
+                console.log(document.querySelector('#currentFriends #' + friendUsername.value));
                 if (friendUsername.value == this.playerUsername) {
                     alert("Can not send request to yourself!");
                     // reset the form
                     // document.getElementById("addFriendForm").reset();
                     clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
                     alert(`This player is already your friend!`);
                     // reset the form
                     // document.getElementById("addFriendForm").reset();
                     clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
+                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
                 }
                 else {
                     searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
@@ -206,7 +207,7 @@ export class friendScene extends Phaser.Scene {
         backButton.on("pointerup", () => {
             // Moves back to the main menu when the back button is clicked
             clearInterval(interval);
-            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
+            this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
         })
 
         // called whenever anywhere is clicked
@@ -214,41 +215,57 @@ export class friendScene extends Phaser.Scene {
             if (event === undefined) event = window.event;
             let joining;
             var target = 'target' in event ? event.target : event.srcElement;
-            if (target.className == "fa-sharp fa-solid fa-right-to-bracket" ){
-            for (let index in friendsList) {
-                // error here - cant get to error for joining offline player, also think broke the delete and accept
-                // new request functionality fix
-                if (friendsList[index] == target.id ) {
-                    // if the element's color attribute is green then they are online
-                    if (window.getComputedStyle(document.getElementById(target.id), null).color == "rgb(0, 128, 0)") {
+            // check if its the green join button that caused the click event
+            if (target.className == "fa-sharp fa-solid fa-right-to-bracket green") {
+                for (let index in inLobbyList) {
+                    if (inLobbyList[index] == target.id) {
                         if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
-                            alert("Joining now!");
-                            this.network.connect(target.id);
+                            // cant use this keyword as were inside a function
+                            // console.log(scene.network);
+                            var data = {
+                                otherUsername: target.id
+                            };
+                            $.ajax({
+                                type: 'POST',
+                                url: '/testerRoute',
+                                data,
+                                // on success call the callback function
+                                success: function (result) {
+                                    console.log(result.otherUser);
+                                    scene.network.connect(result.otherUser);
+                                    scene.network.send("hello");
+                                    scene.network.send("testing again");
+                                    scene.loadLobby();
+                                },
+                                // on error return to game page
+                                error: function (xhr) {
+                                    window.alert(JSON.stringify(xhr));
+                                    window.location.replace('/game.html');
+                                }
+                            });
+                            // target.id wont work as its not the encrypted version
+                            // scene.network.connect(target.id);
                             clearInterval(interval)
-                            joining = "true";
+                            // joining = "true";
                             break;
                         }
                         else {
                             break;
                         }
                     }
-                    joining = "offline"
                 }
-            }}
-            if (joining == "offline") {
-                confirm(target.id + " is not online! ");
-            } else if (joining == "true") {
-                clearInterval(interval)
-                scene.loadLobby();
+                // if (joining == "true"){
+                //     scene.loadLobby();
+                // }
             }
         }
     }
     reset() {
-        this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })
-        
+        this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
+
     }
     loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername })
+        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername })
     }
 }
 
@@ -268,12 +285,12 @@ export class friendScene extends Phaser.Scene {
 //         scene.network.send("hello my name is poap");
 //         scene.network.send("testing again!");
 //     },
-//     // on error return to game page 
+//     // on error return to game page
 //     error: function (xhr) {
 //         window.alert(JSON.stringify(xhr));
 //         window.location.replace('/game.html');
 //     }
 // });
-// // target.id wont work as its not the encrypted version 
+// // target.id wont work as its not the encrypted version
 
 // joining = "true";
