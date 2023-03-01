@@ -14,9 +14,9 @@ export class LobbyScene extends Phaser.Scene{
         this.playerUsername = data.playerUsername;
     }
 
-    init(data){
-        this.network = data.networkObj;
-    }
+    // init(data){
+    //     this.network = data.networkObj;
+    // }
 
     // Creates any images, text, etc.
     create(){
@@ -78,7 +78,7 @@ export class LobbyScene extends Phaser.Scene{
 
         // Networking!
         // PLACEHOLDER - Lists current players connected to game
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, joinCode, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, this.playerUsername, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
 
         let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.80, 'Start Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 

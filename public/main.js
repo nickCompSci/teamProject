@@ -8,7 +8,7 @@ import {MenuScene} from "./scenes/MenuScene.js";
 import {OptionsScene} from "./scenes/OptionsScene.js";
 import {CreditsScene} from "./scenes/CreditsScene.js";
 import {JoinGameScene} from "./scenes/JoinGameScene.js";
-import {CreateGameScene} from "./scenes/CreateGameScene.js";
+// import {CreateGameScene} from "./scenes/CreateGameScene.js";
 import {LobbyScene} from "./scenes/LobbyScene.js";
 import {friendScene} from "./scenes/FriendScene.js";
 import {MapScene} from "./scenes/MapScene.js";
@@ -24,7 +24,7 @@ let game = new Phaser.Game({
     height: 800,
     scale: { parent: 'phaser-container', mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
-        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, CreateGameScene, LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene
+        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene
     ],
     render:{
         pixelArt: true

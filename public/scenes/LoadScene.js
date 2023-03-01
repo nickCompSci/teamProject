@@ -7,7 +7,7 @@ import { MenuScene } from "./MenuScene.js";
 import { OptionsScene } from "./OptionsScene.js";
 import { CreditsScene } from "./CreditsScene.js";
 import { JoinGameScene } from "./JoinGameScene.js";
-import { CreateGameScene } from "./CreateGameScene.js";
+// import { CreateGameScene } from "./CreateGameScene.js";
 import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
