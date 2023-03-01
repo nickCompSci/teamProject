@@ -56,7 +56,7 @@ function showFriends() {
                 friendsList[i] = allFriends[i];
 
                 listElement.innerHTML = allFriends[i] + ' <i id="' + allFriends[i]
-                    + '" class="fa-sharp fa-solid fa-right-to-bracket" title="Join ' + allFriends[i] + ' if they are online"></i>\
+                    + '"class="fa-sharp fa-solid fa-right-to-bracket" title="Join ' + allFriends[i] + ' if they are online"></i>\
                         <i onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
 
                 document.getElementById("currentFriends").appendChild(listElement);
