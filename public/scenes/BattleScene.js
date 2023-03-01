@@ -1,6 +1,6 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions} from "../helpers/config.js";
+import { gameOptions } from "../helpers/config.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
@@ -56,7 +56,7 @@ export class BattleScene extends Phaser.Scene {
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(1.5);
-        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health)
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.maxHealth, this.player.health);
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
