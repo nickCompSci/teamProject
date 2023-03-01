@@ -122,6 +122,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.handArray.splice(randomIndex, 1);
             this.graveYardArray.push(randomCard);
             scene.arrangeCardsInCenter(this.handArray);
+            this.discardPileUpdate(scene);
         }
     }
 
