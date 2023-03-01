@@ -96,8 +96,8 @@ function showPending() {
         success: function (result) {
             // set the innerhtml to nothing to make sure not to duplicate results
             document.getElementById("pendingRequests").innerHTML = "";
-            allPendingRequests = result.friendRequests;
-            allSentRequests = result.sentRequests;
+            const allPendingRequests = result.friendRequests;
+            const allSentRequests = result.sentRequests;
             // for loop to generate the list and the font-awesome icons
             const incomingElement = document.createElement("li");
             incomingElement.innerHTML = "Incoming (" + allPendingRequests.length + "):"
@@ -126,7 +126,7 @@ function showPending() {
                     sentRequests[i] = allSentRequests[i];
                     // what the user will see
                     // remember to create new function to remove the request
-                    listElement.innerHTML = allSentRequests[i] + '<i onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
+                    listElement.innerHTML = allSentRequests[i] + '<i onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red once" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
                     document.getElementById("pendingRequests").appendChild(listElement);
                 }
             }

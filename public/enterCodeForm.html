@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        /* the font style */
+        @font-face {
+            font-family: gameFont;
+            src: url(assets/resources/PixelboyFont.ttf);
+        }
+
+        /* all text with gameFont */
+        * {
+            font-family: gameFont;
+            color: white;
+        }
+
+        body {
+            font-size: 40px
+        }
+
+        .container {
+            padding: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 60px;
+        }
+
+        a {
+            color: white;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a:active {
+            text-decoration: none;
+        }
+
+        /* when hovering over links, use cursor pointer */
+        a.pointer {
+            cursor: pointer;
+        }
+
+        /* design for the input box */
+        input[type=text] {
+            width: 100%;
+            margin: 8px 0;
+            padding: 12px 20px;
+            display: inline-block;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid white;
+            color: white;
+            font-size: 20px;
+            font-family: Verdana;
+        }
+
+        /* when an input box is in focus, i.e a user has clicked on it */
+        input:focus {
+            outline: 3px solid white;
+            border: none;
+        }
+
+        /* placeholder text */
+        input::placeholder {
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            opacity: 1;
+            font-size: 25px;
+            font-family: Verdana;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- form with input field that will be used to search for a username -->
+    <form id="enterCodeForm">
+        <div class="container">
+            <input type="text" name="code" id="code" placeholder="Join code" required>
+        </div>
+    </form>
+</body>
+
+</html>

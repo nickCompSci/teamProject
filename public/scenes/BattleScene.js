@@ -57,7 +57,7 @@ export class BattleScene extends Phaser.Scene {
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(1.5);
-        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour);
+        this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
         let chamber = this.add.circle(0, 0, 30, 0xffcc00);
         this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
