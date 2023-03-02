@@ -17,13 +17,8 @@ export class LobbyScene extends Phaser.Scene{
         console.log(this.network.peer._connections);
         if(this.network.peer._connections.size>0){
             this.network.send("i have joined the lobby, sending you hello!");
-        }
-        // if(this.network.peer._connections){
-        //     this.network.send("hi");
-        // }
-        // this.network.send("hi");
-        // were not actually connected to anyone
-        
+           
+        }        
     }
 
     // Creates any images, text, etc.
@@ -76,7 +71,23 @@ export class LobbyScene extends Phaser.Scene{
 
         const interval = setInterval(function () {
             if(test.network.peer._connections.size>0){
-                test.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, test.network.peer.conn.peer, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+                var data = {
+                    otherUser : test.network.peer.conn.peer
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/getOtherPlayersId',
+                    data,
+                    success: function (result){
+                        console.log(result.otherUserName);
+                        test.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
+                    },
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/game.html');
+                    }
+                });
+                // test.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, test.network.peer.conn.peer, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
                 clearInterval(interval);
             }
             console.log("got here")
@@ -135,21 +146,26 @@ export class LobbyScene extends Phaser.Scene{
         backButton.on("pointerup", ()=>{
             console.log(this.network);
             // Moves back to the main menu when the back button is clicked
-            deleteJoinCodeRelationship(this.network.peer.id);
+            
             clearInterval(interval);
             console.log(this.network.peer._connections.size);
-
             if(this.network.peer._connections.size > 0){
                 try{
-
                     this.network.peer.destroy();
                     console.log("terminated connection");
                     window.location.replace('/game.html');
 
                 }catch{
                     console.log("failed");
-                }}
-            else{this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });}
+                }finally{
+                    deleteJoinCodeRelationship(this.network.peer.id);
+                }
+                    
+                }
+            else{
+                this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
+                deleteJoinCodeRelationship(this.network.peer.id);
+            }
         })
 
         // Add event listener to enable copying of the text
@@ -160,16 +176,5 @@ export class LobbyScene extends Phaser.Scene{
                 window.alert("Join code copied to clipboard!");
             }
         });
-        if(this.network.peer._connections.size>0){
-            // this.network.peer._connections
-            this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, this.network.peer.conn.peer, {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
-        }
-        // while (1){
-        //     if(this.network.peer._connections.size>0){
-        //         this.network.send("testing again");
-        //         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, this.network.peer._connections[0], {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
-        //         break;
-        //     }
-        // }
     }
 }

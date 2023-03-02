@@ -8,7 +8,10 @@ const crypto = require('crypto');
 const tokenList = {};
 //create express router
 const router = express.Router();
-
+const algorithm = 'aes-256-cbc';
+const password = 'my secret key';
+const key = crypto.scryptSync(password, 'salt', 32);
+const iv = Buffer.alloc(16, 0);
 // route to check if server is active and running
 router.get("/status", (request, response, next) => {
     response.status(200).json({ status: "Ok, server running" });
@@ -18,16 +21,24 @@ router.post("/obtainUserId", (request, response) => {
     const refreshToken = request.body.refreshToken;
     const currentUser = tokenList[refreshToken].username;
 
-    const algorithm = 'aes-256-cbc';
-    const password = 'my secret key';
-    const key = crypto.scryptSync(password, 'salt', 32);
-    const iv = Buffer.alloc(16, 0);
     const cipher = crypto.createCipheriv(algorithm, key, iv);
     let encrypted = cipher.update(currentUser, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     response.setHeader('Content-Type', 'application/json');
     // return the username to route caller
     response.end(JSON.stringify({ username: currentUser, encrypted: encrypted }));
+    // to access in caller - result.username
+})
+router.post("/getOtherPlayersId", (request, response) => {
+
+    const otherUser = request.body.otherUser;
+
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    let decrypted = decipher.update(otherUser, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ otherUserName : decrypted }));
     // to access in caller - result.username
 })
 
