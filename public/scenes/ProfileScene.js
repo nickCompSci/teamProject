@@ -16,14 +16,36 @@ export class ProfileScene extends Phaser.Scene{
 
     // Creates any images, text, etc.
     create(){
-
+        var toolTip; 
+        var toolTipText;
+        
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
-        // Options title
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.20, this.playerUsername, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-
-
+        // Profile title
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, this.playerUsername, {fontFamily: 'font1', fill: '#ffffff', fontSize: '80px'}).setDepth(1).setOrigin(0.5)
+        let logoutButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "Logout") 
+            .setStyle({fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setInteractive({useHandCursor: true})
+            .on("pointerdown", () => $.ajax({
+                type: 'POST',
+                url: "/logout",
+                // callback function
+                success: () =>  {
+                    // make the pending requests update to reflect changes to the user
+                    // a form of "refreshing"
+                    window.location.replace('/index.html');
+                },
+                error: function (xhr) {
+                    window.alert(JSON.stringify(xhr));
+                }
+            }))
+            .on("pointerover",() => logoutButton.setStyle({ fill: '#f39c12' }))
+            .on("pointerout",() => logoutButton.setStyle({ fill: '#FFF' }))
+// ________________________________________________________________________________________________________
+            
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -45,7 +67,7 @@ export class ProfileScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
             console.log("click")
         })
-        
+
         backButton.on("pointerout", () => {
             arrowSprite.setVisible(false);
         })
