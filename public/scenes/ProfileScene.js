@@ -42,6 +42,15 @@ export class ProfileScene extends Phaser.Scene{
             }))
             .on("pointerover",() => logoutButton.setStyle({ fill: '#f39c12' }))
             .on("pointerout",() => logoutButton.setStyle({ fill: '#FFF' }))
+
+            let friendsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, "Friends") 
+                .setStyle({fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+                .setDepth(1)
+                .setOrigin(0.5)
+                .setInteractive({useHandCursor: true})
+                .on("pointerdown", () => this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername }))
+                .on("pointerover",() => friendsButton.setStyle({ fill: '#f39c12' }))
+                .on("pointerout",() => friendsButton.setStyle({ fill: '#FFF' }))
 // ________________________________________________________________________________________________________
             
         // Back Button for navigating back to the main menu
