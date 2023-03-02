@@ -13,7 +13,7 @@ export default class HandCard extends Phaser.GameObjects.Sprite {
 
     // edits card's appearances in hand
     cardInHand(scene) {
-        this.visible = !this.visible;
+        this.setVisible(true);
         this.setInteractive();
         scene.input.setDraggable(this);
         this.setOrigin(0.5, 1);

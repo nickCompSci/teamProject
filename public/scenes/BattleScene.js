@@ -69,10 +69,16 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        this.loadCards();
+        // this.loadCards();
         // shuffles the deck and sets up the visual for the deck cards
+        console.log(this.player.deckArray);
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
+        console.log(this.player.deckArray);
+        console.log(this.player.handArray);
+        for (let cards of this.player.handArray) {
+            console.log(cards.visible);
+        }
 
         this.ap = this.add.image(0, 0, "ap", 1);
         this.ap.setOrigin(0,0);
@@ -82,7 +88,7 @@ export class BattleScene extends Phaser.Scene {
         this.actiontext.setOrigin(0,0);
         this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
-        // indicator for player for keeping cards
+        // indicator for player when keeping cards
         this.keepCardsText = this.add.text(this.ap.x + this.ap.width, this.ap.y + this.ap.height, this.player.keepCards.length +  " / " + this.player.keepCardsLimit).setVisible(false);
 
         // launch the discard pile scene in parallel

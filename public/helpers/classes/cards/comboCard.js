@@ -118,7 +118,7 @@ export default class ComboCard extends HandCard {
     }
 
     getLabel() {
-        return "Combo: \nAffects the next card played through amplifying the effect."
+        return "Combo: \nWhen played, clicking a valid card amplifies its effect."
     }
     
    

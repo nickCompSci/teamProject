@@ -8,7 +8,7 @@ export default class HealthBar{
         this.maxHealth = maxHealth;
         this.maxArmour = maxArmour;
 
-        this.healthText = scene.add.text(this.x - 27, this.y - 4, health, {color: "white", fontSize: "20px"});
+        this.healthText = scene.add.text(this.x - 27, this.y - 2, health, {color: "white", fontSize: "20px"});
         this.armourText = scene.add.text(x, y, maxArmour, {colour: "black", fontSize: "20px"});
 
         this.show_health(scene, health, armour);

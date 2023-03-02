@@ -35,7 +35,7 @@ export default class HealingCard extends HandCard {
 
     getLabel() {
         if (this.effect.target === "armour") {
-            return "Armour: \nRemoved before health when receiving damage.";
+            return "Armour: \nRemoved before health when receiving damage. Damage reduction applies.";
         } else if (this.effect.target === "health") {
             return "Health: \nIf this reaches zero, you die."
         }
