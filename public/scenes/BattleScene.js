@@ -257,7 +257,7 @@ export class BattleScene extends Phaser.Scene {
         damage_num.setPosition(character.x + 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
 
-        this.playerCalculation(character);
+        this.characterHealthbarCalculation(character);
 
     }
 
@@ -276,7 +276,7 @@ export class BattleScene extends Phaser.Scene {
         healing_num.setPosition(character.x - 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, healing_num], this);
 
-        this.playerCalculation(character);
+        this.characterHealthbarCalculation(character);
     }
 
     armour_calculation(character, armour) {
@@ -290,7 +290,7 @@ export class BattleScene extends Phaser.Scene {
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, armour_num], this);
         console.log("Player's armour: " + character.armour);
 
-        this.playerCalculation(character);
+        this.characterHealthbarCalculation(character);
     } 
 
     clearNumAndTintEvent(character, num) {
@@ -298,9 +298,12 @@ export class BattleScene extends Phaser.Scene {
         num.destroy();
     }
 
-    playerCalculation(character) {
+    characterHealthbarCalculation(character) {
         if (character.spriteType === "player") {
             this.playerHealth.show_health(this, character.health, character.armour);
+        } else if (character.spriteType === "enemy") {
+            let enemyIndex = this.enemies.indexOf(character);
+            this.healthbars[enemyIndex].show_health(this, character.health, character.armour);
         }
     }
 
@@ -447,13 +450,13 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
-    spawnBossOnScene() {
-        let boss = new Boss(this, 0, 0, "boss", 0 , 120);
-        this.enemies.push(boss);
-        let bosshealth = new HealthBar(this, boss.x - 40, boss.y + 100, boss.health, boss.maxHealth, boss.armour, boss.maxArmour);
-        this.healthbars.push(bosshealth);
-        boss.updateArrow();
-    }
+    // spawnBossOnScene() {
+    //     let boss = new Boss(this, 0, 0, "boss", 0 , 120);
+    //     this.enemies.push(boss);
+    //     let bosshealth = new HealthBar(this, boss.x - 40, boss.y + 100, boss.health, boss.maxHealth, boss.armour, boss.maxArmour);
+    //     this.healthbars.push(bosshealth);
+    //     boss.updateArrow();
+    // }
     
     // // spawning in enemies and their life
     spawnEnemyOnScene() {
