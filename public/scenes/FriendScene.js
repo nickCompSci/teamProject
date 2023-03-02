@@ -233,7 +233,7 @@ export class friendScene extends Phaser.Scene {
                                 success: function (result) {
                                     console.log(result.otherUser);
                                     scene.network.connect(result.otherUser);
-                                    scene.network.send("hello");
+                                    // scene.network.send("hello");
                                     scene.network.send("testing again");
                                     scene.loadLobby();
                                 },

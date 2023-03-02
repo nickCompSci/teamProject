@@ -31,6 +31,8 @@ router.post("/obtainUserId", (request, response) => {
     // to access in caller - result.username
 })
 
+
+
 router.post("/testerRoute", (request, response) => {
     const otherUser = request.body.otherUsername;
     console.log(request.body.otherUsername);
