@@ -63,9 +63,9 @@ export class BattleScene extends Phaser.Scene {
         this.player.setScale(1.5);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
-        this.deck = this.add.sprite(23, 550, "deck");
+        this.deck = this.add.sprite(20, 550, "deck");
         this.deck.setOrigin(0, 0);
-        this.deckAmount = this.add.text(this.deck.x + this.deck.width, this.deck.y + this.deck.height, this.player.deckArray.length);
+        this.deckAmount = this.add.text(this.deck.x + this.deck.width, this.deck.y + this.deck.height, this.player.deckArray.length, {fontSize: "20px"});
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
@@ -78,17 +78,19 @@ export class BattleScene extends Phaser.Scene {
         this.ap.setOrigin(0,0);
         this.ap.setPosition(gameWidth/27, gameHeight/2 + 225);
         this.ap.setScale(1.5);
-        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "white", fontSize: "30px"});
+        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "#FFFFFF", fontSize: "30px"});
         this.actiontext.setOrigin(0,0);
         this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
+        this.keepCardsText
+
         // launch the discard pile scene in parallel
-        this.discardPile = this.add.sprite(23, 750, "discardPile").setOrigin(0, 1);
+        this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
         this.discardPile.setInteractive({useHandCursor: true});
         this.discardPile.on('pointerdown', (event) => {
             this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
-        this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length);
+        this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         
         this.endTurnButton = new Button(0, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
@@ -253,6 +255,8 @@ export class BattleScene extends Phaser.Scene {
         damage_num.setPosition(character.x + 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
 
+        this.playerCalculation(character);
+
     }
 
     healing_calculation(character, healing, modifiers) {
@@ -265,11 +269,12 @@ export class BattleScene extends Phaser.Scene {
         if (character.health > character.maxHealth) {
             character.health = character.maxHealth;
         }
-        console.log(healing);
         character.setTint(0x90EE90);
         let healing_num = this.add.text(0, 0, "+" + healing, {color: "#90EE90", fontSize: "30px"});
         healing_num.setPosition(character.x - 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, healing_num], this);
+
+        this.playerCalculation(character);
     }
 
     armour_calculation(character, armour) {
@@ -277,17 +282,24 @@ export class BattleScene extends Phaser.Scene {
         if (character.armour > character.maxArmour) {
             character.armour = character.maxArmour
         }
-
         character.setTint(0x808080);
         let armour_num = this.add.text(0, 0, "+" + armour, {color: "#808080", fontSize: "30px"});
         armour_num.setPosition(character.x - 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, armour_num], this);
         console.log("Player's armour: " + character.armour);
+
+        this.playerCalculation(character);
     } 
 
     clearNumAndTintEvent(character, num) {
         character.clearTint();
         num.destroy();
+    }
+
+    playerCalculation(character) {
+        if (character.spriteType === "player") {
+            this.playerHealth.show_health(this, character.health, character.armour);
+        }
     }
 
     loadCards() {
@@ -453,7 +465,7 @@ export class BattleScene extends Phaser.Scene {
             enemy.spawn();
             enemy.x += spawnEnemyDistanceX;
             let enemyhealth = new HealthBar(this, enemy.x - 40, this.player.y + 100, enemy.health, enemy.health, enemy.armour, enemy.maxArmour);
-            this.healthbars. push(enemyhealth);
+            this.healthbars.push(enemyhealth);
 
             spawnEnemyDistanceX += 200;
             enemy.setDepth(1);

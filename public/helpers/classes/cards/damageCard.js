@@ -63,6 +63,9 @@ export default class DamageCard extends HandCard {
 
     damageEnemy(enemy, scene) {
         if (enemy.isBeingClicked) {
+            if (this.name === "ballistic") {
+                this.effect.damage = scene.player.armour;
+            }
             scene.damage_calculation(enemy, this.effect.damage, [1]);
             enemy.isBeingClicked = false;
             this.resetCard();
