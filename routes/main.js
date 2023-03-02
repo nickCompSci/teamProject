@@ -42,6 +42,99 @@ router.post("/getOtherPlayersId", (request, response) => {
     // to access in caller - result.username
 })
 
+router.post("/updateNeo", (request, response) => {
+    console.log("were in neo route now")
+    function updateNeoCallback(result) {
+        // at the moment wont return anything
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({}));
+    }
+
+    function updateNeo(currentUsername, callback) {
+        (async () => {
+            // connection details
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                // query to delete the JOIN_CODE relationship from the current user to all
+                // their friends
+                console.log(currentUsername)
+                const writeQuery = `
+                    MATCH (n:Person {username: $currentUsername})
+                    SET n.connectedInLobby = 'true'
+                    RETURN n.username`;
+                await session.executeWrite(tx =>
+                    tx.run(writeQuery, { currentUsername })
+                );
+                console.log("completed the update in neo");
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback("success");
+            }
+        })();
+    }
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+
+    updateNeo(currentUser, updateNeoCallback);
+})
+
+
+router.post("/checkLobbyFull", (request, response) => {
+    console.log("were in lobby route")
+    function checkLobbyFullCallback(result) {
+        console.log(result);
+        // at the moment wont return anything
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({result : result}));
+    }
+
+    function checkLobbyFull( otherUser, callback) {
+
+        (async () => {
+            // connection details
+            let result = "false";
+            const uri = process.env.NEO4J_URI;
+            const user = process.env.NEO4J_USERNAME;
+            const password = process.env.NEO4J_PASSWORD;
+
+            const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+            try {
+                const session = driver.session({ database: "neo4j" });
+                // query to delete the JOIN_CODE relationship from the current user to all
+                // their friends
+                console.log(otherUser)
+                const readQuery = `
+                    MATCH (n:Person {username: $otherUser}) 
+                    RETURN n.connectedInLobby IS NOT NULL as exists`;
+                const readResult = await session.executeRead(tx =>
+                    tx.run(readQuery, {  otherUser })
+                );
+                readResult.records.forEach(record => {
+                    found = record.get("exists");
+                    console.log(`found : ${found}`)
+                    if (found == true){
+                        result = "true";
+                    }
+                })
+
+            } catch (error) {
+                console.error(`Something went wrong: ${error}`);
+            } finally {
+                await driver.close();
+                callback(result);
+            }
+        })();
+    }
+    const otherUser = request.body.otherUser
+    checkLobbyFull(otherUser, checkLobbyFullCallback);
+})
 
 
 router.post("/testerRoute", (request, response) => {

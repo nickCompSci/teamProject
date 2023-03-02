@@ -214,44 +214,98 @@ export class friendScene extends Phaser.Scene {
         document.onclick = function (event) {
             if (event === undefined) event = window.event;
             let joining;
-            var target = 'target' in event ? event.target : event.srcElement;
+            let target = 'target' in event ? event.target : event.srcElement;
             // check if its the green join button that caused the click event
             if (target.className == "fa-sharp fa-solid fa-right-to-bracket green") {
                 for (let index in inLobbyList) {
                     if (inLobbyList[index] == target.id) {
-                        if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
-                            // cant use this keyword as were inside a function
-                            // console.log(scene.network);
-                            var data = {
-                                otherUsername: target.id
-                            };
-                            $.ajax({
-                                type: 'POST',
-                                url: '/testerRoute',
-                                data,
-                                // on success call the callback function
-                                success: function (result) {
-                                    console.log(result.otherUser);
-                                    scene.network.connect(result.otherUser);
-                                    // scene.network.send("hello");
-                                    scene.network.send("testing again");
-                                    scene.loadLobby();
-                                },
-                                // on error return to game page
-                                error: function (xhr) {
-                                    window.alert(JSON.stringify(xhr));
-                                    window.location.replace('/game.html');
+                        var data = {
+                            otherUser: target.id
+                        };
+                        $.ajax({
+                            type: 'POST',
+                            url: '/checkLobbyFull',
+                            data,
+                            // on success call the callback function
+                            success: function (result) {
+                                console.log(result.result);
+                                if (result.result == "false"){
+                                    if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
+                                        // cant use this keyword as were inside a function
+                                        // console.log(scene.network);
+                                        var data = {
+                                            otherUsername: target.id
+                                        };
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/testerRoute',
+                                            data,
+                                            // on success call the callback function
+                                            success: function (result) {
+                                                console.log(result.otherUser);
+                                                clearInterval(interval)
+                                                scene.network.connect(result.otherUser);
+                                                // scene.network.send("hello");
+                                                scene.network.send("testing again");
+                                                scene.loadLobby();
+                                            },
+                                            // on error return to game page
+                                            error: function (xhr) {
+                                                window.alert(JSON.stringify(xhr));
+                                                window.location.replace('/game.html');
+                                            }
+                                        });
+                                        // target.id wont work as its not the encrypted version
+                                        // scene.network.connect(target.id);
+                                        clearInterval(interval)
+                                        // joining = "true";
+
+                                    }
+                                }else{
+                                    alert("this lobby is full!")
                                 }
-                            });
-                            // target.id wont work as its not the encrypted version
-                            // scene.network.connect(target.id);
-                            clearInterval(interval)
-                            // joining = "true";
-                            break;
-                        }
-                        else {
-                            break;
-                        }
+                            },
+                        
+                            // on error return to game page
+                            error: function (xhr) {
+                                window.alert(JSON.stringify(xhr));
+                                window.location.replace('/game.html');
+                            }
+                        });
+                        break;
+                        // if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
+                        //     // cant use this keyword as were inside a function
+                        //     // console.log(scene.network);
+                        //     var data = {
+                        //         otherUsername: target.id
+                        //     };
+                        //     $.ajax({
+                        //         type: 'POST',
+                        //         url: '/testerRoute',
+                        //         data,
+                        //         // on success call the callback function
+                        //         success: function (result) {
+                        //             console.log(result.otherUser);
+                        //             scene.network.connect(result.otherUser);
+                        //             // scene.network.send("hello");
+                        //             scene.network.send("testing again");
+                        //             scene.loadLobby();
+                        //         },
+                        //         // on error return to game page
+                        //         error: function (xhr) {
+                        //             window.alert(JSON.stringify(xhr));
+                        //             window.location.replace('/game.html');
+                        //         }
+                        //     });
+                        //     // target.id wont work as its not the encrypted version
+                        //     // scene.network.connect(target.id);
+                        //     clearInterval(interval)
+                        //     // joining = "true";
+                        //     break;
+                        // }
+                        // else {
+                        //     break;
+                        // }
                     }
                 }
                 // if (joining == "true"){
@@ -269,28 +323,3 @@ export class friendScene extends Phaser.Scene {
     }
 }
 
-// console.log(scene.network);
-// console.log(target.id);
-// var data = {
-//     otherUsername: target.id
-// };
-// $.ajax({
-//     type: 'POST',
-//     url: '/testerRoute',
-//     data,
-//     // on success call the callback function
-//     success: function (result) {
-//         console.log(result.otherUser);
-//         scene.network.connect(result.otherUser);
-//         scene.network.send("hello my name is poap");
-//         scene.network.send("testing again!");
-//     },
-//     // on error return to game page
-//     error: function (xhr) {
-//         window.alert(JSON.stringify(xhr));
-//         window.location.replace('/game.html');
-//     }
-// });
-// // target.id wont work as its not the encrypted version
-
-// joining = "true";
