@@ -69,7 +69,8 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        this.loadCards();
+        // this.loadCards();
+
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
@@ -82,7 +83,7 @@ export class BattleScene extends Phaser.Scene {
         this.actiontext.setOrigin(0,0);
         this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
-        // indicator for player for keeping cards
+        // indicator for player when keeping cards
         this.keepCardsText = this.add.text(this.ap.x + this.ap.width, this.ap.y + this.ap.height, this.player.keepCards.length +  " / " + this.player.keepCardsLimit).setVisible(false);
 
         // launch the discard pile scene in parallel
@@ -98,7 +99,6 @@ export class BattleScene extends Phaser.Scene {
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
-        // check level here, if at top, call boss function
         //this.loadEnemies();
         this.spawnEnemyOnScene();
 
@@ -436,12 +436,9 @@ export class BattleScene extends Phaser.Scene {
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        while (this.player.handArray.length < 5){
-            if (this.player.deckArray.length === 0){
-                this.player.resetDeck(this);
-            }
-            this.player.drawCard(1, this);
-        }
+        this.player.drawCard(5 - this.player.handArray.length, this);
+
+        // checking if newly drawn cards are available to play
         for (let card of this.player.handArray){
             if (card.cost > this.player.actionPoints){
                 card.setTint(0xff0000);
@@ -473,5 +470,17 @@ export class BattleScene extends Phaser.Scene {
            
             enemy.updateArrow();
         }
+    }
+
+    disableInteractionDuringCard() {
+        this.keepCardButton.disableInteractive();
+        this.endTurnButton.disableInteractive();
+        this.discardPile.disableInteractive();
+    }
+
+    enableInteractionAfterCard() {
+        this.keepCardButton.setInteractive();
+        this.endTurnButton.setInteractive();
+        this.discardPile.setInteractive();
     }
 }

@@ -8,8 +8,3 @@ export const gameOptions = {
     cardYOffset: 10
 }
 
-export const cardBackDimensions = {
-    backWidth: 130,
-    backHeight: 205
-}
-

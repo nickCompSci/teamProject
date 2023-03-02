@@ -1,4 +1,7 @@
-import {cardBackDimensions} from "../config.js";
+import DamageCard from "./cards/damageCard.js";
+import HealingCard from "./cards/healingCard.js";
+import ComboCard from "./cards/comboCard.js";
+import ReloadCard from "./cards/reloadCard.js";
 
 export default class Player extends Phaser.GameObjects.Sprite {
 
@@ -19,6 +22,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.keepCards = [];
         this.keepCardsLimit = 2;
         scene.add.existing(this);
+
+        // generate a starter deck for the player
+        this.starterDeck(scene);
     }
 
     selectCardInHand(scene) {
@@ -200,7 +206,33 @@ export default class Player extends Phaser.GameObjects.Sprite {
         return this.spriteType;
     }
 
-    starterDeck() {
-        
+    starterDeck(scene) {
+        let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", scene, 0, 0, "high_noon");
+        let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", scene, 0, 0, "medkit");
+        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 5}, "white", scene, 0, 0, "kevlar");
+        let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", scene, 0, 0, "headshot");
+        let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", scene, 0, 0, "reload");
+
+        this.generateDuplicateCard(4, high_noon);
+        this.generateDuplicateCard(1, headshot);
+        this.generateDuplicateCard(1, medkit);
+        this.generateDuplicateCard(1, kevlar);
+        this.generateDuplicateCard(2, reload);
+    }
+
+    generateDuplicateCard(numOfDuplicates, card) {
+        for (let i=0; i < numOfDuplicates; i++) {
+            let newCard;
+            if (card.cardType === "damage") {
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, card.scene, card.x, card.y, card.texture);
+            } else if (card.cardType === "healing") {
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, card.scene, card.x, card.y, card.texture);
+            } else if (card.cardType === "combo") {
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, card.scene, card.x, card.y, card.texture);
+            } else if (card.cardType === "reload") {
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, card.scene, card.x, card.y, card.texture);
+            }
+            this.deckArray.push(newCard);
+        }
     }
 }

@@ -20,6 +20,8 @@ export default class DamageCard extends HandCard {
         console.log(card);
         if (this.effect.target === "single") {
             for (let enemy of scene.enemies) {
+                scene.player.disableDragOnCards();
+                scene.disableInteractionDuringCard();
                 // remove event listener from enemy
                 enemy.enemyArrow.setVisible(true);
                 enemy.removeListener("pointerdown", enemy.clickHandler);
@@ -77,6 +79,9 @@ export default class DamageCard extends HandCard {
             enemy.clickHandler = this.damageEnemy.bind(this, enemy, scene);
             enemy.on("pointerdown", enemy.clickHandler);
         }
+
+        scene.player.enableDragOnCards();
+        scene.enableInteractionAfterCard();
 
     }
 
