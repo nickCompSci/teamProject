@@ -16,9 +16,7 @@ export class ProfileScene extends Phaser.Scene{
 
     // Creates any images, text, etc.
     create(){
-        var toolTip; 
-        var toolTipText;
-        
+
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
