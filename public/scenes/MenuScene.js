@@ -104,7 +104,7 @@ export class MenuScene extends Phaser.Scene{
         })
 
         profileButton.on("pointerup", ()=>{
-            console.log("click")
+            this.scene.start(CST.SCENES.PROFILE, {networkObj:this.network, playerUsername: this.playerUsername});
         })
 
         // Options Button

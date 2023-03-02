@@ -12,6 +12,7 @@ import { LobbyScene } from "./LobbyScene.js";
 import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { MapScene } from "./MapScene.js";
+import { ProfileScene } from "./ProfileScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{

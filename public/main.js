@@ -15,6 +15,7 @@ import {MapScene} from "./scenes/MapScene.js";
 import {BattleScene} from "./scenes/BattleScene.js";
 import {BattleLoadScene} from "./scenes/BattleLoadScene.js"
 import {DiscardPileScene} from "./scenes/DiscardPileScene.js"
+import { ProfileScene } from "./scenes/ProfileScene.js";
 
 // import RexUIPlugin from  "../node_modules/phaser3-rex-plugins/templates/ui/ui-plugin"
 
@@ -24,7 +25,7 @@ let game = new Phaser.Game({
     height: 800,
     scale: { parent: 'phaser-container', mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
-        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene
+        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene, ProfileScene
     ],
     render:{
         pixelArt: true
