@@ -30,6 +30,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
         this.load.image("deck", "../assets/resources/sprites/deck.png");
+        this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
         
         // enemies
         this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
@@ -73,11 +74,13 @@ export class BattleScene extends Phaser.Scene {
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
 
-        let chamber = this.add.circle(0, 0, 30, 0xffcc00);
-        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "black", fontSize: "30px"});
-        this.actiontext.setPosition(-10, -18);
-        let actions = this.add.container(0, 0, [chamber, this.actiontext]);
-        actions.setPosition(gameWidth/20, gameHeight/1.75);
+        this.ap = this.add.image(0, 0, "ap", 1);
+        this.ap.setOrigin(0,0);
+        this.ap.setPosition(gameWidth/27, gameHeight/2 + 225);
+        this.ap.setScale(1.5);
+        this.actiontext = this.add.text(0,0, this.player.getActionPoints(), {color: "white", fontSize: "30px"});
+        this.actiontext.setOrigin(0,0);
+        this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
         // launch the discard pile scene in parallel
         this.discardPile = this.add.sprite(23, 750, "discardPile").setOrigin(0, 1);
@@ -206,6 +209,11 @@ export class BattleScene extends Phaser.Scene {
                 }, 500);
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
+                if (this.player.actionPoints > 6){
+                    this.ap.setFrame(0);
+                } else {
+                    this.ap.setFrame(7 - this.player.actionPoints);
+                }
                 this.actiontext.text = this.player.getActionPoints();
         
                 this.cameras.main.shake(100, 0.02);
