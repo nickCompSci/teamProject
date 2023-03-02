@@ -82,7 +82,8 @@ export class BattleScene extends Phaser.Scene {
         this.actiontext.setOrigin(0,0);
         this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
-        this.keepCardsText
+        // indicator for player for keeping cards
+        this.keepCardsText = this.add.text(this.ap.x + this.ap.width, this.ap.y + this.ap.height, this.player.keepCards.length +  " / " + this.player.keepCardsLimit).setVisible(false);
 
         // launch the discard pile scene in parallel
         this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
@@ -411,13 +412,13 @@ export class BattleScene extends Phaser.Scene {
 
 
     // start keep cards and make keep cards button appear
-    keepCard(player) {
+    keepCard() {
         this.keepCardButton.visible = false;
         this.endTurnButton.visible = true;
         for (let card of this.player.handArray){
             card.clearTint();
         }
-        this.player.selectCardInHand(player);
+        this.player.selectCardInHand(this);
     }
     
     

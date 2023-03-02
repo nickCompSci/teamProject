@@ -110,6 +110,11 @@ export default class ComboCard extends HandCard {
         scene.actiontext.text = scene.player.actionPoints; 
         scene.ap.setFrame(7 - scene.player.actionPoints);
         scene.player.discardPileUpdate(scene);
+
+        // if combo card takes away health, add it back
+        if ("sideEffects" in this.effect) {
+            scene.healing_calculation(scene.player, this.effect.sideEffects, [1]);
+        }
     }
 
     getLabel() {
