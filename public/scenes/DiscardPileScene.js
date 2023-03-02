@@ -29,6 +29,9 @@ export class DiscardPileScene extends Phaser.Scene {
         let title = this.add.text(gameWidth/2, 5, "Discard Pile", {fontSize: "45px"});
         title.setOrigin(0.5, 0);
 
+        let backButton = new Button(gameWidth/2, gameHeight - 50, "Go Back", this, this.goBackToBattleScene.bind(this), "#202529");
+        backButton.setOrigin(0, 1);
+
         let startX = 10;
         let startY = 50;
         let xOffset = gameOptions.cardWidth + 50;
@@ -54,13 +57,10 @@ export class DiscardPileScene extends Phaser.Scene {
                 }
             }
         }
-
-        this.input.on("pointerdown", function() {
-            this.scene.stop(CST.SCENES.DISCARD_PILE);
-        }, this);
     }
 
-    damageCardFilter() {
-        console.log("Hello");
+    goBackToBattleScene() {
+        this.scene.stop(CST.SCENES.DISCARD_PILE);
+        this.scene.resume(CST.SCENES.BATTLE);
     }
 }

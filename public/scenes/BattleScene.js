@@ -91,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
         this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
         this.discardPile.setInteractive({useHandCursor: true});
         this.discardPile.on('pointerdown', (event) => {
-            this.scene.launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
+            this.scene.pause().launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
         }, this);
         this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         

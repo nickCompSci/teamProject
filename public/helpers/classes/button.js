@@ -18,7 +18,7 @@ export default class Button extends Phaser.GameObjects.Text {
     }
 
     setFontColour(fontColour) {
-        this.setStyle({color: "#202529"});
+        this.setStyle({color: fontColour});
     }
 
     changePadding(newX, newY) {
