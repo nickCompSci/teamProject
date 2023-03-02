@@ -223,7 +223,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
     generateDuplicateCard(numOfDuplicates, card) {
         for (let i=0; i < numOfDuplicates; i++) {
             let newCard;
-            console.log(card.sprite);
             if (card.cardType === "damage") {
                 newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, card.scene, card.x, card.y, card.texture);
             } else if (card.cardType === "healing") {

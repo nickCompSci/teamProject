@@ -70,15 +70,10 @@ export class BattleScene extends Phaser.Scene {
 
         // loads all the different types of cards
         // this.loadCards();
+
         // shuffles the deck and sets up the visual for the deck cards
-        console.log(this.player.deckArray);
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
-        console.log(this.player.deckArray);
-        console.log(this.player.handArray);
-        for (let cards of this.player.handArray) {
-            console.log(cards.visible);
-        }
 
         this.ap = this.add.image(0, 0, "ap", 1);
         this.ap.setOrigin(0,0);
@@ -104,7 +99,6 @@ export class BattleScene extends Phaser.Scene {
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
-        // check level here, if at top, call boss function
         //this.loadEnemies();
         this.spawnEnemyOnScene();
 
@@ -442,12 +436,9 @@ export class BattleScene extends Phaser.Scene {
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
-        while (this.player.handArray.length < 5){
-            if (this.player.deckArray.length === 0){
-                this.player.resetDeck(this);
-            }
-            this.player.drawCard(1, this);
-        }
+        this.player.drawCard(5 - this.player.handArray.length, this);
+
+        // checking if newly drawn cards are available to play
         for (let card of this.player.handArray){
             if (card.cost > this.player.actionPoints){
                 card.setTint(0xff0000);
@@ -479,5 +470,17 @@ export class BattleScene extends Phaser.Scene {
            
             enemy.updateArrow();
         }
+    }
+
+    disableInteractionDuringCard() {
+        this.keepCardButton.disableInteractive();
+        this.endTurnButton.disableInteractive();
+        this.discardPile.disableInteractive();
+    }
+
+    enableInteractionAfterCard() {
+        this.keepCardButton.setInteractive();
+        this.endTurnButton.setInteractive();
+        this.discardPile.setInteractive();
     }
 }

@@ -18,6 +18,7 @@ export default class ComboCard extends HandCard {
         let card = this;
         if ("target" in this.effect) {
             scene.player.disableDragOnCards();
+            scene.disableInteractionDuringCard();
             for (let card of scene.player.handArray) {
                 // remove the event listener from the card
                 card.removeListener("pointerdown", card.comboHandler);
@@ -93,7 +94,8 @@ export default class ComboCard extends HandCard {
         }
         
         scene.arrangeCardsInCenter(scene.player.handArray);
-        // enable cards to be draggable
+        // enable interaction of all elements
+        scene.enableInteractionAfterCard();
         scene.player.enableDragOnCards();
     }
 
