@@ -26,7 +26,7 @@ let game = new Phaser.Game({
     height: 800,
     scale: { parent: 'phaser-container', mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene:[
-        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, /*CreateGameScene,*/ LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene, ExtraScene
+        LoadScene, MenuScene, OptionsScene, CreditsScene, JoinGameScene, /*CreateGameScene,*/ LobbyScene, friendScene, MapScene, BattleScene, BattleLoadScene, DiscardPileScene, ExtraScene, ProfileScene
     ],
     render:{
         pixelArt: true
