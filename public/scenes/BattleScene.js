@@ -8,6 +8,7 @@ import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
 import HealingCard from "../helpers/classes/cards/healingCard.js";
 import Enemy from "../helpers/classes/enemy.js";
+import Boss from "../helpers/classes/boss.js";
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -444,6 +445,14 @@ export class BattleScene extends Phaser.Scene {
                 card.setTint(0xff0000);
             }
         }
+    }
+
+    spawnBossOnScene() {
+        let boss = new Boss(this, 0, 0, "boss", 0 , 120);
+        this.enemies.push(boss);
+        let bosshealth = new HealthBar(this, boss.x - 40, boss.y + 100, boss.health, boss.maxHealth, boss.armour, boss.maxArmour);
+        this.healthbars.push(bosshealth);
+        boss.updateArrow();
     }
     
     // // spawning in enemies and their life
