@@ -248,17 +248,18 @@ export class BattleScene extends Phaser.Scene {
     }
 
     damage_calculation(character, damage) {
-        for (let modifier of character.damageModifiers){
+        console.log("Unmodified damage: " + damage);
+        for (let modifier of character.damageModifiers) {
             damage = damage * modifier;
         }
-        character.health = character.health - damage;
+        console.log("Modified damage: " + damage);
+        let checkCharacter = this.checkArmour(character, damage);
         character.setTint(0xff0000);
         let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
         damage_num.setPosition(character.x + 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
 
-        this.characterHealthbarCalculation(character);
-
+        this.characterHealthbarCalculation(checkCharacter);
     }
 
     healing_calculation(character, healing, modifiers) {
@@ -284,6 +285,10 @@ export class BattleScene extends Phaser.Scene {
         if (character.armour > character.maxArmour) {
             character.armour = character.maxArmour
         }
+        // 30% damage reduction from attacks
+        if (!character.damageModifiers.includes(0.7)) {
+            character.damageModifiers.push(0.7);
+        }
         character.setTint(0x808080);
         let armour_num = this.add.text(0, 0, "+" + armour, {color: "#808080", fontSize: "30px"});
         armour_num.setPosition(character.x - 40, character.y - 80);
@@ -305,6 +310,25 @@ export class BattleScene extends Phaser.Scene {
             let enemyIndex = this.enemies.indexOf(character);
             this.healthbars[enemyIndex].show_health(this, character.health, character.armour);
         }
+    }
+
+    checkArmour(character, damage) {
+        if (damage > character.armour) {
+            let damageLeft = Math.floor(damage - character.armour);
+            character.armour = 0;
+            character.health = character.health - damageLeft;
+        } else {
+            character.armour = Math.floor(character.armour - damage);
+        }
+
+        // remove the armour damage modifier if there is no armour
+        if (character.armour === 0) {
+            if (character.damageModifiers.includes(0.7)) {
+                character.damageModifiers.splice(character.damageModifiers.indexOf(0.7), 1);
+            }
+        }
+
+        return character;
     }
 
     loadCards() {
