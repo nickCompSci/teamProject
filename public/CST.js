@@ -15,6 +15,7 @@ export const CST = {
         BATTLE: "BATTLE",
         DISCARD_PILE: "DISCARD_PILE",
         MAP: "MAP",
-        PROFILE : "PROFILE"
+        PROFILE : "PROFILE",
+        EXTRA: "EXTRA"
     }
 }

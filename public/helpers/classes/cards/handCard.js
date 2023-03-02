@@ -8,7 +8,7 @@ export default class HandCard extends Phaser.GameObjects.Sprite {
         this.cost = cost;
         this.effect = effect;
         this.cardType = cardType;
-        this.rarity = rarity
+        this.rarity = rarity;
     }
 
     // edits card's appearances in hand
@@ -37,6 +37,10 @@ export default class HandCard extends Phaser.GameObjects.Sprite {
 
     getType() {
         return this.cardType;
+    }
+
+    getRarity() {
+        return this.rarity;
     }
 
     setCost(cost) {

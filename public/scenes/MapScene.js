@@ -49,16 +49,16 @@ export class MapScene extends Phaser.Scene{
         let shop = this.add.image(  0,0, 'shop').setDepth(2);
         let random = this.add.image(  0,0,  'random').setDepth(2);
         let random2 = this.add.image(  0,0,  'random').setDepth(2);
+        let random3 = this.add.image(  0,0,  'random').setDepth(2);
         let battle2 = this.add.image(  0,0,  'cards').setDepth(2);
         let battle3 = this.add.image(  0,0,  'cards').setDepth(2);
         let battle4 = this.add.image(  0,0,  'cards').setDepth(2);
         let battle5 = this.add.image(  0,0,  'cards').setDepth(2);
-        let battle6 = this.add.image(  0,0,  'cards').setDepth(2);
-        let battle7 = this.add.image(  0,0,  'cards').setDepth(2);
+        let chest = this.add.image(  0,0,  'chest').setDepth(2);
         let start = this.add.image( 740,490, 'door').setDepth(2);
         let end = this.add.image( 270,460, 'door').setDepth(2);
 
-        let encounters = [battle, battle2, battle3, battle4, battle5, battle6, battle7, shop, random, random2];
+        let encounters = [battle, battle2, battle3, battle4, battle5, random3, chest, shop, random, random2];
         let startEnd = [start, end];
 
         //Door images and their respective set of positions
@@ -220,7 +220,20 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
-                    scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
+                    if (adjacent[i].getEncounter().texture.key == "cards") {
+                        scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
+                    } else if (adjacent[i].getEncounter().texture.key == "end") {
+                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end"});
+                    } else if (adjacent[i].getEncounter().texture.key == "random") {
+                        let choice = Math.floor(Math.random() * 2);
+                        if (choice == 0) {
+                            scene.scene.start(CST.SCENES.EXTRA, {room : "chest"});
+                        } else {
+                            scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
+                        }
+                    } else {
+                        scene.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
+                    }
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }
@@ -240,3 +253,4 @@ export class MapScene extends Phaser.Scene{
         
     }
 }
+
