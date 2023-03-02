@@ -21,10 +21,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
     }
 
-    selectCardInHand(player) {
+    selectCardInHand(scene) {
         // disable drag first on all cards
         this.disableDragOnCards();
-
+        scene.keepCardsText.setVisible(true);
         for (let card of this.handArray) {
             // remove the event listener from the card
             card.removeListener("pointerdown", card.clickHandler);
@@ -33,23 +33,25 @@ export default class Player extends Phaser.GameObjects.Sprite {
             card.isBeingClicked = false;
 
             // add the event listener back to the card
-            card.clickHandler = this.keepingCards.bind(this, card);
+            card.clickHandler = this.keepingCards.bind(this, card, scene);
             card.on("pointerdown", card.clickHandler);
         }
     }
 
-    keepingCards(card) {
+    keepingCards(card, scene) {
         if (card.isBeingClicked) {
             // removes the card from list 
             this.keepCards.splice(this.keepCards.indexOf(card), 1);
             card.clearTint();
             card.isBeingClicked = false;
+            scene.keepCardsText.text = this.keepCards.length + " / " + this.keepCardsLimit;
         } else {
             if (this.keepCards.length < this.keepCardsLimit) {
                 this.keepCards.push(card);
                 card.isBeingClicked = true;
                 // add a visual effect when clicked
                 card.setTint(0x999999);
+                scene.keepCardsText.text = this.keepCards.length + " / " + this.keepCardsLimit;
             }
         }
     }
@@ -87,6 +89,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.deckUpdate(scene);
         this.discardPileUpdate(scene);
         scene.arrangeCardsInCenter(this.handArray);
+        scene.keepCardsText.setVisible(false);
         this.enableDragOnCards();
         this.keepCards = [];
         
