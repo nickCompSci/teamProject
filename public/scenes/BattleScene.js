@@ -95,8 +95,8 @@ export class BattleScene extends Phaser.Scene {
         }, this);
         this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         
-        this.endTurnButton = new Button(0, gameHeight/2, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
-        this.keepCardButton = new Button(0, gameHeight/2, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
+        this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
+        this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
@@ -206,6 +206,8 @@ export class BattleScene extends Phaser.Scene {
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
                 gameObject.activateCard(this);
+
+
 
                 // remove the card from the scene after 500ms
                 setTimeout(function() { 
@@ -472,6 +474,14 @@ export class BattleScene extends Phaser.Scene {
                 card.setTint(0xff0000);
             }
         }
+    }
+
+    win() {
+
+    }
+
+    lose() {
+
     }
 
     // spawnBossOnScene() {

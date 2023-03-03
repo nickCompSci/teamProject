@@ -3,14 +3,10 @@
 
 export default class Button extends Phaser.GameObjects.Text {
 
-    constructor(x, y, label, scene, callback, bgColour) {
+    constructor(x, y, xPadding, yPadding, label, scene, callback, bgColour) {
         super(scene, x, y, label);
-        this.padding = {
-            x: 8,
-            y: 15
-        }
         this.setOrigin(0, 0.5);
-        this.setPadding(this.padding.x, this.padding.y);
+        this.setPadding(xPadding, yPadding);
         this.setStyle({ backgroundColor: bgColour});
         this.setInteractive( { useHandCursor: true});
         this.on('pointerdown', () => callback());
@@ -22,11 +18,7 @@ export default class Button extends Phaser.GameObjects.Text {
     }
 
     changePadding(newX, newY) {
-        this.padding = {
-            x: newX,
-            y: newY
-        }
-        this.setPadding(this.padding.x, this.padding.y);
+        this.setPadding(newX, newY);
     }
 
     changeOrigin(newX, newY) {
