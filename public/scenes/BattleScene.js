@@ -207,8 +207,6 @@ export class BattleScene extends Phaser.Scene {
                 this.player.discardPileUpdate(this);
                 gameObject.activateCard(this);
 
-
-
                 // remove the card from the scene after 500ms
                 setTimeout(function() { 
                     gameObject.setActive(false).setVisible(false).clearTint(); 
@@ -246,6 +244,25 @@ export class BattleScene extends Phaser.Scene {
             gameObject.displayHeight = gameOptions.cardHeight;
             gameObject.displayWidth = gameOptions.cardWidth;
             this.arrangeCardsInCenter(this.player.handArray);
+        }
+    }
+
+    check_enemy_death(){
+        for (let enemy of this.enemies) {
+            if (enemy.health <= 0){
+                let enemy_index = this.enemies.indexOf(enemy);
+                this.healthbars[enemy_index].bar.destroy();
+                this.healthbars[enemy_index].healthText.destroy();
+                this.healthbars[enemy_index].armourText.destroy();
+                delete this.healthbars[enemy_index];
+                enemy.destroy();
+                this.enemies.splice(enemy_index, 1);
+                this.healthbars.splice(enemy_index, 1);
+            }
+        }
+
+        if (this.enemies.length === 0){
+            this.win();
         }
     }
 
@@ -477,11 +494,11 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-
+        console.log("YOU WON!");
     }
 
     lose() {
-
+        console.log("YOU LOST!");
     }
 
     // spawnBossOnScene() {
