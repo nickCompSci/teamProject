@@ -39,10 +39,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         this.load.html("enterCodeForm", "../enterCodeForm.html");
-
-        this.load.image("player2", "../assets/resources/player2.png");
-        this.load.image("player", "../assets/resources/player.png");
-        this.load.image("player_map", "../assets/resources/player_map.png");
+        this.load.image("player_map", "../assets/resources/sprites/player_map.png");
 
         this.load.image("map", "../assets/resources/tower_floor_map.png");
         this.load.image("shop", "../assets/resources/shop.png");

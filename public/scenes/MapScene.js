@@ -220,6 +220,9 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
+                    scene.scene.start(CST.SCENES.EXTRA,  {room : "shop"});
+
+                    /*
                     if (adjacent[i].getEncounter().texture.key == "cards") {
                         scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                     } else if (adjacent[i].getEncounter().texture.key == "end") {
@@ -234,6 +237,7 @@ export class MapScene extends Phaser.Scene{
                     } else {
                         scene.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
                     }
+                    */
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }
