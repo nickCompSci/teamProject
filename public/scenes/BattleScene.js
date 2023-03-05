@@ -50,17 +50,17 @@ export class BattleScene extends Phaser.Scene {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
-        let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
-        let card_bg = this.add.image(0, 0, "card_holder");
-        let bg = this.add.sprite(0, 0, "backgroundBattle");
-        hud_bg.setScale(2);
+        this.hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+        this.card_bg = this.add.image(0, 0, "card_holder");
+        this.bg = this.add.sprite(0, 0, "backgroundBattle");
+        this.hud_bg.setScale(2);
 
-        card_bg.setPosition(gameWidth/2, gameHeight);
-        card_bg.setScale(0.325);
-        card_bg.displayWidth = 777;
-        bg.setPosition(gameWidth/2, gameHeight/2.6);
-        bg.setScale(0.65);
-        bg.displayWidth = 777;
+        this.card_bg.setPosition(gameWidth/2, gameHeight);
+        this.card_bg.setScale(0.325);
+        this.card_bg.displayWidth = 777;
+        this.bg.setPosition(gameWidth/2, gameHeight/2.6);
+        this.bg.setScale(0.65);
+        this.bg.displayWidth = 777;
         
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
@@ -105,6 +105,8 @@ export class BattleScene extends Phaser.Scene {
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
+        // temporarily adding random cards from deck to add to this.rewards
+        // remove when generating cards from map
         for (let i=0; i < 2; i++) {
             let randomIndex = Math.floor(Math.random() * this.player.deckArray.length);
             let randomCard = this.player.deckArray[randomIndex];
@@ -275,7 +277,6 @@ export class BattleScene extends Phaser.Scene {
     win() {
         console.log("YOU WON");
         this.showRewards();
-        // reward here
     }
 
 
@@ -552,10 +553,40 @@ export class BattleScene extends Phaser.Scene {
         this.disableHover();
         this.player.disableDragOnCards();
 
-        for (let cards of this.rewards) {
+        let centerX = this.game.config.width / 2;
+        let centerY = this.game.config.height / 2;
+
+        let pickCardsText = this.add.text(centerX, 100, "Pick One Card", {color:"#FD722A" , fontSize: "40px"});
+        pickCardsText.setOrigin(0.5, 0.5);
+        let player = this.player;
+        let scene = this;
+
+        for (let i=0; i < this.rewards.length; i++) {
+            let cards = this.rewards[i];
+            let cardXOffset = centerX + (i - (this.rewards.length - 1) / 2) * 300;
+
+            cards.setOrigin(0.5, 0.5);
+            cards.x = cardXOffset;
+            cards.y = centerY;
+            cards.angle = 0;
+            cards.displayWidth = gameOptions.cardWidth * 2;
+            cards.displayHeight = gameOptions.cardHeight * 2;
+            cards.setDepth(5);
+
+            // add the card to deckArray when clicked 
+            cards.on('pointerdown', function (event) {
+                player.deckArray.push(this);
+
+                for (let cards of scene.rewards) {
+                    cards.destroy();
+                }
+                pickCardsText.destroy();
+                scene.rewards=[];
+                // transition scene here
+                // this refers to the card btw here, not the scene
+            })
+
             cards.setVisible(true);
-            cards.x = 300;
-            cards.y = 400;
             this.add.existing(cards);
         }
     }
