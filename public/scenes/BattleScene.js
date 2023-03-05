@@ -105,9 +105,14 @@ export class BattleScene extends Phaser.Scene {
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
-        //this.loadEnemies();
-        // this.spawnEnemyOnScene();
-        this.spawnBossOnScene();
+        for (let i=0; i < 2; i++) {
+            let randomIndex = Math.floor(Math.random() * this.player.deckArray.length);
+            let randomCard = this.player.deckArray[randomIndex];
+            this.rewards.push(randomCard);
+        }
+
+        this.spawnEnemyOnScene();
+        // this.spawnBossOnScene();
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
         // this.input.on("pointerdown", (pointer, gameObject) => {
@@ -115,11 +120,6 @@ export class BattleScene extends Phaser.Scene {
         //         scene.arrangeCardsInCenter(scene.player.handArray);
         //     }
         // });
-
-        // this.input.on("pointerup", (pointer, gameObject) => {
-        //     handArray.push(gameObject);
-        //     scene.arrangeCardsInCenter(scene.player.handArray)
-        // }) 
 
         // card event listeners for pointer interactions
         this.input.on('dragstart', (pointer, gameObject) => {
@@ -211,12 +211,11 @@ export class BattleScene extends Phaser.Scene {
                 
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
+                
+                // destroy breaks combo cards
+                gameObject.setVisible(false); 
                 gameObject.activateCard(this);
 
-                // remove the card from the scene after 500ms
-                setTimeout(function() { 
-                    gameObject.setActive(false).setVisible(false).clearTint(); 
-                }, 500);
         
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 if (this.player.actionPoints > 6){
@@ -262,6 +261,7 @@ export class BattleScene extends Phaser.Scene {
                 this.healthbars[enemy_index].armourText.destroy();
                 delete this.healthbars[enemy_index];
                 this.enemies[enemy_index].destroy();
+                this.enemies[enemy_index].enemyArrow.destroy();
                 this.enemies.splice(enemy_index, 1);
                 this.healthbars.splice(enemy_index, 1);
             }
@@ -274,6 +274,7 @@ export class BattleScene extends Phaser.Scene {
 
     win() {
         console.log("YOU WON");
+        this.showRewards();
         // reward here
     }
 
@@ -293,6 +294,10 @@ export class BattleScene extends Phaser.Scene {
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, damage_num], this);
 
         this.characterHealthbarCalculation(checkCharacter);
+
+        if (this.enemies.includes(character)) {
+            this.check_enemy_death();
+        }
     }
 
     healing_calculation(character, healing) {
@@ -323,7 +328,6 @@ export class BattleScene extends Phaser.Scene {
         let armour_num = this.add.text(0, 0, "+" + armour, {color: "#808080", fontSize: "30px"});
         armour_num.setPosition(character.x - 40, character.y - 80);
         this.time.delayedCall(450, this.clearNumAndTintEvent, [character, armour_num], this);
-        console.log("Player's armour: " + character.armour);
 
         this.characterHealthbarCalculation(character);
     } 
@@ -542,6 +546,20 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    showRewards() {
+        // disable interaction of all elements besides hover
+        this.disableInteractionDuringCard();
+        this.disableHover();
+        this.player.disableDragOnCards();
+
+        for (let cards of this.rewards) {
+            cards.setVisible(true);
+            cards.x = 300;
+            cards.y = 400;
+            this.add.existing(cards);
+        }
+    }
+
     disableInteractionDuringCard() {
         this.keepCardButton.disableInteractive();
         this.endTurnButton.disableInteractive();
@@ -552,5 +570,10 @@ export class BattleScene extends Phaser.Scene {
         this.keepCardButton.setInteractive();
         this.endTurnButton.setInteractive();
         this.discardPile.setInteractive();
+    }
+
+    disableHover() {
+        this.input.off('gameobjectover');
+        this.input.off('gameobjectout');
     }
 }
