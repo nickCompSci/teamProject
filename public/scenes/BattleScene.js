@@ -70,7 +70,8 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        // this.loadCards();
+        this.loadCards();
+        let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
@@ -91,11 +92,12 @@ export class BattleScene extends Phaser.Scene {
         this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
         this.discardPile.setInteractive({useHandCursor: true});
         this.discardPile.on('pointerdown', (event) => {
-            this.scene.pause().launch(CST.SCENES.DISCARD_PILE, this.player.graveYardArray);
+            let cardsInDiscardPile = this.player.graveYardArray;
+            this.scene.pause().launch(CST.SCENES.DISCARD_PILE, {cardsInDiscardPile, cardsInDeck});
         }, this);
         this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         
-        this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
+        this.endTurnButton = new Button(0, gameHeight/2, 8, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
@@ -247,6 +249,7 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+
     check_enemy_death(){
         for (let enemy of this.enemies) {
             if (enemy.health <= 0){
@@ -266,12 +269,19 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    win() {
+        console.log("YOU WON");
+    }
+
+
+    lose() {
+        console.log("YOU LOSE");
+    }
+
     damage_calculation(character, damage) {
-        console.log("Unmodified damage: " + damage);
         for (let modifier of character.damageModifiers) {
             damage = damage * modifier;
         }
-        console.log("Modified damage: " + damage);
         let checkCharacter = this.checkArmour(character, damage);
         character.setTint(0xff0000);
         let damage_num = this.add.text(0,0, "-" + damage, {color: "red", fontSize: "30px"});
@@ -331,6 +341,7 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    // check if character has armour to reduce damage
     checkArmour(character, damage) {
         if (damage > character.armour) {
             let damageLeft = Math.floor(damage - character.armour);
@@ -491,14 +502,6 @@ export class BattleScene extends Phaser.Scene {
                 card.setTint(0xff0000);
             }
         }
-    }
-
-    win() {
-        console.log("YOU WON!");
-    }
-
-    lose() {
-        console.log("YOU LOST!");
     }
 
     // spawnBossOnScene() {

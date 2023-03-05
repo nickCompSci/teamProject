@@ -11,7 +11,8 @@ export class DiscardPileScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.graveYardArray = data;
+        this.graveYardArray = data.cardsInDiscardPile;
+        this.amountOfRepeats = data.cardsInDeck;
     }
 
     preload() {
@@ -23,21 +24,32 @@ export class DiscardPileScene extends Phaser.Scene {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
-        let bg = this.add.image(-20, 0, "backgroundBattle").setOrigin(0,0);
+        let cam = this.cameras.main;
+        
+        let repeat = this.checkCardsInDiscardPile(this.amountOfRepeats);
+
+        let bg = this.add.tileSprite(0, 0, gameWidth * repeat, gameHeight * repeat, "backgroundBattle").setOrigin(0,0);
         bg.setScale(1);
+
+        cam.setBounds(0, 0, gameWidth, gameHeight * repeat);
 
         let title = this.add.text(gameWidth/2, 5, "Discard Pile", {fontSize: "45px"});
         title.setOrigin(0.5, 0);
 
-        let backButton = new Button(gameWidth/2, gameHeight - 50, "Go Back", this, this.goBackToBattleScene.bind(this), "#202529");
-        backButton.setOrigin(0, 1);
+        let backButton = new Button(gameWidth/2, gameHeight - 50, 20, 20, "Go Back", this, this.goBackToBattleScene.bind(this), "#FD722A");
+        backButton.setFontColour("#202529");
 
-        let startX = 10;
-        let startY = 50;
+        backButton.setOrigin(0.5, 1);
+        backButton.setScrollFactor(0); //make button stick on screen
+        backButton.setDepth(3);
+
+        let startX = 30;
+        let startY = 40;
         let xOffset = gameOptions.cardWidth + 50;
         let yOffSet = gameOptions.cardHeight + 60;
         let xCounter = 0;
         let yCounter = 0;
+
 
         if (this.graveYardArray.length > 0) {
             for (let cards of this.graveYardArray) {
@@ -57,10 +69,26 @@ export class DiscardPileScene extends Phaser.Scene {
                 }
             }
         }
+
+        this.input.on("pointermove", function (pointer) {
+            if (!pointer.isDown) {
+                return;
+            }
+
+            cam.scrollY -= (pointer.y - pointer.prevPosition.y) / cam.zoom;
+        })
     }
 
     goBackToBattleScene() {
         this.scene.stop(CST.SCENES.DISCARD_PILE);
         this.scene.resume(CST.SCENES.BATTLE);
+    }
+
+    checkCardsInDiscardPile(amountOfRepeats) {
+        if (amountOfRepeats < 10) {
+            return 1;
+        }
+
+        return Math.floor(amountOfRepeats / 10);
     }
 }

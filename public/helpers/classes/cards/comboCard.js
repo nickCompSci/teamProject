@@ -78,7 +78,7 @@ export default class ComboCard extends HandCard {
             card.isBeingCombo = false;
             card.setTint(0x86C5D8);
         } else if (card.isBeingCombo) {
-            this.bringBackComboCard(card, scene)
+            this.bringBackComboCard(card, scene);
         }
         
         // remove the event listener from all cards
@@ -102,6 +102,7 @@ export default class ComboCard extends HandCard {
     // if selected non-valid card, brings back the card and adds back AP
     // sets the card back to interactive as well
     bringBackComboCard(card, scene) {
+        console.log(this);
         card.isBeingCombo = false;
         scene.player.graveYardArray.splice(scene.player.graveYardArray.indexOf(this), 1);
         scene.player.handArray.push(this);
