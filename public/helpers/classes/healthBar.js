@@ -8,8 +8,10 @@ export default class HealthBar{
         this.maxHealth = maxHealth;
         this.maxArmour = maxArmour;
 
-        this.healthText = scene.add.text(this.x - 27, this.y - 2, health, {color: "white", fontSize: "20px"});
-        this.armourText = scene.add.text(x, y, maxArmour, {colour: "black", fontSize: "20px"});
+        this.sizeOfFont = this.checkFontSize();
+
+        this.healthText = scene.add.text(this.x - 27, this.y - 2, health, {color: "white", fontSize: this.sizeOfFont});
+        this.armourText = scene.add.text(x, y, maxArmour, {colour: "black", fontSize: this.sizeOfFont});
 
         this.show_health(scene, health, armour);
 
@@ -57,5 +59,12 @@ export default class HealthBar{
             this.armourText = scene.add.text(this.x + 100, this.y - 4, armour, {color: "black", fontSize: "18px"});
             this.armourText.setDepth(1);
         }
+    }
+
+    checkFontSize(fontSize) {
+        if (this.maxHealth >= 100) {
+            return "16px";
+        }
+        return "20px";
     }
 }
