@@ -95,7 +95,7 @@ export class friendScene extends Phaser.Scene {
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '80px' }).setDepth(1).setOrigin(0.5)
 
         // Back Button for navigating back to the main menu
-        let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
+        // let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
@@ -191,24 +191,27 @@ export class friendScene extends Phaser.Scene {
 
         });
 
-        // Back Button
-        backButton.setInteractive();
-
-        backButton.on("pointerover", () => {
-            arrowSprite.setVisible(true);
-            arrowSprite.x = backButton.x - backButton.width + 60;
-            arrowSprite.y = backButton.y + backButton.height / 4;
-        })
-
-        backButton.on("pointerout", () => {
-            arrowSprite.setVisible(false);
-        })
-
-        backButton.on("pointerup", () => {
-            // Moves back to the main menu when the back button is clicked
-            clearInterval(interval);
-            this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
-        })
+        let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setInteractive({useHandCursor: true})
+            .on("pointerout",() => backButton.setStyle({ fill: '#FFF' }))
+            .on("pointerover", ()=>{
+                arrowSprite.setVisible(true);
+                arrowSprite.x = backButton.x - backButton.width + 60;
+                arrowSprite.y = backButton.y + backButton.height / 4;
+                backButton.setStyle({fill: '#fd722a'});
+                this.sound.play("menuButtonHover", {volume : 0.2});
+            })
+            .on("pointerup", ()=>{
+                this.sound.play("menuButtonPress", {volume : 0.4});
+                clearInterval(interval);
+                this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
+                // Moves back to the main menu when the back button is clicked
+            })
+            .on("pointerout", () => {
+                arrowSprite.setVisible(false);
+            })
 
         // called whenever anywhere is clicked
         document.onclick = function (event) {

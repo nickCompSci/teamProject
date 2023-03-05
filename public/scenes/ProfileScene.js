@@ -33,7 +33,7 @@ export class ProfileScene extends Phaser.Scene{
             .setOrigin(0.5)
             .setInteractive({useHandCursor: true})
             .on("pointerdown", () => {
-                this.sound.play("menuButtonPress");
+                this.sound.play("menuButtonPress",{volume : 0.4});
                 $.ajax({
                 type: 'POST',
                 url: "/logout",
@@ -50,7 +50,7 @@ export class ProfileScene extends Phaser.Scene{
                 arrowSprite.setVisible(true);
                 arrowSprite.x = logoutButton.x - logoutButton.width + 90;
                 arrowSprite.y = logoutButton.y + logoutButton.height / 4;
-                this.sound.play("menuButtonHover");
+                this.sound.play("menuButtonHover",{volume : 0.2});
             })
             .on("pointerout",() => {
                 logoutButton.setStyle({ fill: '#FFF' })
@@ -63,14 +63,14 @@ export class ProfileScene extends Phaser.Scene{
                 .setOrigin(0.5)
                 .setInteractive({useHandCursor: true})
                 .on("pointerup", () => {
-                    this.sound.play("menuButtonPress");
+                    this.sound.play("menuButtonPress",{volume : 0.4});
                     this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })})
                 .on("pointerover",() =>{
                     friendsButton.setStyle({ fill: '#fd722a' });
                     arrowSprite.setVisible(true);
                     arrowSprite.x = friendsButton.x - friendsButton.width + 110;
                     arrowSprite.y = friendsButton.y + friendsButton.height / 4;
-                    this.sound.play("menuButtonHover");
+                    this.sound.play("menuButtonHover",{volume : 0.2});
                 })
                 
                 .on("pointerout",() => {
@@ -89,10 +89,10 @@ export class ProfileScene extends Phaser.Scene{
                 arrowSprite.x = backButton.x - backButton.width + 60;
                 arrowSprite.y = backButton.y + backButton.height / 4;
                 backButton.setStyle({fill: '#fd722a'});
-                this.sound.play("menuButtonHover");
+                this.sound.play("menuButtonHover", {volume : 0.2});
             })
             .on("pointerup", ()=>{
-                this.sound.play("menuButtonPress");
+                this.sound.play("menuButtonPress", {volume : 0.4});
                 // Moves back to the main menu when the back button is clicked
                 this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
             })

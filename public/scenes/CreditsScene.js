@@ -47,19 +47,24 @@ export class CreditsScene extends Phaser.Scene{
         arrowSprite.setVisible(false);
 
         // Back Button
-        backButton.setInteractive();
+        backButton.setInteractive({useHandCursor: true});
 
         backButton.on("pointerover", ()=>{
             arrowSprite.setVisible(true);
             arrowSprite.x = backButton.x - backButton.width + 60;
             arrowSprite.y = backButton.y + backButton.height / 4;
-            console.log("hover")
+            this.sound.play("menuButtonHover", {volume : 0.4});
+            backButton.setStyle({fill: '#fd722a'});
         })
-
+        backButton.on("pointerout",() => backButton.setStyle({ fill: '#FFF' }))
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
+            this.sound.play("menuButtonPress", {volume : 0.2});
             this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
-            console.log("click")
+        })
+
+        backButton.on("pointerout", () => {
+            arrowSprite.setVisible(false);
         })
     }
 }
