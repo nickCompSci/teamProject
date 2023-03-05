@@ -24,12 +24,12 @@ export class MenuScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2 - 330, this.game.renderer.height * 0.20, 'Dual Ascent', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
         this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
-        let playGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 -90, 'Play Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+        let playGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 , 'Play Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
             .setDepth(1)
             .setOrigin(0.5)
             .on("pointerout", () => {
                 arrowSprite.setVisible(false);
-                createButton.setStyle({fill: '#fff'});
+                playGameButton.setStyle({fill: '#fff'});
             })
             .setInteractive({useHandCursor: true})
             .on("pointerover", ()=>{
@@ -45,7 +45,7 @@ export class MenuScene extends Phaser.Scene{
                 this.scene.start(CST.SCENES.PLAYGAME, {networkObj: this.network, playerUsername: this.playerUsername });
             })
 
-        let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 150, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+        let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
         .setOrigin(0.5)
         .on("pointerout", () => {
@@ -53,7 +53,7 @@ export class MenuScene extends Phaser.Scene{
             profileButton.setStyle({fill: '#fff'});
         })
 
-        let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 225, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+        let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
         .setOrigin(0.5)
         .on("pointerout", () => {
