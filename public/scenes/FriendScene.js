@@ -125,14 +125,17 @@ export class friendScene extends Phaser.Scene {
                 // make sure that something was entered and not nothing
                 if (friendUsername.value != "") {
                     if (friendUsername.value == this.playerUsername) {
+                        scene.sound.play("failedToSendFriendRequest");
                         alert("You can not send request to yourself!");
                     }
                     // check if the player username entered is already a friend
                     else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
+                        scene.sound.play("failedToSendFriendRequest");
                         alert(`This player is already your friend!`);
                     }
                     // check if the entered username exists in the pending requests list
                     else if (document.querySelector('#showUsersPending #' + friendUsername.value)) {
+                        scene.sound.play("failedToSendFriendRequest");
                         let element = document.querySelector('#pendingRequests #' + friendUsername.value)
                         if (element.matches(".fa-sharp.fa-solid.fa-square-xmark.red.once")) {
                             alert(`You already sent this player a friend request!`);
