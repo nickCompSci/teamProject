@@ -29,6 +29,36 @@ export class OptionsScene extends Phaser.Scene{
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
+        let logoutButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "Logout") 
+        .setStyle({fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+        .setDepth(1)
+        .setOrigin(0.5)
+        .setInteractive({useHandCursor: true})
+        .on("pointerdown", () => {
+            this.sound.play("menuButtonPress");
+            $.ajax({
+            type: 'POST',
+            url: "/logout",
+            // callback function
+            success: () =>  {
+                window.location.replace('/index.html');
+            },
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+            }
+        })})
+        .on("pointerover",() => {
+            logoutButton.setStyle({ fill: '#fd722a' })
+            arrowSprite.setVisible(true);
+            arrowSprite.x = logoutButton.x - logoutButton.width + 90;
+            arrowSprite.y = logoutButton.y + logoutButton.height / 4;
+            this.sound.play("menuButtonHover");
+        })
+        .on("pointerout",() => {
+            logoutButton.setStyle({ fill: '#FFF' })
+            arrowSprite.setVisible(false)
+        })
+
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
