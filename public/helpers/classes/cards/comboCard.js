@@ -16,10 +16,18 @@ export default class ComboCard extends HandCard {
 
     activateCard(scene) {
         let card = this;
+
+        // if combo cards is the only card in your hand
+        if (scene.player.handArray.length === 0) {
+            this.bringBackComboCard(this, scene);
+            return; 
+        }
+
         if ("target" in this.effect) {
             scene.player.disableDragOnCards();
             scene.disableInteractionDuringCard();
             for (let card of scene.player.handArray) {
+
                 // remove the event listener from the card
                 card.removeListener("pointerdown", card.comboHandler);
 
@@ -102,7 +110,6 @@ export default class ComboCard extends HandCard {
     // if selected non-valid card, brings back the card and adds back AP
     // sets the card back to interactive as well
     bringBackComboCard(card, scene) {
-        console.log(this);
         card.isBeingCombo = false;
         scene.player.graveYardArray.splice(scene.player.graveYardArray.indexOf(this), 1);
         scene.player.handArray.push(this);
