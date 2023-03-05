@@ -32,7 +32,8 @@ export class ProfileScene extends Phaser.Scene{
             .setDepth(1)
             .setOrigin(0.5)
             .setInteractive({useHandCursor: true})
-            .on("pointerdown", () => 
+            .on("pointerdown", () => {
+                this.sound.play("menuButtonPress");
                 $.ajax({
                 type: 'POST',
                 url: "/logout",
@@ -43,12 +44,13 @@ export class ProfileScene extends Phaser.Scene{
                 error: function (xhr) {
                     window.alert(JSON.stringify(xhr));
                 }
-            }))
+            })})
             .on("pointerover",() => {
                 logoutButton.setStyle({ fill: '#fd722a' })
                 arrowSprite.setVisible(true);
                 arrowSprite.x = logoutButton.x - logoutButton.width + 90;
                 arrowSprite.y = logoutButton.y + logoutButton.height / 4;
+                this.sound.play("menuButtonHover");
             })
             .on("pointerout",() => {
                 logoutButton.setStyle({ fill: '#FFF' })
@@ -60,19 +62,21 @@ export class ProfileScene extends Phaser.Scene{
                 .setDepth(1)
                 .setOrigin(0.5)
                 .setInteractive({useHandCursor: true})
-                .on("pointerdown", () => this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername }))
+                .on("pointerup", () => {
+                    this.sound.play("menuButtonPress");
+                    this.scene.start(CST.SCENES.FRIENDS, {networkObj: this.network, playerUsername: this.playerUsername })})
                 .on("pointerover",() =>{
                     friendsButton.setStyle({ fill: '#fd722a' });
                     arrowSprite.setVisible(true);
                     arrowSprite.x = friendsButton.x - friendsButton.width + 110;
                     arrowSprite.y = friendsButton.y + friendsButton.height / 4;
+                    this.sound.play("menuButtonHover");
                 })
                 
                 .on("pointerout",() => {
                     friendsButton.setStyle({ fill: '#FFF' })
-                    arrowSprite.setVisible(false)
+                    arrowSprite.setVisible(false);
                 })
-// ________________________________________________________________________________________________________
             
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
@@ -85,8 +89,10 @@ export class ProfileScene extends Phaser.Scene{
                 arrowSprite.x = backButton.x - backButton.width + 60;
                 arrowSprite.y = backButton.y + backButton.height / 4;
                 backButton.setStyle({fill: '#fd722a'});
+                this.sound.play("menuButtonHover");
             })
             .on("pointerup", ()=>{
+                this.sound.play("menuButtonPress");
                 // Moves back to the main menu when the back button is clicked
                 this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
             })
