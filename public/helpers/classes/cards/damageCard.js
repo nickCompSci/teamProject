@@ -37,6 +37,7 @@ export default class DamageCard extends HandCard {
             }
         } else if (this.effect.target === "all") {
             this.dealDamageToAllEnemies(scene);
+            scene.check_enemy_death();
             this.resetCard();
         } else if (this.effect.target === "random") {
             for (let i=0; i < this.effect.randomAmount; i++) {
@@ -97,7 +98,6 @@ export default class DamageCard extends HandCard {
     dealDamageToAllEnemies(scene) {
         for (let enemy of scene.enemies) {
             scene.damage_calculation(enemy, this.effect.damage, [1]);
-            scene.check_enemy_death();
         }
 
     }

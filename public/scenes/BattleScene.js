@@ -19,8 +19,8 @@ export class BattleScene extends Phaser.Scene {
 
     init(data) {
         // data returns a list of preloaded cards
-        let cards = data;
         this.enemies = [];
+        this.keepCardsText;
     }
 
     preload() {
@@ -251,14 +251,13 @@ export class BattleScene extends Phaser.Scene {
 
 
     check_enemy_death(){
-        for (let enemy of this.enemies) {
-            if (enemy.health <= 0){
-                let enemy_index = this.enemies.indexOf(enemy);
+        for (let enemy_index=this.enemies.length-1; enemy_index >= 0; enemy_index--) {
+            if (this.enemies[enemy_index].health <= 0){
                 this.healthbars[enemy_index].bar.destroy();
                 this.healthbars[enemy_index].healthText.destroy();
                 this.healthbars[enemy_index].armourText.destroy();
                 delete this.healthbars[enemy_index];
-                enemy.destroy();
+                this.enemies[enemy_index].destroy();
                 this.enemies.splice(enemy_index, 1);
                 this.healthbars.splice(enemy_index, 1);
             }
