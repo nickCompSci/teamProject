@@ -69,14 +69,6 @@ export class MenuScene extends Phaser.Scene{
             creditsButton.setStyle({fill: '#fff'});
         })
 
-        let friendsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 350, 'Friends', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-        .setDepth(1)
-        .setOrigin(0.5)
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            friendsButton.setStyle({fill: '#fff'});
-        })
-
         let battleButton = this.add.text(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 + 350, 'Battle', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
         .setOrigin(0.5)
@@ -156,23 +148,6 @@ export class MenuScene extends Phaser.Scene{
             this.sound.play("menuButtonPress",{volume: 0.4});
             this.scene.start(CST.SCENES.CREDITS, {networkObj:this.network, playerUsername: this.playerUsername})
 
-        })
-
-        // Friends Button
-        friendsButton.setInteractive({useHandCursor: true})
-
-        friendsButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = friendsButton.x - friendsButton.width +100;
-            arrowSprite.y = friendsButton.y + friendsButton.height / 4;
-            friendsButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        friendsButton.on("pointerup", ()=>{
-            // Moves to options menu when clicked
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            this.scene.start(CST.SCENES.FRIENDS, {networkObj:this.network ,playerUsername: this.playerUsername})
         })
 
         battleButton.setInteractive({useHandCursor: true})
