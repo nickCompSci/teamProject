@@ -8,7 +8,6 @@ export const CST = {
         OPTIONS: "OPTIONS",
         CREDITS: "CREDITS",
         JOIN: "JOIN",
-        // CREATE: "CREATE",
         LOBBY: "LOBBY",
         FRIENDS: "FRIENDS",
         BATTLE_LOAD: "BATTLE_LOAD",
@@ -16,6 +15,7 @@ export const CST = {
         DISCARD_PILE: "DISCARD_PILE",
         MAP: "MAP",
         PROFILE : "PROFILE",
-        EXTRA: "EXTRA"
+        EXTRA: "EXTRA",
+        PLAYGAME : "PLAYGAME"
     }
 }
