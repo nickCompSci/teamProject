@@ -395,7 +395,7 @@ router.post("/getPendingFriendRequests", (request, response) => {
             try {
                 const session = driver.session({ database: "neo4j" });
                 const incomingQuery = `MATCH (:Person {username: $currentUsername})<-[:PENDING_REQUEST]-(People)
-                    RETURN People.username as users`;
+                    RETURN People.username as users ORDER BY users`;
                 const incomingQueryResult = await session.executeRead(tx =>
                     tx.run(incomingQuery, { currentUsername })
                 );
@@ -404,7 +404,7 @@ router.post("/getPendingFriendRequests", (request, response) => {
                     incomingRequests.push(userWhoSentFriendRequest);
                 })
                 const sentQuery = `MATCH (:Person {username: $currentUsername})-[:PENDING_REQUEST]->(People)
-                RETURN People.username as users`;
+                RETURN People.username as users ORDER BY users`;
                 const sentQueryResult = await session.executeRead(tx =>
                     tx.run(sentQuery, { currentUsername })
                 );

@@ -127,7 +127,7 @@ function showPending() {
                     sentRequests[i] = allSentRequests[i];
                     // what the user will see
                     // remember to create new function to remove the request
-                    listElement.innerHTML = allSentRequests[i] + '<i onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red once" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
+                    listElement.innerHTML = allSentRequests[i] + '<i id="'+allSentRequests[i]+'" onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red once" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
                     document.getElementById("pendingRequests").appendChild(listElement);
                 }
             }
