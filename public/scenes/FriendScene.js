@@ -16,6 +16,20 @@ export class friendScene extends Phaser.Scene {
     }
     // Creates any images, text, etc.
     create() {
+
+        function tempAlert(message, duration) {
+            var tmpElement = document.createElement("div");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
+            tmpElement.innerHTML = message;
+            tmpElement.style.color = "white"
+            tmpElement.style.backgroundColor = "black"
+            tmpElement.style.padding = "1%"
+            setTimeout(function () {
+                tmpElement.parentNode.removeChild(tmpElement);
+            }, duration);
+            document.body.appendChild(tmpElement);
+        }
+
         function searchForValidUsername(usernameToSearch, callback) {
             // data to send to the route
             var data = {
@@ -37,17 +51,12 @@ export class friendScene extends Phaser.Scene {
 
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
-                window.confirm("Invalid Username, please try again");
-                document.getElementById("addFriendForm").reset();
+                scene.sound.play("failedToSendFriendRequest");
+                tempAlert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`,5000)
             } else {
-                // a user with the username was found
-                // remove searchButton and make confirm button interactive
-                if(confirm("Player found! Are you sure you want to send them a friend request")==true){
+                if (confirm("Player found! Are you sure you want to send them a friend request") == true) {
                     sendFriendRequest(scene.nameInput.getChildByName("friendUsername").value, sendFriendRequestCallback);
                 }
-                // searchButton.setText("");
-                // confirmButton.setText("Send Request");
-                // confirmButton.setInteractive();
             }
         }
 
@@ -110,43 +119,43 @@ export class friendScene extends Phaser.Scene {
         const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' })
             .setInteractive({ useHandCursor: true })
             .on("pointerup", () => {
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            // obtains the value the user entered in the username field
-            let friendUsername = this.nameInput.getChildByName("friendUsername");
-            // make sure that something was entered and not nothing
-            if (friendUsername.value != "") {
-                if (friendUsername.value == this.playerUsername) {
-                    alert("You can not send request to yourself!");
-                }
-                // check if the player username entered is already a friend
-                else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
-                    alert(`This player is already your friend!`);
-                }
-                // check if the entered username exists in the pending requests list
-                else if (document.querySelector('#showUsersPending #' + friendUsername.value)) {
-                    let element = document.querySelector('#pendingRequests #' + friendUsername.value)
-                    if(element.matches(".fa-sharp.fa-solid.fa-square-xmark.red.once")){
-                        alert(`You already sent this player a friend request!`);
-                    }else{
-                        alert(`This player already sent you a friend request!`);
+                this.sound.play("menuButtonPress", { volume: 0.4 });
+                // obtains the value the user entered in the username field
+                let friendUsername = this.nameInput.getChildByName("friendUsername");
+                // make sure that something was entered and not nothing
+                if (friendUsername.value != "") {
+                    if (friendUsername.value == this.playerUsername) {
+                        alert("You can not send request to yourself!");
+                    }
+                    // check if the player username entered is already a friend
+                    else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
+                        alert(`This player is already your friend!`);
+                    }
+                    // check if the entered username exists in the pending requests list
+                    else if (document.querySelector('#showUsersPending #' + friendUsername.value)) {
+                        let element = document.querySelector('#pendingRequests #' + friendUsername.value)
+                        if (element.matches(".fa-sharp.fa-solid.fa-square-xmark.red.once")) {
+                            alert(`You already sent this player a friend request!`);
+                        } else {
+                            alert(`This player already sent you a friend request!`);
+                        }
+                    }
+                    else {
+                        searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
                     }
                 }
-                else {
-                    searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
-                }
-            }
-        })
-        .on("pointerover", () => {
-            searchButton.setStyle({ fill: '#fd722a' })
-            this.sound.play("menuButtonHover",{volume: 0.2});
-            arrowSprite.setVisible(true);
-            arrowSprite.x = searchButton.x;
-            arrowSprite.y = searchButton.y + searchButton.height - 15;
-        })
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            searchButton.setStyle({fill: '#fff'});
-        })
+            })
+            .on("pointerover", () => {
+                searchButton.setStyle({ fill: '#fd722a' })
+                this.sound.play("menuButtonHover", { volume: 0.2 });
+                arrowSprite.setVisible(true);
+                arrowSprite.x = searchButton.x;
+                arrowSprite.y = searchButton.y + searchButton.height - 15;
+            })
+            .on("pointerout", () => {
+                arrowSprite.setVisible(false);
+                searchButton.setStyle({ fill: '#fff' });
+            })
 
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
             .setDepth(1)
