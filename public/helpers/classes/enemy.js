@@ -27,7 +27,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     }
 
     spawn() {
-        this.visible = true;
+        this.setVisible(true);
     }
 
     getSpriteType() {

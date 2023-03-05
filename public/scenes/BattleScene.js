@@ -20,7 +20,10 @@ export class BattleScene extends Phaser.Scene {
     init(data) {
         // data returns a list of preloaded cards
         this.enemies = [];
-        this.keepCardsText;
+        this.healthbars = [];
+        this.level;
+        this.boss;
+        this.rewards = [];
     }
 
     preload() {
@@ -70,7 +73,7 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        this.loadCards();
+        // this.loadCards();
         let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
         // shuffles the deck and sets up the visual for the deck cards
@@ -103,7 +106,8 @@ export class BattleScene extends Phaser.Scene {
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
         //this.loadEnemies();
-        this.spawnEnemyOnScene();
+        // this.spawnEnemyOnScene();
+        this.spawnBossOnScene();
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
         // this.input.on("pointerdown", (pointer, gameObject) => {
@@ -270,6 +274,7 @@ export class BattleScene extends Phaser.Scene {
 
     win() {
         console.log("YOU WON");
+        // reward here
     }
 
 
@@ -290,11 +295,8 @@ export class BattleScene extends Phaser.Scene {
         this.characterHealthbarCalculation(checkCharacter);
     }
 
-    healing_calculation(character, healing, modifiers) {
+    healing_calculation(character, healing) {
         // list of 1 for empty modifiers
-        for (let modifier of modifiers) {
-            healing = healing * modifier;
-        }
 
         character.health += healing;
         if (character.health > character.maxHealth) {
@@ -487,8 +489,12 @@ export class BattleScene extends Phaser.Scene {
         
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
-            let base_damage = this.enemies[i].action();
-            this.damage_calculation(this.player, base_damage);
+            if (this.enemies.includes(this.boss)) {
+                this.enemies[i].action(this);
+            } else {
+                let base_damage = this.enemies[i].action();
+                this.damage_calculation(this.player, base_damage);
+            }
         }
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
@@ -496,20 +502,20 @@ export class BattleScene extends Phaser.Scene {
         this.player.drawCard(5 - this.player.handArray.length, this);
 
         // checking if newly drawn cards are available to play
-        for (let card of this.player.handArray){
+        for (let card of this.player.handArray) {
             if (card.cost > this.player.actionPoints){
                 card.setTint(0xff0000);
             }
         }
     }
 
-    // spawnBossOnScene() {
-    //     let boss = new Boss(this, 0, 0, "boss", 0 , 120);
-    //     this.enemies.push(boss);
-    //     let bosshealth = new HealthBar(this, boss.x - 40, boss.y + 100, boss.health, boss.maxHealth, boss.armour, boss.maxArmour);
-    //     this.healthbars.push(bosshealth);
-    //     boss.updateArrow();
-    // }
+    spawnBossOnScene() {
+        this.boss = new Boss(this, 0, 0, "boss", 0 , 120);
+        this.enemies.push(this.boss);
+        let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
+        this.healthbars.push(bosshealth);
+        this.boss.setDepth(1);
+    }
     
     // // spawning in enemies and their life
     spawnEnemyOnScene() {
@@ -518,7 +524,6 @@ export class BattleScene extends Phaser.Scene {
 
         this.enemies.push(snake1);
         this.enemies.push(snake2);
-        this.healthbars = [];
 
         let spawnEnemyDistanceX = 0;
 
