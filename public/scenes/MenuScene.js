@@ -45,23 +45,6 @@ export class MenuScene extends Phaser.Scene{
                 this.scene.start(CST.SCENES.PLAYGAME, {networkObj: this.network, playerUsername: this.playerUsername });
             })
 
-        // Adds a button to the scene - (x, y, image)
-        let createButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Create Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-        .setDepth(1)
-        .setOrigin(0.5)
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            createButton.setStyle({fill: '#fff'});
-        })
-
-        let joinButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 75, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-        .setDepth(1)
-        .setOrigin(0.5)
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            joinButton.setStyle({fill: '#fff'});
-        })
-
         let profileButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 150, 'Profile', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
         .setOrigin(0.5)
@@ -123,43 +106,6 @@ export class MenuScene extends Phaser.Scene{
             this.sound.play("soundtrack", { loop: true });
             this.sound.setVolume(0.2)
         }
-
-        // Allows the start button to be interactive
-        createButton.setInteractive({useHandCursor: true})
-
-        // When the pointer is over the button, the arrow will appear
-        createButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = createButton.x - createButton.width +150;
-            arrowSprite.y = createButton.y + createButton.height / 4;
-            createButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        // Signals when the pointer is clicked and released
-        createButton.on("pointerup", ()=>{
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
-        })
-
-        // Allows the start button to be interactive
-        joinButton.setInteractive({useHandCursor: true})
-
-        // When the pointer is over the button, the arrow will appear
-        joinButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = joinButton.x - joinButton.width +125;
-            arrowSprite.y = joinButton.y + joinButton.height / 4;
-            joinButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        // Signals when the pointer is clicked and released
-        joinButton.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.JOIN, {networkObj:this.network, playerUsername: this.playerUsername});
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            console.log("click")
-        })
 
         // Profile Button
         profileButton.setInteractive({useHandCursor: true})
