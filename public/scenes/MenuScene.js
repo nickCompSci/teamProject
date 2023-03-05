@@ -18,11 +18,18 @@ export class MenuScene extends Phaser.Scene{
     create(){
 
         // Adds background image to the scene - (x, y, image)
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
+            .setDisplaySize(this.game.renderer.width, this.game.renderer.height)
+            .setDepth(0)
 
         // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
-        this.add.text(this.game.renderer.width / 2 - 330, this.game.renderer.height * 0.20, 'Dual Ascent', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-        this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        this.add.text(this.game.renderer.width / 2 - 330, this.game.renderer.height * 0.20, 'Dual Ascent', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+            .setDepth(1)
+            .setOrigin(0.5)
+
+        this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+            .setDepth(1)
+            .setOrigin(0.5)
 
         let playGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 , 'Play Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
             .setDepth(1)
@@ -34,7 +41,7 @@ export class MenuScene extends Phaser.Scene{
             .setInteractive({useHandCursor: true})
             .on("pointerover", ()=>{
                 arrowSprite.setVisible(true);
-                arrowSprite.x = playGameButton.x - playGameButton.width +100;
+                arrowSprite.x = playGameButton.x - playGameButton.width +120;
                 arrowSprite.y = playGameButton.y + playGameButton.height / 4;
                 playGameButton.setStyle({fill: '#fd722a'});
                 this.sound.play("menuButtonHover",{volume: 0.2});
@@ -52,6 +59,19 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.setVisible(false);
             profileButton.setStyle({fill: '#fff'});
         })
+        .setInteractive({useHandCursor: true})
+        .on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = profileButton.x - profileButton.width +100;
+            arrowSprite.y = profileButton.y + profileButton.height / 4;
+            profileButton.setStyle({fill: '#fd722a'});
+            this.sound.play("menuButtonHover",{volume: 0.2});
+        })
+        .on("pointerup", ()=>{
+            this.sound.play("menuButtonPress",{volume: 0.4});
+            this.scene.start(CST.SCENES.PROFILE, {networkObj:this.network, playerUsername: this.playerUsername});
+        })
+
 
         let optionsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, 'Options', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
@@ -60,6 +80,19 @@ export class MenuScene extends Phaser.Scene{
             arrowSprite.setVisible(false);
             optionsButton.setStyle({fill: '#fff'});
         })
+        .setInteractive({useHandCursor: true})
+        .on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = optionsButton.x - optionsButton.width +100;
+            arrowSprite.y = optionsButton.y + optionsButton.height / 4;
+            optionsButton.setStyle({fill: '#fd722a'});
+            this.sound.play("menuButtonHover",{volume: 0.2});
+        })
+        .on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.sound.play("menuButtonPress",{volume: 0.4});
+            this.scene.start(CST.SCENES.OPTIONS, {networkObj: this.network, playerUsername: this.playerUsername });
+        })
 
         let creditsButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Credits', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)
@@ -67,6 +100,19 @@ export class MenuScene extends Phaser.Scene{
         .on("pointerout", () => {
             arrowSprite.setVisible(false);
             creditsButton.setStyle({fill: '#fff'});
+        })
+        .setInteractive({useHandCursor: true})
+        .on("pointerover", ()=>{
+            arrowSprite.setVisible(true);
+            arrowSprite.x = creditsButton.x - creditsButton.width +100;
+            arrowSprite.y = creditsButton.y + creditsButton.height / 4;
+            creditsButton.setStyle({fill: '#fd722a'});
+            this.sound.play("menuButtonHover",{volume: 0.2});
+        })
+        .on("pointerup", ()=>{
+            // Moves to options menu when clicked
+            this.sound.play("menuButtonPress",{volume: 0.4});
+            this.scene.start(CST.SCENES.CREDITS, {networkObj:this.network, playerUsername: this.playerUsername})
         })
 
         let battleButton = this.add.text(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 + 350, 'Battle', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
@@ -98,57 +144,6 @@ export class MenuScene extends Phaser.Scene{
             this.sound.play("soundtrack", { loop: true });
             this.sound.setVolume(0.2)
         }
-
-        // Profile Button
-        profileButton.setInteractive({useHandCursor: true})
-
-        profileButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = profileButton.x - profileButton.width +100;
-            arrowSprite.y = profileButton.y + profileButton.height / 4;
-            profileButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        profileButton.on("pointerup", ()=>{
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            this.scene.start(CST.SCENES.PROFILE, {networkObj:this.network, playerUsername: this.playerUsername});
-        })
-
-        // Options Button
-        optionsButton.setInteractive({useHandCursor: true})
-
-        optionsButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = optionsButton.x - optionsButton.width +100;
-            arrowSprite.y = optionsButton.y + optionsButton.height / 4;
-            optionsButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        optionsButton.on("pointerup", ()=>{
-            // Moves to options menu when clicked
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            this.scene.start(CST.SCENES.OPTIONS, {networkObj: this.network, playerUsername: this.playerUsername });
-        })
-
-        // Credits Button
-        creditsButton.setInteractive({useHandCursor: true})
-
-        creditsButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = creditsButton.x - creditsButton.width +100;
-            arrowSprite.y = creditsButton.y + creditsButton.height / 4;
-            creditsButton.setStyle({fill: '#fd722a'});
-            this.sound.play("menuButtonHover",{volume: 0.2});
-        })
-
-        creditsButton.on("pointerup", ()=>{
-            // Moves to options menu when clicked
-            this.sound.play("menuButtonPress",{volume: 0.4});
-            this.scene.start(CST.SCENES.CREDITS, {networkObj:this.network, playerUsername: this.playerUsername})
-
-        })
 
         battleButton.setInteractive({useHandCursor: true})
 
