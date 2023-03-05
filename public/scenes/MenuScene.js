@@ -24,6 +24,27 @@ export class MenuScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2 - 330, this.game.renderer.height * 0.20, 'Dual Ascent', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
         this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
+        let playGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 -90, 'Play Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
+            .setDepth(1)
+            .setOrigin(0.5)
+            .on("pointerout", () => {
+                arrowSprite.setVisible(false);
+                createButton.setStyle({fill: '#fff'});
+            })
+            .setInteractive({useHandCursor: true})
+            .on("pointerover", ()=>{
+                arrowSprite.setVisible(true);
+                arrowSprite.x = playGameButton.x - playGameButton.width +100;
+                arrowSprite.y = playGameButton.y + playGameButton.height / 4;
+                playGameButton.setStyle({fill: '#fd722a'});
+                this.sound.play("menuButtonHover",{volume: 0.2});
+            })
+            .on("pointerup", ()=>{
+                // Moves to options menu when clicked
+                this.sound.play("menuButtonPress",{volume: 0.4});
+                this.scene.start(CST.SCENES.PLAYGAME, {networkObj: this.network, playerUsername: this.playerUsername });
+            })
+
         // Adds a button to the scene - (x, y, image)
         let createButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Create Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
         .setDepth(1)

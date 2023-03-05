@@ -13,6 +13,7 @@ import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { MapScene } from "./MapScene.js";
 import { ProfileScene } from "./ProfileScene.js";
+import { PlayGameScene } from "./PlayGameScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -66,7 +67,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.audio("failedToSendFriendRequest", ['../assets/resources/sounds/failedSentRequest.mp3', '../assets/resources/sounds/failedSentRequest.ogg']);
         this.load.audio("menuButtonPress","../assets/resources/sounds/menuButtonPress.mp3");
         this.load.audio("menuButtonHover","../assets/resources/sounds/menuButtonHover.mp3");
-        
+
         // Progress Bar
         let loadingBar = this.add.graphics({
             fillStyle: {
