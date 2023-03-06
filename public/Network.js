@@ -1,4 +1,3 @@
-
 export class Network{
     constructor(username){  
         this.peer = new Peer(username);
@@ -45,5 +44,16 @@ export class Network{
         this.peer.conn.on('data', function(data){
             console.log("Data received: ", data);
         })
+    }
+
+    handleDataMapScene(opponentLevelObj){
+        this.peer.conn.off('data');
+        this.peer.conn.on('data', function(data){
+            var json_data = JSON.parse(data);
+            console.log(json_data);
+            if(json_data['type'] == 'levelUpdate'){
+                opponentLevelObj.setText(json_data['level']);
+            }
+        });
     }
 }

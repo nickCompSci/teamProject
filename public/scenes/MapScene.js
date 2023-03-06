@@ -13,6 +13,7 @@ export class MapScene extends Phaser.Scene{
     init(data){
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
+        window.network = this.network;
     }
 
     // Creates any images, text, etc.
@@ -164,7 +165,17 @@ export class MapScene extends Phaser.Scene{
 
         // level counter top in the left
         let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-    
+
+        let opponentLevel;
+        try{
+            opponentLevel = data.level;
+        } catch{
+            opponentLevel = 0;
+        }
+        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        this.network.handleDataMapScene(opponentLevelText);
+
+
         // N.B. *** VERY IMPORTANT FUNCTION *** 
         encountersInteractive(this)
 
