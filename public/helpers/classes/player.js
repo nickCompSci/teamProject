@@ -24,7 +24,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
         // generate a starter deck for the player
-        this.starterDeck(scene);
+        // this.starterDeck(scene);
     }
 
     selectCardInHand(scene) {
@@ -114,7 +114,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     // draw an amount of cards
     drawCard(amountOfCards, scene) {
         for (let i=0; i < amountOfCards; i++) {
-            scene.sound.play("drawCard", {volume: 0.4});
+            scene.sound.play("drawCard", {volume: 0.15});
             this.resetDeck(scene);
 
             let drawCard = this.deckArray.pop();

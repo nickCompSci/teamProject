@@ -22,7 +22,7 @@ export class BattleScene extends Phaser.Scene {
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
-        this.level = 3;
+        this.level;
         this.boss;
     }
 
@@ -52,6 +52,16 @@ export class BattleScene extends Phaser.Scene {
         // sound effects
         this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
         this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
+        this.load.audio('playCard', "../assets/resources/sounds/battle/playCard.mp3");
+        this.load.audio('comboWrong', "../assets/resources/sounds/battle/comboWrong.mp3");
+        this.load.audio('heal', "../assets/resources/sounds/battle/heal.mp3");
+        this.load.audio('armour', "../assets/resources/sounds/battle/armour.mp3");
+        this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
+        this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
+        this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
+        this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
+        this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
+        this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
     }
 
     create() {
@@ -81,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        // this.loadCards();
+        this.loadCards();
         let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
         // shuffles the deck and sets up the visual for the deck cards
@@ -124,13 +134,13 @@ export class BattleScene extends Phaser.Scene {
         // soundtracks
         if (this.level === 4) {
             // spawn other player
-            this.sound.play("menuMusic", {loop: true, volume: 0.1});
+            this.sound.play("menuMusic", {loop: true, volume: 0.05});
         } else if (this.level === 3) {
             this.spawnBossOnScene();
-            this.sound.play("bossMusic", {loop: true, volume: 0.1});
+            this.sound.play("bossMusic", {loop: true, volume: 0.05});
         } else {
             this.spawnEnemyOnScene();
-            this.sound.play("battleMusic", {loop: true, volume: 0.1});
+            this.sound.play("battleMusic", {loop: true, volume: 0.05});
         }
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
@@ -223,7 +233,9 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.input.enabled = false;
                 gameObject.tooltip.removeTooltip();
                 gameObject.clearTint();
-        
+
+                this.sound.play("playCard", {volume: 0.5});
+
                 // setting card in the middle 
                 gameObject.displayHeight = gameOptions.cardHeight;
                 gameObject.displayWidth = gameOptions.cardWidth;
@@ -282,7 +294,15 @@ export class BattleScene extends Phaser.Scene {
                 this.healthbars[enemy_index].healthText.destroy();
                 this.healthbars[enemy_index].armourText.destroy();
                 delete this.healthbars[enemy_index];
-                this.enemies[enemy_index].destroy();
+                this.tweens.add({
+                    targets: this.enemies[enemy_index],
+                    alpha: {from: 1, to: 0},
+                    ease: 'Sine.InOut',
+                    duration: 500,
+                    yoyo: false
+                });
+                this.time.delayedCall(500, this.enemies[enemy_index].destroy);
+                this.sound.play("enemyDeath", {volume: 0.5});
                 this.enemies[enemy_index].enemyArrow.destroy();
                 this.enemies.splice(enemy_index, 1);
                 this.healthbars.splice(enemy_index, 1);
@@ -294,6 +314,12 @@ export class BattleScene extends Phaser.Scene {
         }
     }
 
+    check_player_death() {
+        if (this.player.health <= 0) {
+            this.lose();
+        }
+    }
+
     win() {
         console.log("YOU WON");
         this.showRewards();
@@ -302,6 +328,7 @@ export class BattleScene extends Phaser.Scene {
 
     lose() {
         console.log("YOU LOSE");
+        this.sound.play("playerDeath", {volume: 0.7});
     }
 
     damage_calculation(character, damage) {
@@ -319,11 +346,17 @@ export class BattleScene extends Phaser.Scene {
         if (this.enemies.includes(character)) {
             this.check_enemy_death();
         }
+        
+        if (character.spriteType === "enemy") {
+            this.sound.play("enemyHurt", {volume: 0.1});
+        } else if (character.spriteType === "player") {
+            this.check_player_death();
+            this.sound.play("playerHurt", {volume: 0.5});
+        }
     }
 
     healing_calculation(character, healing) {
-        // list of 1 for empty modifiers
-
+        this.sound.play("heal", {volume: 0.6});
         character.health += healing;
         if (character.health > character.maxHealth) {
             character.health = character.maxHealth;
@@ -337,6 +370,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     armour_calculation(character, armour) {
+        this.sound.play("armour", {volume: 0.6});
         character.armour += armour;
         if (character.armour > character.maxArmour) {
             character.armour = character.maxArmour
@@ -419,7 +453,7 @@ export class BattleScene extends Phaser.Scene {
         let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
         let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
         let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
-        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", this, 0, 0, "nanotech");
+        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "blue", this, 0, 0, "nanotech");
 
         this.player.deckArray.push(headshot);
         this.player.deckArray.push(ricochet);
@@ -569,6 +603,7 @@ export class BattleScene extends Phaser.Scene {
 
     showRewards() {
         // disable interaction of all elements besides hover
+        this.sound.play("playerWin");
         this.disableInteractionDuringCard();
         this.disableHover();
         this.player.disableDragOnCards();
