@@ -21,9 +21,9 @@ export class BattleScene extends Phaser.Scene {
         // data returns a list of preloaded cards
         this.enemies = [];
         this.healthbars = [];
-        this.level;
-        this.boss;
         this.rewards = [];
+        this.level = 3;
+        this.boss;
     }
 
     preload() {
@@ -44,23 +44,31 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
         this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
         this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
+
+        // soundtrack;
+        this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
+        this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
+
+        // sound effects
+        this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
+        this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
     }
 
     create() {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
-        let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
-        let card_bg = this.add.image(0, 0, "card_holder");
-        let bg = this.add.sprite(0, 0, "backgroundBattle");
-        hud_bg.setScale(2);
+        this.hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
+        this.card_bg = this.add.image(0, 0, "card_holder");
+        this.bg = this.add.sprite(0, 0, "backgroundBattle");
+        this.hud_bg.setScale(2);
 
-        card_bg.setPosition(gameWidth/2, gameHeight);
-        card_bg.setScale(0.325);
-        card_bg.displayWidth = 777;
-        bg.setPosition(gameWidth/2, gameHeight/2.6);
-        bg.setScale(0.65);
-        bg.displayWidth = 777;
+        this.card_bg.setPosition(gameWidth/2, gameHeight);
+        this.card_bg.setScale(0.325);
+        this.card_bg.displayWidth = 777;
+        this.bg.setPosition(gameWidth/2, gameHeight/2.6);
+        this.bg.setScale(0.65);
+        this.bg.displayWidth = 777;
         
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
@@ -105,14 +113,25 @@ export class BattleScene extends Phaser.Scene {
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
+        // temporarily adding random cards from deck to add to this.rewards
+        // remove when generating cards from map
         for (let i=0; i < 2; i++) {
             let randomIndex = Math.floor(Math.random() * this.player.deckArray.length);
             let randomCard = this.player.deckArray[randomIndex];
             this.rewards.push(randomCard);
         }
 
-        this.spawnEnemyOnScene();
-        // this.spawnBossOnScene();
+        // soundtracks
+        if (this.level === 4) {
+            // spawn other player
+            this.sound.play("menuMusic", {loop: true, volume: 0.1});
+        } else if (this.level === 3) {
+            this.spawnBossOnScene();
+            this.sound.play("bossMusic", {loop: true, volume: 0.1});
+        } else {
+            this.spawnEnemyOnScene();
+            this.sound.play("battleMusic", {loop: true, volume: 0.1});
+        }
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
         // this.input.on("pointerdown", (pointer, gameObject) => {
@@ -154,6 +173,7 @@ export class BattleScene extends Phaser.Scene {
         // hover over listener
         this.input.on('gameobjectover', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                this.sound.play("cardHover");
                 let yOffSet = 50;
                 this.tweens.add({
                     targets: gameObject,
@@ -162,7 +182,8 @@ export class BattleScene extends Phaser.Scene {
                     displayWidth: gameOptions.cardWidth * 2,
                     displayHeight: gameOptions.cardHeight * 2,
                     depth: 100,
-                    duration: 10
+                    duration: 10,
+                    useHandCursor: true
                 });
                 gameObject.tooltip.showTooltip();
                 gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
@@ -208,6 +229,7 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.displayWidth = gameOptions.cardWidth;
                 gameObject.x = dropZone.x;
                 gameObject.y = dropZone.y + dropZone.y / 3;
+
                 
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
@@ -275,7 +297,6 @@ export class BattleScene extends Phaser.Scene {
     win() {
         console.log("YOU WON");
         this.showRewards();
-        // reward here
     }
 
 
@@ -552,10 +573,40 @@ export class BattleScene extends Phaser.Scene {
         this.disableHover();
         this.player.disableDragOnCards();
 
-        for (let cards of this.rewards) {
+        let centerX = this.game.config.width / 2;
+        let centerY = this.game.config.height / 2;
+
+        let pickCardsText = this.add.text(centerX, 100, "Pick One Card", {color:"#FD722A" , fontSize: "40px"});
+        pickCardsText.setOrigin(0.5, 0.5);
+        let player = this.player;
+        let scene = this;
+
+        for (let i=0; i < this.rewards.length; i++) {
+            let cards = this.rewards[i];
+            let cardXOffset = centerX + (i - (this.rewards.length - 1) / 2) * 300;
+
+            cards.setOrigin(0.5, 0.5);
+            cards.x = cardXOffset;
+            cards.y = centerY;
+            cards.angle = 0;
+            cards.displayWidth = gameOptions.cardWidth * 2;
+            cards.displayHeight = gameOptions.cardHeight * 2;
+            cards.setDepth(5);
+
+            // add the card to deckArray when clicked 
+            cards.on('pointerdown', function (event) {
+                player.deckArray.push(this);
+
+                for (let cards of scene.rewards) {
+                    cards.destroy();
+                }
+                pickCardsText.destroy();
+                scene.rewards=[];
+                // transition scene here
+                // this refers to the card btw here, not the scene
+            })
+
             cards.setVisible(true);
-            cards.x = 300;
-            cards.y = 400;
             this.add.existing(cards);
         }
     }

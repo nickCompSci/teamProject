@@ -142,7 +142,7 @@ export class MenuScene extends Phaser.Scene{
             this.isMusicPlaying = true;
             this.sound.pauseOnBlur = false;
             this.sound.play("soundtrack", { loop: true });
-            this.sound.setVolume(0.2)
+            this.sound.setVolume(0.2);
         }
 
         battleButton.setInteractive({useHandCursor: true})
@@ -155,7 +155,9 @@ export class MenuScene extends Phaser.Scene{
 
         battleButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
+            this.sound.sounds[0].stop();
             this.scene.start(CST.SCENES.BATTLE_LOAD);
+
         })
 
         // Map Button
@@ -169,7 +171,8 @@ export class MenuScene extends Phaser.Scene{
 
         mapButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.MAP)
+            this.sound.sounds[0].stop();
+            this.scene.start(CST.SCENES.MAP);
             console.log("click")
         })
     }
