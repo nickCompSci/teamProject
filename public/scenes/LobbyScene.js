@@ -14,6 +14,7 @@ export class LobbyScene extends Phaser.Scene {
         this.playerUsername = data.playerUsername;
         this.host = false;
         this.joinee = false;
+        this.otherPlayerName;
         if (data.host) {
             this.host = true
             console.log(`${this.playerUsername} is the host`);
@@ -75,6 +76,54 @@ export class LobbyScene extends Phaser.Scene {
         function deleteJoinCodeRelationshipCallback(result) {
             // no need to do anything here for now
         }
+
+        let scene = this;
+
+        // this interval must keep checking for a connection 
+        // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
+        // with the joinee
+        const waitingForJoineeInterval = setInterval(function () {
+            // if detects an increase in connections
+            
+            if ((scene.network.peer._connections.size > 0 && scene.host == true)){
+                console.log("Player joined");
+                clearInterval(waitingForJoineeInterval)
+                var data = {
+                    otherUser: scene.network.peer.conn.peer
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/getOtherPlayersId',
+                        data,
+                        success: function (result) {
+                            console.log(result.otherUserName);
+                            scene.otherPlayerName = result.otherUserName;
+
+                            var data = {
+                                username: scene.playerUsername,
+                                otherUser: scene.otherPlayerName,
+                            }
+                            $.ajax({
+                                type: 'POST',
+                                url: '/createLobby',
+                                data,
+                                // success: function (result) {
+                                    
+                                // },
+                                error: function (xhr) {
+                                    window.alert(JSON.stringify(xhr));
+                                    window.location.replace('/game.html');
+                                }
+                            });
+                            // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+            }
+        }, 2000);
 
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
@@ -147,7 +196,23 @@ export class LobbyScene extends Phaser.Scene {
                 // console.log(this.network.peer._connections.size);
                 if (this.host == true) {
                     deleteJoinCodeRelationship(this.network.peer.id);
+                    // /deleteLobby
+                    var data = {
+                        username : scene.playerUsername
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/deleteLobby',
+                        data,
+                        success: function (result) {
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
                 }
+                
                 this.sound.play("menuButtonPress", { volume: 0.4 });
                 if (this.network.peer._connections.size > 0) {
                     try {
