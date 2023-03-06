@@ -20,6 +20,7 @@ export class LobbyScene extends Phaser.Scene {
             console.log(`${this.playerUsername} is the host`);
         } else if (data.joinee) {
             this.joinee = true;
+            this.otherPlayerName = data.playerToJoin;
             console.log(`${this.playerUsername} is the joinee`);
         }
         console.log(this.network);
@@ -77,6 +78,7 @@ export class LobbyScene extends Phaser.Scene {
             // no need to do anything here for now
         }
 
+
         let scene = this;
 
         // this interval must keep checking for a connection 
@@ -84,46 +86,55 @@ export class LobbyScene extends Phaser.Scene {
         // with the joinee
         const waitingForJoineeInterval = setInterval(function () {
             // if detects an increase in connections
-            
-            if ((scene.network.peer._connections.size > 0 && scene.host == true)){
-                console.log("Player joined");
+
+            if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
                 clearInterval(waitingForJoineeInterval)
                 var data = {
                     otherUser: scene.network.peer.conn.peer
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: '/getOtherPlayersId',
-                        data,
-                        success: function (result) {
-                            console.log(result.otherUserName);
-                            scene.otherPlayerName = result.otherUserName;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/getOtherPlayersId',
+                    data,
+                    success: function (result) {
+                        console.log(result.otherUserName);
+                        scene.otherPlayerName = result.otherUserName;
 
-                            var data = {
-                                username: scene.playerUsername,
-                                otherUser: scene.otherPlayerName,
-                            }
-                            $.ajax({
-                                type: 'POST',
-                                url: '/createLobby',
-                                data,
-                                // success: function (result) {
-                                    
-                                // },
-                                error: function (xhr) {
-                                    window.alert(JSON.stringify(xhr));
-                                    window.location.replace('/game.html');
-                                }
-                            });
-                            // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
-                        },
-                        error: function (xhr) {
-                            window.alert(JSON.stringify(xhr));
-                            window.location.replace('/game.html');
+                        var data = {
+                            username: scene.playerUsername,
+                            otherUser: scene.otherPlayerName,
                         }
-                    });
+                        $.ajax({
+                            type: 'POST',
+                            url: '/createLobby',
+                            data,
+                            success: function (result) {
+                                scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                            },
+                            error: function (xhr) {
+                                window.alert(JSON.stringify(xhr));
+                                window.location.replace('/game.html');
+                            }
+                        });
+                        // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                    },
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/game.html');
+                    }
+                });
             }
         }, 2000);
+
+
+        // a leaveGame detection interval
+        // if the host leaves the game - he will peer.destroy and leave
+        // the joinee must detect this
+        // const waitingForHostInterval = setInterval(function () {
+        //     if ((scene.network.peer._connections.size > 0 && scene.joinee == true)) {
+
+        //     }
+        // }, 5000)
 
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
@@ -135,31 +146,39 @@ export class LobbyScene extends Phaser.Scene {
             .setDepth(1)
             .setOrigin(0.5)
 
-        let joinCode = this.network.peer.id;
+
         // send the joinCode to a function to send POST request to create a relationship
         // this will be queried by friends of this player
         if (this.host == true) {
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, `Host: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                .setDepth(1)
+                .setOrigin(0.5)
+            let joinCode = this.network.peer.id;
             addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
+
+            let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                .setDepth(1)
+                .setOrigin(0.5)
+                .setInteractive({ useHandCursor: true })
+                // Add event listener to enable copying of the text
+                .on('pointerdown', function (pointer) {
+                    if (pointer.leftButtonDown()) {
+                        var joinCode = joinCodeText.text.split(':')[1].trim(); // extract the join code
+                        navigator.clipboard.writeText(joinCode); // copy the join code to clipboard
+                        window.alert("Join code copied to clipboard!");
+                    }
+                });
         }
 
-        let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-            .setDepth(1)
-            .setOrigin(0.5)
-            .setInteractive({ useHandCursor: true })
-            // Add event listener to enable copying of the text
-            .on('pointerdown', function (pointer) {
-                if (pointer.leftButtonDown()) {
-                    var joinCode = joinCodeText.text.split(':')[1].trim(); // extract the join code
-                    navigator.clipboard.writeText(joinCode); // copy the join code to clipboard
-                    window.alert("Join code copied to clipboard!");
-                }
-            });
-
-        // Networking!
-        // PLACEHOLDER - Lists current players connected to game
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, this.playerUsername, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-            .setDepth(1)
-            .setOrigin(0.5)
+        if (this.joinee == true) {
+            console.log("Got here as JOINEE")
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Player 2: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                .setDepth(1)
+                .setOrigin(0.5)
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.40, `Host: ${this.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                .setDepth(1)
+                .setOrigin(0.5)
+        }
 
         let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.80, 'Start Game', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
             .setDepth(1)
@@ -175,8 +194,6 @@ export class LobbyScene extends Phaser.Scene {
                 // clearInterval(interval);
                 this.scene.start(CST.SCENES.MAP, { networkObj: this.network, playerUsername: this.playerUsername });
             })
-
-
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
@@ -198,7 +215,7 @@ export class LobbyScene extends Phaser.Scene {
                     deleteJoinCodeRelationship(this.network.peer.id);
                     // /deleteLobby
                     var data = {
-                        username : scene.playerUsername
+                        username: scene.playerUsername
                     }
                     $.ajax({
                         type: 'POST',
@@ -212,7 +229,7 @@ export class LobbyScene extends Phaser.Scene {
                         }
                     });
                 }
-                
+
                 this.sound.play("menuButtonPress", { volume: 0.4 });
                 if (this.network.peer._connections.size > 0) {
                     try {

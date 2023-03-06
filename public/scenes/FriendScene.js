@@ -232,7 +232,7 @@ export class friendScene extends Phaser.Scene {
                                                             scene.network.connect(result.otherUser);
                                                             // scene.network.send("hello");
                                                             scene.network.send("testing again");
-                                                            scene.loadLobby();
+                                                            scene.loadLobby(target.id);
                                                         },
                                                         // on error return to game page
                                                         error: function (xhr) {
@@ -279,8 +279,8 @@ export class friendScene extends Phaser.Scene {
         this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
 
     }
-    loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername, joinee: "joinee" })
+    loadLobby(playerToJoin) {
+        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername, joinee: "joinee", playerToJoin : playerToJoin })
     }
 }
 
