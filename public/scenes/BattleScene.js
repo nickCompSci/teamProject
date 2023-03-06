@@ -21,9 +21,9 @@ export class BattleScene extends Phaser.Scene {
         // data returns a list of preloaded cards
         this.enemies = [];
         this.healthbars = [];
-        this.level;
-        this.boss;
         this.rewards = [];
+        this.level = 3;
+        this.boss;
     }
 
     preload() {
@@ -44,6 +44,14 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
         this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
         this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
+
+        // soundtrack;
+        this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
+        this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
+
+        // sound effects
+        this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
+        this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
     }
 
     create() {
@@ -113,8 +121,17 @@ export class BattleScene extends Phaser.Scene {
             this.rewards.push(randomCard);
         }
 
-        this.spawnEnemyOnScene();
-        // this.spawnBossOnScene();
+        // soundtracks
+        if (this.level === 4) {
+            // spawn other player
+            this.sound.play("menuMusic", {loop: true, volume: 0.1});
+        } else if (this.level === 3) {
+            this.spawnBossOnScene();
+            this.sound.play("bossMusic", {loop: true, volume: 0.1});
+        } else {
+            this.spawnEnemyOnScene();
+            this.sound.play("battleMusic", {loop: true, volume: 0.1});
+        }
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
         // this.input.on("pointerdown", (pointer, gameObject) => {
@@ -156,6 +173,7 @@ export class BattleScene extends Phaser.Scene {
         // hover over listener
         this.input.on('gameobjectover', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
+                this.sound.play("cardHover");
                 let yOffSet = 50;
                 this.tweens.add({
                     targets: gameObject,
@@ -164,7 +182,8 @@ export class BattleScene extends Phaser.Scene {
                     displayWidth: gameOptions.cardWidth * 2,
                     displayHeight: gameOptions.cardHeight * 2,
                     depth: 100,
-                    duration: 10
+                    duration: 10,
+                    useHandCursor: true
                 });
                 gameObject.tooltip.showTooltip();
                 gameObject.tooltip.setLabelCoordinates(gameObject.x + gameOptions.cardWidth, gameObject.y - gameOptions.cardHeight * 2 - yOffSet + 10);
@@ -210,6 +229,7 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.displayWidth = gameOptions.cardWidth;
                 gameObject.x = dropZone.x;
                 gameObject.y = dropZone.y + dropZone.y / 3;
+
                 
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
