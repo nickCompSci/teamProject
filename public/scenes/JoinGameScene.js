@@ -66,7 +66,7 @@ export class JoinGameScene extends Phaser.Scene{
                 if (isValidCode) {
                     console.log("Success: Valid code found");
                     this.network.connect(code.value);
-                    this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
+                    this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername, joinee : "joinee"  });
                 } else {
                     // Code does not exist
                     alert("Code not found");

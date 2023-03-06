@@ -51,7 +51,7 @@ export class PlayGameScene extends Phaser.Scene{
             // Signals when the pointer is clicked and released
             .on("pointerup", ()=>{
                 this.sound.play("menuButtonPress",{volume: 0.4});
-                this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername });
+                this.scene.start(CST.SCENES.LOBBY, {networkObj: this.network, playerUsername: this.playerUsername, host: "host" });
             })
 
         let joinButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 110, 'Join Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})

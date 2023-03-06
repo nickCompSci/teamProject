@@ -255,7 +255,7 @@ export class friendScene extends Phaser.Scene {
 
     }
     loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername })
+        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername, joinee : "joinee" })
     }
 }
 

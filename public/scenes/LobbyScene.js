@@ -12,6 +12,15 @@ export class LobbyScene extends Phaser.Scene {
     init(data) {
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
+        this.host = false;
+        this.joinee = false;
+        if (data.host) {
+            this.host = true
+            console.log(`${this.playerUsername} is the host`);
+        } else if (data.joinee) {
+            this.joinee = true;
+            console.log(`${this.playerUsername} is the joinee`);
+        }
         console.log(this.network);
         console.log(this.network.peer._connections.size)
         console.log(this.network.peer._connections);
@@ -23,8 +32,6 @@ export class LobbyScene extends Phaser.Scene {
 
     // Creates any images, text, etc.
     create() {
-
-
 
         function addJoinCodeToUserNode(joinCode, callback) {
             // data to be sent to the server route
@@ -68,7 +75,7 @@ export class LobbyScene extends Phaser.Scene {
         function deleteJoinCodeRelationshipCallback(result) {
             // no need to do anything here for now
         }
-        
+
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
             .setDisplaySize(this.game.renderer.width, this.game.renderer.height)
@@ -82,7 +89,9 @@ export class LobbyScene extends Phaser.Scene {
         let joinCode = this.network.peer.id;
         // send the joinCode to a function to send POST request to create a relationship
         // this will be queried by friends of this player
-        addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
+        if (this.host == true) {
+            addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
+        }
 
         let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
             .setDepth(1)
@@ -126,17 +135,20 @@ export class LobbyScene extends Phaser.Scene {
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true })
             .on("pointerover", () => {
-                backButton.setStyle({fill: '#fd722a'});
-                this.sound.play("menuButtonHover",{volume: 0.2});
+                backButton.setStyle({ fill: '#fd722a' });
+                this.sound.play("menuButtonHover", { volume: 0.2 });
                 arrowSprite.setVisible(true);
                 arrowSprite.x = backButton.x - backButton.width + 60;
                 arrowSprite.y = backButton.y + backButton.height / 4;
-                
+
             })
             .on("pointerup", () => {
                 // clearInterval(interval);
                 // console.log(this.network.peer._connections.size);
-                this.sound.play("menuButtonPress",{volume: 0.4});
+                if (this.host == true) {
+                    deleteJoinCodeRelationship(this.network.peer.id);
+                }
+                this.sound.play("menuButtonPress", { volume: 0.4 });
                 if (this.network.peer._connections.size > 0) {
                     try {
                         this.network.peer.destroy();
@@ -145,13 +157,9 @@ export class LobbyScene extends Phaser.Scene {
 
                     } catch {
                         console.log("failed");
-                    } finally {
-                        deleteJoinCodeRelationship(this.network.peer.id);
                     }
-
                 }
                 else {
-                    deleteJoinCodeRelationship(this.network.peer.id);
                     this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
                 }
             })
