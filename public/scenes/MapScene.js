@@ -162,7 +162,6 @@ export class MapScene extends Phaser.Scene{
         ]
 
         const map = new Map(encounters, positions, doors, door_positions, startEnd)
-
         // level counter top in the left
         let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
 
@@ -182,6 +181,7 @@ export class MapScene extends Phaser.Scene{
         // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
             if (map.currentLocation == 11) {
+                this.network.send('{"type":"levelUpdate", "level":"'+(map._level+1).toString()+'"}')
                 for (let i=0; i<map.adjacent.length; i++) {
                     map.adjacent[i].getEncounter().disableInteractive();
                 }
