@@ -51,6 +51,21 @@ export class LobbyScene extends Phaser.Scene {
             document.body.appendChild(tmpElement);
         }
 
+        function tempAlert2(message, duration) {
+            var tmpElement = document.createElement("div");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:23%;background-color:white;");
+            tmpElement.innerHTML = message;
+            tmpElement.style.color = "white"
+            tmpElement.style.backgroundColor = "black"
+            tmpElement.style.padding = "5%"
+            tmpElement.style.fontSize = "larger"
+            setTimeout(function () {
+                tmpElement.parentNode.removeChild(tmpElement);
+            }, duration);
+            document.body.appendChild(tmpElement);
+        }
+
+
         function addJoinCodeToUserNode(joinCode, callback) {
             // data to be sent to the server route
             var data = {
@@ -140,35 +155,35 @@ export class LobbyScene extends Phaser.Scene {
                         }
                     });
                 }
-            }, 2000);
+            }, 100);
         }
         // a leaveGame detection interval
-        // if the joinee leaves the game - he will peer.destroy and leave
+        // if the joinee leaves the game - he will peer.destroy and destroy his directional IN_LOBBY_TOGETHER
         // the host must detect this, peer.destroy himself, reallocate the peer to himself
         // and rebuild the JOIN_GAME relationship
-        // there is nothing in neo4j to detect the joinee leaving unless i make
-        // IN_LOBBY_TOGETHER  a 2 way relationship
+
         if(this.host){
-            const detectingJoineeLeaveInterval = setInterval(function () {
-                var data = {
-                    username: scene.playerUsername,
-                    otherUser: scene.otherPlayerName,
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: '/checkIfHostLeft',
-                    data,
-                    success: function (result) {
-                        if (result.hostLeft == "true"){
-                            tempAlert("The host has left the game! Sending you back to Main Menu",3000)
-                        }
-                    },
-                    error: function (xhr) {
-                        window.alert(JSON.stringify(xhr));
-                        window.location.replace('/game.html');
+            let detectingJoineeLeaveInterval = setInterval(function () {
+                if (scene.otherPlayerName){
+                    var data = {
+                        username: scene.playerUsername,
+                        otherUser: scene.otherPlayerName,
                     }
-                });
-            }, 3500);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/checkIfHostLeft',
+                        data,
+                        success: function (result) {
+                            if (result.hostLeft == "true"){
+                                tempAlert("The Joinee has left the game! Sending you back to main menu",3000);
+                            }
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+        }}, 3500);
         }
 
         // a leaveGame detection interval
@@ -186,6 +201,7 @@ export class LobbyScene extends Phaser.Scene {
                     data,
                     success: function (result) {
                         if (result.hostLeft == "true"){
+                            // clearInterval(detectingJoineeLeaveInterval);
                             tempAlert("The host has left the game! Sending you back to Main Menu",3000)
                         }
                     },
@@ -232,7 +248,6 @@ export class LobbyScene extends Phaser.Scene {
         }
 
         if (this.joinee == true) {
-            console.log("Got here as JOINEE")
             this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Player 2: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
                 .setDepth(1)
                 .setOrigin(0.5)
@@ -290,7 +305,22 @@ export class LobbyScene extends Phaser.Scene {
                         }
                     });
                 }
-
+                else if (this.joinee == true){
+                    var data = {
+                        username: scene.playerUsername
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/joineeLeft',
+                        data,
+                        success: function (result) {
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+                }
                 this.sound.play("menuButtonPress", { volume: 0.4 });
                 if (this.network.peer._connections.size > 0) {
                     try {

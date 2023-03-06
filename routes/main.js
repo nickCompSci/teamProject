@@ -748,6 +748,7 @@ router.post("/createLobby", (request, response) => {
             const lobbyWriteQuery =`
                 MATCH (a:Person {username : $currentUsername}), (b:Person {username : $otherUser})
                 CREATE (a)-[r:IN_LOBBY_TOGETHER]->(b)
+                CREATE (a)<-[:IN_LOBBY_TOGETHER]-(b)
                 RETURN type(r)`
             await session.executeWrite(tx =>
                 tx.run(lobbyWriteQuery, { currentUsername, otherUser })
@@ -784,7 +785,7 @@ router.post("/deleteLobby", (request, response) => {
             // query to delete the JOIN_CODE relationship from the current user to all
             // their friends
             const writeQuery = `
-                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]->(n:Person)
+                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]-(n:Person)
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { currentUsername })
@@ -866,7 +867,7 @@ router.post("/checkIfHostLeft", (request, response) => {
             // query to check if the IN_LOBBY_TOGETHER relationship from the host user to joinee is 
             // still present
             const readQuery = `
-                RETURN EXISTS ( (:Person {username : $currentUsername})-[:IN_LOBBY_TOGETHER]-(:Person {username : $otherUser}) ) as exists`;
+                RETURN EXISTS ( (:Person {username : $currentUsername})<-[:IN_LOBBY_TOGETHER]-(:Person {username : $otherUser}) ) as exists`;
             const readResult = await session.executeRead(tx =>
                 tx.run(readQuery, { currentUsername, otherUser })
             );
@@ -891,6 +892,84 @@ router.post("/checkIfHostLeft", (request, response) => {
     })();
     // to access in caller - result.username
 })
+
+router.post("/joineeLeft", (request, response) => {
+    (async () => {
+        const currentUsername = request.body.username;
+
+        // now connect to neo4j
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to delete the JOIN_CODE relationship from the current user to all
+            // their friends
+            const writeQuery = `
+                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]->(n:Person)
+                DELETE r`;
+            await session.executeWrite(tx =>
+                tx.run(writeQuery, { currentUsername })
+            );
+
+            // ****************************************
+            console.log(`Successfully deleted IN_LOBBY_TOGETHER from joinee: ${currentUsername} to other player`);
+    
+
+        } catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            response.end(JSON.stringify({}));
+        }
+
+    })();
+    // to access in caller - result.username
+})
+
+router.post("/cleanup", (request, response) => {
+    (async () => {
+
+        const refreshToken = request.body.refreshToken;
+        const currentUsername = tokenList[refreshToken].username;
+        // now connect to neo4j
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to delete the JOIN_CODE relationship from the current user to all
+            // their friends
+            const writeQuery = `
+                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]->(n:Person)
+                DELETE r`;
+            await session.executeWrite(tx =>
+                tx.run(writeQuery, { currentUsername })
+            );
+            const writeQuery2 = `
+                MATCH (a:Person {username: $currentUsername})-[r:JOIN_GAME]->(n:Person)
+                DELETE r`;
+            await session.executeWrite(tx =>
+                tx.run(writeQuery2, { currentUsername })
+            );
+            console.log(`Finished cleanup for player: ${currentUsername}`);
+        } catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            response.end(JSON.stringify({}));
+        }
+
+    })();
+    // to access in caller - result.username
+})
+
 
 
 module.exports = router;

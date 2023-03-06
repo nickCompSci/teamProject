@@ -105,6 +105,23 @@ export class LoadScene extends Phaser.Scene{
                 success: function (result) {
                     playerUsername = result.username;
                     network = new Network(result.encrypted);
+                    var data = {
+                        refreshToken: getCookie('refreshJwt')
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/cleanup',
+                        data,
+                        // on success call the callback function
+                        success: function (result) {
+
+                        },
+                        // on error return to game page 
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/');
+                        }
+                    });   
                 },
                 // on error return to game page 
                 error: function (xhr) {
