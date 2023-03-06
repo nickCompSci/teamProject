@@ -64,7 +64,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.audio("failedToSendFriendRequest", ['../assets/resources/sounds/failedSentRequest.mp3', '../assets/resources/sounds/failedSentRequest.ogg']);
         this.load.audio("menuButtonPress","../assets/resources/sounds/menuButtonPress.mp3");
         this.load.audio("menuButtonHover","../assets/resources/sounds/menuButtonHover.mp3");
-
+        this.load.audio("beginGame","../assets/resources/sounds/beginGame.mp3");
         // Progress Bar
         let loadingBar = this.add.graphics({
             fillStyle: {
