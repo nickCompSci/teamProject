@@ -650,6 +650,8 @@ router.post("/joinCodeRelationship", (request, response) => {
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, joinCode })
                 );
+                // ****************************************
+                console.log(`Successfully created JOIN_CODE from ${currentUsername} to all their friends`);
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
@@ -692,6 +694,8 @@ router.post("/deleteJoinRelationship", (request, response) => {
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, joinCode })
                 );
+                 // ****************************************
+                 console.log(`Successfully deleted JOIN_CODE from ${currentUsername} to all their friends`);
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
