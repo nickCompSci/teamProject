@@ -850,5 +850,47 @@ router.post("/doubleCheckEmpty", (request, response) => {
     // to access in caller - result.username
 })
 
+router.post("/checkIfHostLeft", (request, response) => {
+    (async () => {
+        const currentUsername = request.body.username;
+        const otherUser = request.body.otherUser;
+        let hostLeft = "true";
+        // now connect to neo4j
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to check if the IN_LOBBY_TOGETHER relationship from the host user to joinee is 
+            // still present
+            const readQuery = `
+                RETURN EXISTS ( (:Person {username : $currentUsername})-[:IN_LOBBY_TOGETHER]-(:Person {username : $otherUser}) ) as exists`;
+            const readResult = await session.executeRead(tx =>
+                tx.run(readQuery, { currentUsername, otherUser })
+            );
+
+            readResult.records.forEach(record => {
+                // the users who are a friend of this user
+                if(record.get("exists") == true){
+                    hostLeft = "false";
+                };
+            })
+            // ****************************************
+            console.log(`has hos left the game:  ${hostLeft}`);
+    
+        } catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            response.end(JSON.stringify({hostLeft: hostLeft}));
+        }
+
+    })();
+    // to access in caller - result.username
+})
+
 
 module.exports = router;

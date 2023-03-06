@@ -35,6 +35,22 @@ export class LobbyScene extends Phaser.Scene {
     // Creates any images, text, etc.
     create() {
 
+
+        function tempAlert(message, duration) {
+            var tmpElement = document.createElement("div");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:23%;background-color:white;");
+            tmpElement.innerHTML = message;
+            tmpElement.style.color = "white"
+            tmpElement.style.backgroundColor = "black"
+            tmpElement.style.padding = "5%"
+            tmpElement.style.fontSize = "larger"
+            setTimeout(function () {
+                tmpElement.parentNode.removeChild(tmpElement);
+                window.location.replace('/game.html');
+            }, duration);
+            document.body.appendChild(tmpElement);
+        }
+
         function addJoinCodeToUserNode(joinCode, callback) {
             // data to be sent to the server route
             var data = {
@@ -84,57 +100,102 @@ export class LobbyScene extends Phaser.Scene {
         // this interval must keep checking for a connection 
         // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
         // with the joinee
-        const waitingForJoineeInterval = setInterval(function () {
-            // if detects an increase in connections
+        if (this.host) {
+            const waitingForJoineeInterval = setInterval(function () {
+                // if detects an increase in connections
+                if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
+                    clearInterval(waitingForJoineeInterval)
+                    var data = {
+                        otherUser: scene.network.peer.conn.peer
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/getOtherPlayersId',
+                        data,
+                        success: function (result) {
+                            console.log(result.otherUserName);
+                            scene.otherPlayerName = result.otherUserName;
 
-            if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
-                clearInterval(waitingForJoineeInterval)
+                            var data = {
+                                username: scene.playerUsername,
+                                otherUser: scene.otherPlayerName,
+                            }
+                            $.ajax({
+                                type: 'POST',
+                                url: '/createLobby',
+                                data,
+                                success: function (result) {
+                                    scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                                },
+                                error: function (xhr) {
+                                    window.alert(JSON.stringify(xhr));
+                                    window.location.replace('/game.html');
+                                }
+                            });
+                            // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+                }
+            }, 2000);
+        }
+        // a leaveGame detection interval
+        // if the joinee leaves the game - he will peer.destroy and leave
+        // the host must detect this, peer.destroy himself, reallocate the peer to himself
+        // and rebuild the JOIN_GAME relationship
+        // there is nothing in neo4j to detect the joinee leaving unless i make
+        // IN_LOBBY_TOGETHER  a 2 way relationship
+        if(this.host){
+            const detectingJoineeLeaveInterval = setInterval(function () {
                 var data = {
-                    otherUser: scene.network.peer.conn.peer
+                    username: scene.playerUsername,
+                    otherUser: scene.otherPlayerName,
                 }
                 $.ajax({
                     type: 'POST',
-                    url: '/getOtherPlayersId',
+                    url: '/checkIfHostLeft',
                     data,
                     success: function (result) {
-                        console.log(result.otherUserName);
-                        scene.otherPlayerName = result.otherUserName;
-
-                        var data = {
-                            username: scene.playerUsername,
-                            otherUser: scene.otherPlayerName,
+                        if (result.hostLeft == "true"){
+                            tempAlert("The host has left the game! Sending you back to Main Menu",3000)
                         }
-                        $.ajax({
-                            type: 'POST',
-                            url: '/createLobby',
-                            data,
-                            success: function (result) {
-                                scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
-                            },
-                            error: function (xhr) {
-                                window.alert(JSON.stringify(xhr));
-                                window.location.replace('/game.html');
-                            }
-                        });
-                        // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
                     },
                     error: function (xhr) {
                         window.alert(JSON.stringify(xhr));
                         window.location.replace('/game.html');
                     }
                 });
-            }
-        }, 2000);
-
+            }, 3500);
+        }
 
         // a leaveGame detection interval
         // if the host leaves the game - he will peer.destroy and leave
         // the joinee must detect this
-        // const waitingForHostInterval = setInterval(function () {
-        //     if ((scene.network.peer._connections.size > 0 && scene.joinee == true)) {
-
-        //     }
-        // }, 5000)
+        if (this.joinee) {
+            const detectingHostLeaveInterval = setInterval(function () {
+                var data = {
+                    username: scene.playerUsername,
+                    otherUser: scene.otherPlayerName,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/checkIfHostLeft',
+                    data,
+                    success: function (result) {
+                        if (result.hostLeft == "true"){
+                            tempAlert("The host has left the game! Sending you back to Main Menu",3000)
+                        }
+                    },
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/game.html');
+                    }
+                });
+            }, 3500);
+        }
 
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
