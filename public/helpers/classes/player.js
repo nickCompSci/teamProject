@@ -21,6 +21,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.spriteType = "player";
         this.keepCards = [];
         this.keepCardsLimit = 2;
+
+        this.setScale(1.5);
         scene.add.existing(this);
 
         // generate a starter deck for the player

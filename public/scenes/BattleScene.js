@@ -22,8 +22,9 @@ export class BattleScene extends Phaser.Scene {
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
-        this.level;
+        this.level = 4;
         this.boss;
+        this.otherPlayer;
     }
 
     preload() {
@@ -31,6 +32,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
         this.load.image("player", "../assets/resources/sprites/otherplayer.png");
+        this.load.image("otherPlayer", "../assets/resources/sprites/player_enemy.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
         this.load.image("deck", "../assets/resources/sprites/deck.png");
@@ -82,7 +84,6 @@ export class BattleScene extends Phaser.Scene {
         
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
-        this.player.setScale(1.5);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
         this.deck = this.add.sprite(20, 550, "deck");
@@ -134,6 +135,7 @@ export class BattleScene extends Phaser.Scene {
         // soundtracks
         if (this.level === 4) {
             // spawn other player
+            this.spawnOtherPlayerOnScene();
             this.sound.play("menuMusic", {loop: true, volume: 0.05});
         } else if (this.level === 3) {
             this.spawnBossOnScene();
@@ -324,7 +326,6 @@ export class BattleScene extends Phaser.Scene {
         console.log("YOU WON");
         this.showRewards();
     }
-
 
     lose() {
         console.log("YOU LOSE");
@@ -566,6 +567,16 @@ export class BattleScene extends Phaser.Scene {
                 card.setTint(0xff0000);
             }
         }
+    }
+
+    spawnOtherPlayerOnScene() {
+        // equal to otherPlayer passed in
+        let x = this.game.config.width * 0.7;
+        let y = this.game.config.height * 0.6;
+        this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
+        this.enemies.push(this.otherPlayer);
+        let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
+        this.healthbars.push(otherPlayerHealth)
     }
 
     spawnBossOnScene() {
