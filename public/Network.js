@@ -49,7 +49,7 @@ export class Network{
         })
     }
 
-    handleDataMapScene(opponentLevelObj){
+    handleDataMapScene(opponentLevelObj, data){
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
@@ -58,6 +58,9 @@ export class Network{
                 opponentLevelObj.setText(json_data['level']);
             } else if (json_data['type'] == 'activityUpdate'){
                 console.log(json_data['activity']);
+            } if(json_data['type'] == 'finalBattleCall'){
+                // start final battle scene
+                //Phaser.scene.start(CST.SCENES.BATTLE, data)
             }
         });
     }
