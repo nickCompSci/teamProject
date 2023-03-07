@@ -58,7 +58,7 @@ function showFriends() {
                 friendsList[i] = allFriends[i];
                 // console.log(friendsList);
                 listElement.innerHTML = allFriends[i] + '<i id="' + allFriends[i]
-                + '" onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
+                    + '" onClick="deleteFriend(' + `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
 
                 document.getElementById("currentFriends").appendChild(listElement);
 
@@ -68,7 +68,7 @@ function showFriends() {
                     document.getElementById(allFriends[i]).style.color = "green";
                 }
             }
-            if(document.getElementsByClassName("fa-solid fa-arrows-rotate")){
+            if (document.getElementsByClassName("fa-solid fa-arrows-rotate")) {
                 var element = document.getElementsByClassName("fa-solid fa-arrows-rotate");
                 element[0].remove()
             }
@@ -120,18 +120,18 @@ function showPending() {
             sentElement.style.borderTop = "2px solid grey";
             sentElement.style.paddingTop = "5%";
             document.getElementById("pendingRequests").appendChild(sentElement);
-            if (allSentRequests.length > 0){
+            if (allSentRequests.length > 0) {
                 for (let i = 0; i < allSentRequests.length; i++) {
                     const listElement = document.createElement("li");
                     // add it to the dictionary
                     sentRequests[i] = allSentRequests[i];
                     // what the user will see
                     // remember to create new function to remove the request
-                    listElement.innerHTML = allSentRequests[i] + '<i onClick="cancelFriendRequest('+ `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red once" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
+                    listElement.innerHTML = allSentRequests[i] + '<i id="' + allSentRequests[i] + '" onClick="cancelFriendRequest(' + `\'${sentRequests[i]}\'` + ')" class="fa-sharp fa-solid fa-square-xmark red once" title="Cancel your friend request to ' + allSentRequests[i] + '"></i>';
                     document.getElementById("pendingRequests").appendChild(listElement);
                 }
             }
-            if(document.getElementsByClassName("fa-solid fa-arrows-rotate")){
+            if (document.getElementsByClassName("fa-solid fa-arrows-rotate")) {
                 var element = document.getElementsByClassName("fa-solid fa-arrows-rotate");
                 element[0].remove()
             }
@@ -146,87 +146,95 @@ function showPending() {
 }
 
 function acceptFriendRequest(otherUserIndex) {
-    // data to be sent to the route
-    var data = {
-        refreshToken: getCookie('refreshJwt'),
-        otherUser: pendingFriends[otherUserIndex],
-        value: "accept"
-    };
-    $.ajax({
-        type: 'POST',
-        url: "/acceptOrDeclinePendingRequest",
-        data,
-        // callback function
-        success: function (result) {
-            // make the pending requests update to reflect changes to the user
-            // a form of "refreshing"
-            showPending()
-        },
-        error: function (xhr) {
-            window.alert(JSON.stringify(xhr));
-        }
-    })
+    // data to be sent to the route\
+    if (confirm(`Are you sure you want to accept ${pendingFriends[otherUserIndex]} friend request?`) == true) {
+        var data = {
+            refreshToken: getCookie('refreshJwt'),
+            otherUser: pendingFriends[otherUserIndex],
+            value: "accept"
+        };
+        $.ajax({
+            type: 'POST',
+            url: "/acceptOrDeclinePendingRequest",
+            data,
+            // callback function
+            success: function (result) {
+                // make the pending requests update to reflect changes to the user
+                // a form of "refreshing"
+                showPending()
+            },
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+            }
+        })
+    }
 }
 
 function declineFriendRequest(otherUserIndex) {
     // data to be sent to the route
-    var data = {
-        refreshToken: getCookie('refreshJwt'),
-        otherUser: pendingFriends[otherUserIndex],
-        value: "decline"
-    };
-    $.ajax({
-        type: 'POST',
-        url: "/acceptOrDeclinePendingRequest",
-        data,
-        success: function (result) {
-            // make the pending requests update to reflect changes to the user
-            // a form of "refreshing"
-            showPending()
-        },
-        error: function (xhr) {
-            window.alert(JSON.stringify(xhr));
-        }
-    })
+    if (confirm(`Are you sure you want to decline ${pendingFriends[otherUserIndex]} friend request?`) == true) {
+        var data = {
+            refreshToken: getCookie('refreshJwt'),
+            otherUser: pendingFriends[otherUserIndex],
+            value: "decline"
+        };
+        $.ajax({
+            type: 'POST',
+            url: "/acceptOrDeclinePendingRequest",
+            data,
+            success: function (result) {
+                // make the pending requests update to reflect changes to the user
+                // a form of "refreshing"
+                showPending();
+            },
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+            }
+        })
+    }
 }
 
 function deleteFriend(otherUser) {
     // call to a route to delete a friend from a users/players friend list
     // data to be sent to the route
-    var data = {
-        refreshToken: getCookie('refreshJwt'),
-        otherUser: otherUser
-    }
-    $.ajax({
-        type: 'POST',
-        url: "/deleteFriend",
-        data,
-        // callback function
-        success: function (result) {
-            // reload the friends list for the user
-            showFriends()
-        },
-        error: function (xhr) {
-            window.alert(JSON.stringify(xhr));
+    if (confirm(`Are you sure you want to delete ${otherUser}?`) == true) {
+        var data = {
+            refreshToken: getCookie('refreshJwt'),
+            otherUser: otherUser
         }
-    })
+        $.ajax({
+            type: 'POST',
+            url: "/deleteFriend",
+            data,
+            // callback function
+            success: function (result) {
+                // reload the friends list for the user
+                showFriends()
+            },
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+            }
+        })
+    }
 }
 function cancelFriendRequest(otherUser) {
-    var data = {
-        refreshToken: getCookie('refreshJwt'),
-        otherUser: otherUser
-    }
-    $.ajax({
-        type: 'POST',
-        url: "/cancelRequest",
-        data,
-        // callback function
-        success: function (result) {
-            // reload the friends list for the user
-            showPending()
-        },
-        error: function (xhr) {
-            window.alert(JSON.stringify(xhr));
+    if (confirm(`Are you sure you want to cancel your friend request to ${otherUser}?`) == true) {
+        var data = {
+            refreshToken: getCookie('refreshJwt'),
+            otherUser: otherUser
         }
-    })
+        $.ajax({
+            type: 'POST',
+            url: "/cancelRequest",
+            data,
+            // callback function
+            success: function (result) {
+                // reload the friends list for the user
+                showPending()
+            },
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+            }
+        })
+    }
 }

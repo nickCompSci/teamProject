@@ -19,6 +19,7 @@ export class ExtraScene extends Phaser.Scene {
         // data returns a list of preloaded cards
         this.room = data.room;
         this.enemies = [];
+        this.network = data.network;
     }
 
     preload() {
@@ -67,25 +68,32 @@ export class ExtraScene extends Phaser.Scene {
 
     }
 
+    
+    checkCardsInDiscardPile(amountOfRepeats) {
+        if (amountOfRepeats < 10) {
+            return 1;
+        }
+
+        return Math.floor(amountOfRepeats / 10);
+    }
+
     create() {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
+
         this.setPicked = 0;
         this.payment = []
 
         let hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
         let card_bg = this.add.image(0, 0, "card_holder");
-        let bg = this.add.sprite(0, 0, "backgroundBattle");
-        hud_bg.setScale(2);
+        hud_bg.setScale(2).setScrollFactor(0).setDepth(0);
 
         card_bg.setPosition(gameWidth/2, gameHeight);
-        card_bg.setScale(0.325);
-        bg.setPosition(gameWidth/2, gameHeight/2.6);
-        bg.setScale(0.65);
+        card_bg.setScale(0.325).setScrollFactor(0).setDepth(1);
         
         this.player = new Player(this, 0, 0, "player");
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
-        this.player.setScale(1.5);
+        this.player.setScale(1.5).setScrollFactor(0).setDepth(2);
         
         // loads all the different types of cards
         this.loadCards();
@@ -93,7 +101,9 @@ export class ExtraScene extends Phaser.Scene {
         this.spawnEnemyOnScene()
         
         let arrowSprite = this.add.sprite(100, 100, "arrow");
-        arrowSprite.setVisible(false);
+        arrowSprite.setVisible(false).setScrollFactor(0);
+        
+        let return2rarity = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 90 , 'Re-Choose Rarity', {fontFamily: 'font1', fill:"#ffffff", fontSize: '60px' }).setDepth(-1).setOrigin(0.5).setScrollFactor(0).disableInteractive();
 
         this.pointer = this.add.sprite(100, 100, "pointer");
         this.pointer.setVisible(false);
@@ -104,10 +114,9 @@ export class ExtraScene extends Phaser.Scene {
             this.arrangeCardsInCenter(this.chestCards);
         } else {
 
-            let return2rarity = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 90 , 'Re-Choose Rarity', {fontFamily: 'font1', fontSize: '60px' }).setDepth(-1).setOrigin(0.5)
-            this.help = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 140 , 'Choose a rarity', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(2).setOrigin(0.5)
+            this.help = this.add.text(this.game.renderer.width / 2, 600 , 'Choose a rarity', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(2).setOrigin(0.5).setScrollFactor(0);
 
-            let blue = this.add.text(this.game.renderer.width / 2, 200 , 'Blue Rarity', {fontFamily: 'font1', fill: '#007fff', fontSize: '60px'}).setDepth(3).setOrigin(0.5)
+            let blue = this.add.text(this.game.renderer.width / 2, 660 , 'Blue Rarity', {fontFamily: 'font1', fill: '#007fff', fontSize: '60px'}).setDepth(3).setOrigin(0.5)
             blue.setInteractive();
     
             blue.on("pointerover", ()=>{
@@ -116,7 +125,7 @@ export class ExtraScene extends Phaser.Scene {
                 this.pointer.y = blue.y + blue.height / 4;
             })
     
-            let purple = this.add.text(this.game.renderer.width / 2, 300 , 'Purple Rarity', {fontFamily: 'font1', fill: '#540099', fontSize: '60px'}).setDepth(3).setOrigin(0.5)
+            let purple = this.add.text(this.game.renderer.width / 2, 710, 'Purple Rarity', {fontFamily: 'font1', fill: '#540099', fontSize: '60px'}).setDepth(3).setOrigin(0.5)
     
             purple.setInteractive();
             purple.on("pointerover", ()=>{
@@ -164,34 +173,52 @@ export class ExtraScene extends Phaser.Scene {
 
             })
 
-            return2rarity.on("pointerover", ()=>{
-                this.pointer.setVisible(true).setDepth(3);
-                this.pointer.x = return2rarity.x - return2rarity.width + 750;
-                this.pointer.y = return2rarity.y + return2rarity.height / 4 - 10;
-            })
-    
-            return2rarity.on("pointerup", ()=>{
-                this.scene.start(CST.SCENES.EXTRA);
-            })
         }
 
+        return2rarity.on("pointerover", ()=>{
+            return2rarity.setStyle({fill: '#fd722a'});
+        })
+
+        return2rarity.on("pointerup", ()=>{
+            this.scene.start(CST.SCENES.EXTRA, {networkObj:this.network});
+        })
+
         // Back Button for navigating back to the main menu
-        let backButton = this.add.text(this.game.renderer.width / 2, 30 , 'Return to Map', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(3).setOrigin(0.5)
+        let backButton = this.add.text(this.game.renderer.width / 2, 30 , 'Return to Map', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(3).setOrigin(0.5).setScrollFactor(1);
 
 
         // Back Button
         backButton.setInteractive();
         backButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true).setDepth(3);
-            arrowSprite.x = backButton.x - backButton.width + 60;
-            arrowSprite.y = backButton.y + backButton.height / 4;
+            this.pointer.setVisible(true).setDepth(3);
+            this.pointer.x = backButton.x - backButton.width + 600;
+            this.pointer.y = backButton.y + backButton.height / 4;
         })
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MAP);
+            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
         })
 
+        
+        let cam = this.cameras.main;
+
+        this.getRarityCards("blue")
+        
+        let repeat = this.checkCardsInDiscardPile(this.rarityCards);
+
+        let bg = this.add.tileSprite(0, 0, gameWidth * repeat, gameHeight * repeat, "backgroundBattle").setOrigin(0,0);
+        bg.setPosition(167, -25).setDepth(1).setScale(0.65).setScrollFactor(0);
+
+        cam.setBounds(0, 0, gameWidth, gameHeight * repeat);
+
+        this.input.on("pointermove", function (pointer) {
+            if (!pointer.isDown) {
+                return;
+            }
+
+            cam.scrollY -= (pointer.y - pointer.prevPosition.y) / cam.zoom;
+        })
     }
 
     setCardsInteractive() {
@@ -228,7 +255,7 @@ export class ExtraScene extends Phaser.Scene {
                     this.setPicked += 1;
                         if (this.setPicked == 4) {
                             console.log(this.payment, this.purchase)
-                            this.scene.start(CST.SCENES.MAP);
+                            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
                         }
                     }
                 }
@@ -352,7 +379,7 @@ export class ExtraScene extends Phaser.Scene {
             this.icon = new Enemy(this, 0, 0, "chest", 0, 10);
         } 
 
-        this.enemies.push(this.icon);
+        this.enemies.push(this.icon.setScrollFactor(0));
 
         let spawnEnemyDistanceX = 0;
 
@@ -364,11 +391,11 @@ export class ExtraScene extends Phaser.Scene {
             enemy.y += 25;
 
             spawnEnemyDistanceX += 150;
-            enemy.setDepth(1);
+            enemy.setDepth(2);
 
             if (this.room == "shop") {
                 enemy.x += 40;
-                enemy.y -= 45;
+                enemy.y -= 65;
             }
         }
     }

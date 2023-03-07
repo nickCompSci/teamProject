@@ -17,11 +17,12 @@ export default class DamageCard extends HandCard {
 
     activateCard(scene) {
         let card = this;
-        console.log(card);
         if (this.effect.target === "single") {
             for (let enemy of scene.enemies) {
+                // remove all interaction when playing a single target card
                 scene.player.disableDragOnCards();
                 scene.disableInteractionDuringCard();
+
                 // remove event listener from enemy
                 enemy.enemyArrow.setVisible(true);
                 enemy.removeListener("pointerdown", enemy.clickHandler);
@@ -37,7 +38,6 @@ export default class DamageCard extends HandCard {
         } else if (this.effect.target === "all") {
             this.dealDamageToAllEnemies(scene);
             this.resetCard();
-            scene.check_enemy_death();
         } else if (this.effect.target === "random") {
             for (let i=0; i < this.effect.randomAmount; i++) {
                 let randomIndex = Math.floor(Math.random() * scene.enemies.length);
@@ -47,7 +47,6 @@ export default class DamageCard extends HandCard {
                 // check if enemy died between each attack to update list
             }
             this.resetCard();
-            scene.check_enemy_death();
         }
         // check enemy dead here
 
@@ -85,7 +84,6 @@ export default class DamageCard extends HandCard {
         scene.player.enableDragOnCards();
         scene.enableInteractionAfterCard();
 
-        scene.check_enemy_death();
     }
 
     // if being comboed, will reset 

@@ -21,10 +21,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.spriteType = "player";
         this.keepCards = [];
         this.keepCardsLimit = 2;
+
+        this.setScale(1.5);
         scene.add.existing(this);
 
         // generate a starter deck for the player
-        this.starterDeck(scene);
+        // this.starterDeck(scene);
     }
 
     selectCardInHand(scene) {
@@ -95,9 +97,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.deckUpdate(scene);
         this.discardPileUpdate(scene);
         scene.arrangeCardsInCenter(this.handArray);
-        scene.keepCardsText.setVisible(false);
         this.enableDragOnCards();
         this.keepCards = [];
+        scene.keepCardsText.text = this.keepCards.length + " / " + this.keepCardsLimit; 
+        scene.keepCardsText.setVisible(false);
         
         // remove tint of cards remaining in hand 
         // reset the click flag and add back the event listener 
@@ -107,11 +110,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
             cards.on("pointerdown", cards.clickHandler);
             cards.clearTint();
         }
+
     }
     
     // draw an amount of cards
     drawCard(amountOfCards, scene) {
         for (let i=0; i < amountOfCards; i++) {
+            scene.sound.play("drawCard", {volume: 0.15});
             this.resetDeck(scene);
 
             let drawCard = this.deckArray.pop();

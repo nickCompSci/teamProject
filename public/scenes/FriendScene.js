@@ -16,6 +16,20 @@ export class friendScene extends Phaser.Scene {
     }
     // Creates any images, text, etc.
     create() {
+
+        function tempAlert(message, duration) {
+            var tmpElement = document.createElement("div");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
+            tmpElement.innerHTML = message;
+            tmpElement.style.color = "white"
+            tmpElement.style.backgroundColor = "black"
+            tmpElement.style.padding = "1%"
+            setTimeout(function () {
+                tmpElement.parentNode.removeChild(tmpElement);
+            }, duration);
+            document.body.appendChild(tmpElement);
+        }
+
         function searchForValidUsername(usernameToSearch, callback) {
             // data to send to the route
             var data = {
@@ -37,14 +51,12 @@ export class friendScene extends Phaser.Scene {
 
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
-                window.confirm("Invalid Username, please try again");
-                document.getElementById("addFriendForm").reset();
+                scene.sound.play("failedToSendFriendRequest");
+                tempAlert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`, 5000)
             } else {
-                // a user with the username was found
-                // remove searchButton and make confirm button interactive
-                searchButton.setText("");
-                confirmButton.setText("Send Request");
-                confirmButton.setInteractive();
+                if (confirm("Player found! Are you sure you want to send them a friend request") == true) {
+                    sendFriendRequest(scene.nameInput.getChildByName("friendUsername").value, sendFriendRequestCallback);
+                }
             }
         }
 
@@ -69,33 +81,22 @@ export class friendScene extends Phaser.Scene {
         }
 
         function sendFriendRequestCallback(result) {
-
-            if (result.found == "exists") {
-                scene.sound.play("failedToSendFriendRequest");
-                alert("You already sent a friend request to this player!");
-
-            } else if (result.found == "false") {
+            if (result.found == "false") {
                 scene.sound.play("failedToSendFriendRequest");
                 alert("Invalid username, failed to send friend request");
-            } else if (result.found == "otherUser") {
-                scene.sound.play("failedToSendFriendRequest");
-                alert("This user has already sent you a friend request");
             }
             else {
                 scene.sound.play("sentFriendRequest");
                 alert("Sent friend request!");
+                showPending();
             }
         }
-
 
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Friends title
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, 'Friends', { fontFamily: 'font1', fill: '#ffffff', fontSize: '80px' }).setDepth(1).setOrigin(0.5)
-
-        // Back Button for navigating back to the main menu
-        let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' }).setDepth(1).setOrigin(0.5)
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
@@ -112,103 +113,74 @@ export class friendScene extends Phaser.Scene {
             }
         }, 15000);
 
+        showPending(); // call pending list to load in all the elements
         showFriends(); // on load call the friends function to load in the friends list
 
-        const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
-        const confirmButton = this.add.text(50, 500, "", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' });
-        searchButton.setInteractive();
-
-        this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        this.returnKey.on("down", event => {
-            let friendUsername = this.nameInput.getChildByName("friendUsername");
-            // check if anything was inputted into the input box
-            if (friendUsername.value != "") {
-                if (document.querySelector('#currentFriends #' + friendUsername.value)) {
-                    alert(`This player is already your friend!`);
-                    // reset the form
-                    // document.getElementById("addFriendForm").reset();
-                    clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
+        const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' })
+            .setInteractive({ useHandCursor: true })
+            .on("pointerup", () => {
+                this.sound.play("menuButtonPress", { volume: 0.4 });
+                // obtains the value the user entered in the username field
+                let friendUsername = this.nameInput.getChildByName("friendUsername");
+                // make sure that something was entered and not nothing
+                if (friendUsername.value != "") {
+                    if (friendUsername.value == this.playerUsername) {
+                        scene.sound.play("failedToSendFriendRequest");
+                        alert("You can not send request to yourself!");
+                    }
+                    // check if the player username entered is already a friend
+                    else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
+                        scene.sound.play("failedToSendFriendRequest");
+                        alert(`This player is already your friend!`);
+                    }
+                    // check if the entered username exists in the pending requests list
+                    else if (document.querySelector('#showUsersPending #' + friendUsername.value)) {
+                        scene.sound.play("failedToSendFriendRequest");
+                        let element = document.querySelector('#pendingRequests #' + friendUsername.value)
+                        if (element.matches(".fa-sharp.fa-solid.fa-square-xmark.red.once")) {
+                            alert(`You already sent this player a friend request!`);
+                        } else {
+                            alert(`This player already sent you a friend request!`);
+                        }
+                    }
+                    else {
+                        searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
+                    }
                 }
-                else if (friendUsername.value == this.playerUsername) {
-                    alert("Can not send request to yourself!");
-                    // reset the form
-                    // document.getElementById("addFriendForm").reset();
-                    clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
-                }
-                else {
-                    searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
-                }
-            }
-        });
+            })
+            .on("pointerover", () => {
+                searchButton.setStyle({ fill: '#fd722a' })
+                this.sound.play("menuButtonHover", { volume: 0.2 });
+                arrowSprite.setVisible(true);
+                arrowSprite.x = searchButton.x;
+                arrowSprite.y = searchButton.y + searchButton.height - 15;
+            })
+            .on("pointerout", () => {
+                arrowSprite.setVisible(false);
+                searchButton.setStyle({ fill: '#fff' });
+            })
 
-        searchButton.on("pointerdown", () => {
-            let friendUsername = this.nameInput.getChildByName("friendUsername");
-            if (friendUsername.value != "") {
-                console.log(friendUsername.value, this.playerUsername);
-                console.log(document.querySelector('#currentFriends #' + friendUsername.value));
-                if (friendUsername.value == this.playerUsername) {
-                    alert("Can not send request to yourself!");
-                    // reset the form
-                    // document.getElementById("addFriendForm").reset();
-                    clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
-                }
-                else if (document.querySelector('#currentFriends #' + friendUsername.value)) {
-                    alert(`This player is already your friend!`);
-                    // reset the form
-                    // document.getElementById("addFriendForm").reset();
-                    clearInterval(interval)
-                    this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
-                }
-                else {
-                    searchForValidUsername(friendUsername.value, searchForValidUsernameCallback);
-                }
-            }
-        });
-
-        searchButton.on("pointerover", () => {
-            arrowSprite.setVisible(true);
-            arrowSprite.x = searchButton.x;
-            arrowSprite.y = searchButton.y + searchButton.height - 15;
-        })
-        searchButton.on("pointerout", () => {
-            arrowSprite.setVisible(false);
-
-        })
-
-        confirmButton.on("pointerdown", () => {
-            let friendUsername = this.nameInput.getChildByName("friendUsername");
-            if (friendUsername.value != "") {
-
-                // when success is called in the ajax, it will pass the response to
-                // searchForValidUsernameCallback function
-                sendFriendRequest(friendUsername.value, sendFriendRequestCallback);
-                clearInterval(interval)
-                scene.reset();
-            }
-
-        });
-
-        // Back Button
-        backButton.setInteractive();
-
-        backButton.on("pointerover", () => {
-            arrowSprite.setVisible(true);
-            arrowSprite.x = backButton.x - backButton.width + 60;
-            arrowSprite.y = backButton.y + backButton.height / 4;
-        })
-
-        backButton.on("pointerout", () => {
-            arrowSprite.setVisible(false);
-        })
-
-        backButton.on("pointerup", () => {
-            // Moves back to the main menu when the back button is clicked
-            clearInterval(interval);
-            this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
-        })
+        let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerout", () => backButton.setStyle({ fill: '#FFF' }))
+            .on("pointerover", () => {
+                arrowSprite.setVisible(true);
+                arrowSprite.x = backButton.x - backButton.width + 60;
+                arrowSprite.y = backButton.y + backButton.height / 4;
+                backButton.setStyle({ fill: '#fd722a' });
+                this.sound.play("menuButtonHover", { volume: 0.2 });
+            })
+            .on("pointerup", () => {
+                this.sound.play("menuButtonPress", { volume: 0.4 });
+                clearInterval(interval);
+                this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
+                // Moves back to the main menu when the back button is clicked
+            })
+            .on("pointerout", () => {
+                arrowSprite.setVisible(false);
+            })
 
         // called whenever anywhere is clicked
         document.onclick = function (event) {
@@ -229,25 +201,53 @@ export class friendScene extends Phaser.Scene {
                             // on success call the callback function
                             success: function (result) {
                                 console.log(result.result);
-                                if (result.result == "false"){
+                                if (result.result == "false") {
                                     if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                                         // cant use this keyword as were inside a function
                                         // console.log(scene.network);
+                                        // need to double check if the host is still in an empty lobby
+                                        // can do this by absence of JOIN_CODE relationship
                                         var data = {
-                                            otherUsername: target.id
+                                            username: scene.playerUsername,
+                                            otherUser: target.id
                                         };
                                         $.ajax({
                                             type: 'POST',
-                                            url: '/testerRoute',
+                                            url: '/doubleCheckEmpty',
                                             data,
                                             // on success call the callback function
                                             success: function (result) {
-                                                console.log(result.otherUser);
-                                                clearInterval(interval)
-                                                scene.network.connect(result.otherUser);
-                                                // scene.network.send("hello");
-                                                scene.network.send("testing again");
-                                                scene.loadLobby();
+                                                if (result.isLobbyStillEmpty == "true") {
+                                                    var data = {
+                                                        otherUsername: target.id
+                                                    };
+                                                    $.ajax({
+                                                        type: 'POST',
+                                                        url: '/testerRoute',
+                                                        data,
+                                                        // on success call the callback function
+                                                        success: function (result) {
+                                                            console.log(result.otherUser);
+                                                            clearInterval(interval)
+                                                            scene.network.connect(result.otherUser);
+                                                            // scene.network.send("hello");
+                                                            scene.network.send("testing again");
+                                                            scene.loadLobby(target.id);
+                                                        },
+                                                        // on error return to game page
+                                                        error: function (xhr) {
+                                                            window.alert(JSON.stringify(xhr));
+                                                            window.location.replace('/game.html');
+                                                        }
+                                                    });
+                                                    // target.id wont work as its not the encrypted version
+                                                    // scene.network.connect(target.id);
+                                                    clearInterval(interval);
+                                                }
+                                                else{
+                                                    scene.sound.play("failedToSendFriendRequest");
+                                                    alert("this lobby is now full!");
+                                                }
                                             },
                                             // on error return to game page
                                             error: function (xhr) {
@@ -255,17 +255,14 @@ export class friendScene extends Phaser.Scene {
                                                 window.location.replace('/game.html');
                                             }
                                         });
-                                        // target.id wont work as its not the encrypted version
-                                        // scene.network.connect(target.id);
-                                        clearInterval(interval)
-                                        // joining = "true";
-
                                     }
-                                }else{
-                                    alert("this lobby is full!")
+                                } else {
+                                    scene.sound.play("failedToSendFriendRequest");
+                                    alert("this lobby is full!");
+                                    
                                 }
                             },
-                        
+
                             // on error return to game page
                             error: function (xhr) {
                                 window.alert(JSON.stringify(xhr));
@@ -273,44 +270,8 @@ export class friendScene extends Phaser.Scene {
                             }
                         });
                         break;
-                        // if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
-                        //     // cant use this keyword as were inside a function
-                        //     // console.log(scene.network);
-                        //     var data = {
-                        //         otherUsername: target.id
-                        //     };
-                        //     $.ajax({
-                        //         type: 'POST',
-                        //         url: '/testerRoute',
-                        //         data,
-                        //         // on success call the callback function
-                        //         success: function (result) {
-                        //             console.log(result.otherUser);
-                        //             scene.network.connect(result.otherUser);
-                        //             // scene.network.send("hello");
-                        //             scene.network.send("testing again");
-                        //             scene.loadLobby();
-                        //         },
-                        //         // on error return to game page
-                        //         error: function (xhr) {
-                        //             window.alert(JSON.stringify(xhr));
-                        //             window.location.replace('/game.html');
-                        //         }
-                        //     });
-                        //     // target.id wont work as its not the encrypted version
-                        //     // scene.network.connect(target.id);
-                        //     clearInterval(interval)
-                        //     // joining = "true";
-                        //     break;
-                        // }
-                        // else {
-                        //     break;
-                        // }
                     }
                 }
-                // if (joining == "true"){
-                //     scene.loadLobby();
-                // }
             }
         }
     }
@@ -318,8 +279,8 @@ export class friendScene extends Phaser.Scene {
         this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
 
     }
-    loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername })
+    loadLobby(playerToJoin) {
+        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername, joinee: "joinee", playerToJoin : playerToJoin })
     }
 }
 

@@ -13,6 +13,7 @@ import { friendScene } from "./FriendScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { MapScene } from "./MapScene.js";
 import { ProfileScene } from "./ProfileScene.js";
+import { PlayGameScene } from "./PlayGameScene.js";
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -38,10 +39,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         this.load.html("enterCodeForm", "../enterCodeForm.html");
-
-        this.load.image("player2", "../assets/resources/player2.png");
-        this.load.image("player", "../assets/resources/player.png");
-        this.load.image("player_map", "../assets/resources/player_map.png");
+        this.load.image("player_map", "../assets/resources/sprites/player_map.png");
 
         this.load.image("map", "../assets/resources/tower_floor_map.png");
         this.load.image("shop", "../assets/resources/shop.png");
@@ -64,6 +62,9 @@ export class LoadScene extends Phaser.Scene{
         // this.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
         this.load.audio("sentFriendRequest", ['../assets/resources/sounds/sentRequest.mp3', '../assets/resources/sounds/sentRequest.ogg']);
         this.load.audio("failedToSendFriendRequest", ['../assets/resources/sounds/failedSentRequest.mp3', '../assets/resources/sounds/failedSentRequest.ogg']);
+        this.load.audio("menuButtonPress","../assets/resources/sounds/menuButtonPress.mp3");
+        this.load.audio("menuButtonHover","../assets/resources/sounds/menuButtonHover.mp3");
+        this.load.audio("beginGame","../assets/resources/sounds/beginGame.mp3");
         // Progress Bar
         let loadingBar = this.add.graphics({
             fillStyle: {
@@ -104,6 +105,23 @@ export class LoadScene extends Phaser.Scene{
                 success: function (result) {
                     playerUsername = result.username;
                     network = new Network(result.encrypted);
+                    var data = {
+                        refreshToken: getCookie('refreshJwt')
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/cleanup',
+                        data,
+                        // on success call the callback function
+                        success: function (result) {
+
+                        },
+                        // on error return to game page 
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/');
+                        }
+                    });   
                 },
                 // on error return to game page 
                 error: function (xhr) {

@@ -11,7 +11,7 @@ export class MapScene extends Phaser.Scene{
     }
 
     init(data){
-        this.network = data.networkObj;
+        let network = data.networkObj;
         this.playerUsername = data.playerUsername;
     }
 
@@ -41,7 +41,7 @@ export class MapScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
+            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: this.playerUsername });
         })
 
         // adds icons for map
@@ -161,16 +161,26 @@ export class MapScene extends Phaser.Scene{
         ]
 
         const map = new Map(encounters, positions, doors, door_positions, startEnd)
-
         // level counter top in the left
         let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-    
+
+        let opponentLevel;
+        try{
+            opponentLevel = data.level;
+        } catch{
+            opponentLevel = 0;
+        }
+        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        network.handleDataMapScene(opponentLevelText);
+
+
         // N.B. *** VERY IMPORTANT FUNCTION *** 
         encountersInteractive(this)
 
         // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
             if (map.currentLocation == 11) {
+                network.send('{"type":"levelUpdate", "level":"'+(map._level+1).toString()+'"}')
                 for (let i=0; i<map.adjacent.length; i++) {
                     map.adjacent[i].getEncounter().disableInteractive();
                 }
@@ -218,10 +228,11 @@ export class MapScene extends Phaser.Scene{
                     map.playerLocation(adjacent[i]);
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
+
                     if (adjacent[i].getEncounter().texture.key == "cards") {
                         scene.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                     } else if (adjacent[i].getEncounter().texture.key == "end") {
-                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end"});
+                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: scene.network});
                     } else if (adjacent[i].getEncounter().texture.key == "random") {
                         let choice = Math.floor(Math.random() * 2);
                         if (choice == 0) {
@@ -234,6 +245,7 @@ export class MapScene extends Phaser.Scene{
                     } else {
                         scene.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
                     }
+                    
                     for (let i=0; i<adjacent.length; i++) {
                         adjacent[i].getEncounter().disableInteractive();
                     }

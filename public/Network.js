@@ -1,8 +1,10 @@
-
 export class Network{
     constructor(username){  
         this.peer = new Peer(username);
         this._addPeerListeners();
+        this.joineesReceiveMessage;
+        this.hostRecieveMessage;
+        this.test = null;
     }
 
     _addPeerListeners(){
@@ -13,18 +15,15 @@ export class Network{
 
         this.peer.on('connection', function(conn){
             this.conn = conn
+            let joineesMessage = this;
 
-            // this.conn.on("open", function(){
-                this.conn.on('data', (data)=>{
-                    console.log("Data received: ", data);
-                })
-            // })
-
-            // // when first opened
-            // this.conn.on("open", ()=>{
-            //     console.log(`sender: ${this.id}`)
-            //     this.conn.send("hello");
-            // })
+            this.conn.on('data', (data)=>{
+                console.log("this is the hosts receiver");
+                joineesMessage.hostRecieveMessage = data;
+                joineesMessage.test = data;
+                console.log(joineesMessage.hostRecieveMessage);
+                console.log("Data received: ", data);
+            })
             console.log('Connected to peer with id: ', conn.peer);
         });
 
@@ -42,8 +41,34 @@ export class Network{
         var conn;
         conn = this.peer.connect(id);
         this.peer.conn = conn;
+        let netMessage = this;
         this.peer.conn.on('data', function(data){
+            console.log("this is the joineees receiving function");
+            netMessage.joineesReceiveMessage = data;
             console.log("Data received: ", data);
+        })
+    }
+
+    handleDataMapScene(opponentLevelObj){
+        this.peer.conn.off('data');
+        this.peer.conn.on('data', function(data){
+            var json_data = JSON.parse(data);
+            console.log(json_data);
+            if(json_data['type'] == 'levelUpdate'){
+                opponentLevelObj.setText(json_data['level']);
+            } else if (json_data['type'] == 'activityUpdate'){
+                console.log(json_data['activity']);
+            }
+        });
+    }
+
+    handleDataFightScene(opponent){
+        this.peer.conn.off('data');
+        this.peer.conn.on('data', function(data){
+            var json_data = JSON.parse(data);
+            if(json_data['type'] == 'playerMove'){
+                console.log(json_data['action']);
+            }
         })
     }
 }
