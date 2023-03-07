@@ -56,6 +56,8 @@ export class Network{
             console.log(json_data);
             if(json_data['type'] == 'levelUpdate'){
                 opponentLevelObj.setText(json_data['level']);
+            } else if (json_data['type'] == 'activityUpdate'){
+                console.log(json_data['activity']);
             }
         });
     }
