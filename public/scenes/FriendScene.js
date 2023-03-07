@@ -52,7 +52,7 @@ export class friendScene extends Phaser.Scene {
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
                 scene.sound.play("failedToSendFriendRequest");
-                tempAlert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`,5000)
+                tempAlert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`, 5000)
             } else {
                 if (confirm("Player found! Are you sure you want to send them a friend request") == true) {
                     sendFriendRequest(scene.nameInput.getChildByName("friendUsername").value, sendFriendRequestCallback);
@@ -205,21 +205,49 @@ export class friendScene extends Phaser.Scene {
                                     if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                                         // cant use this keyword as were inside a function
                                         // console.log(scene.network);
+                                        // need to double check if the host is still in an empty lobby
+                                        // can do this by absence of JOIN_CODE relationship
                                         var data = {
-                                            otherUsername: target.id
+                                            username: scene.playerUsername,
+                                            otherUser: target.id
                                         };
                                         $.ajax({
                                             type: 'POST',
-                                            url: '/testerRoute',
+                                            url: '/doubleCheckEmpty',
                                             data,
                                             // on success call the callback function
                                             success: function (result) {
-                                                console.log(result.otherUser);
-                                                clearInterval(interval)
-                                                scene.network.connect(result.otherUser);
-                                                // scene.network.send("hello");
-                                                scene.network.send("testing again");
-                                                scene.loadLobby();
+                                                if (result.isLobbyStillEmpty == "true") {
+                                                    var data = {
+                                                        otherUsername: target.id
+                                                    };
+                                                    $.ajax({
+                                                        type: 'POST',
+                                                        url: '/testerRoute',
+                                                        data,
+                                                        // on success call the callback function
+                                                        success: function (result) {
+                                                            console.log(result.otherUser);
+                                                            clearInterval(interval)
+                                                            scene.network.connect(result.otherUser);
+                                                            // scene.network.send("hello");
+                                                            scene.network.send("testing again");
+                                                            scene.loadLobby(target.id);
+                                                        },
+                                                        // on error return to game page
+                                                        error: function (xhr) {
+                                                            window.alert(JSON.stringify(xhr));
+                                                            window.location.replace('/game.html');
+                                                        }
+                                                    });
+                                                    // target.id wont work as its not the encrypted version
+                                                    // scene.network.connect(target.id);
+                                                    clearInterval(interval);
+                                                }
+                                                else{
+                                                    scene.sound.play("failedToSendFriendRequest");
+                                                    alert("this lobby is now full!");
+                                                }
                                             },
                                             // on error return to game page
                                             error: function (xhr) {
@@ -227,14 +255,11 @@ export class friendScene extends Phaser.Scene {
                                                 window.location.replace('/game.html');
                                             }
                                         });
-                                        // target.id wont work as its not the encrypted version
-                                        // scene.network.connect(target.id);
-                                        clearInterval(interval)
-                                        // joining = "true";
-
                                     }
                                 } else {
-                                    alert("this lobby is full!")
+                                    scene.sound.play("failedToSendFriendRequest");
+                                    alert("this lobby is full!");
+                                    
                                 }
                             },
 
@@ -254,8 +279,8 @@ export class friendScene extends Phaser.Scene {
         this.scene.start(CST.SCENES.FRIENDS, { networkObj: this.network, playerUsername: this.playerUsername })
 
     }
-    loadLobby() {
-        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername })
+    loadLobby(playerToJoin) {
+        this.scene.start(CST.SCENES.LOBBY, { networkObj: this.network, playerUsername: this.playerUsername, joinee: "joinee", playerToJoin : playerToJoin })
     }
 }
 

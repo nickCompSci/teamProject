@@ -29,6 +29,7 @@ export default class ReloadCard extends HandCard {
             scene.damage_calculation(scene.player, this.effect.sideEffects, [1]);
         }
 
+        scene.sound.play("reload", {volume: 0.4});
     }
 
     
