@@ -4,6 +4,9 @@ This file is used to create the map scene.
 import Map from "../helpers/classes/map.js";
 import { CST } from "../CST.js";
 import Player from "../helpers/classes/player.js";
+import { BattleLoadScene } from "./BattleLoadScene.js";
+import { BattleScene } from "./BattleScene.js";
+import { ExtraScene } from "./ExtraScene.js";
 
 export class MapScene extends Phaser.Scene{
     constructor(){
@@ -170,7 +173,7 @@ export class MapScene extends Phaser.Scene{
         try{
             opponentLevel = data.level;
         } catch{
-            opponentLevel = 0;
+            opponentLevel = 1;
         }
         let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
         //this.network.handleDataMapScene(opponentLevelText);
@@ -182,13 +185,13 @@ export class MapScene extends Phaser.Scene{
         // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
             if (this.map.currentLocation == 11) {
-                network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
+                //this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
                 for (let i=0; i<this.map.adjacent.length; i++) {
                     this.map.adjacent[i].getEncounter().disableInteractive();
                 }
                 this.map.levelInc();
                 level.text = this.map._level.toString();
-                encountersInteractive(this);
+                this.encountersInteractive();
                 this.player.x = this.map._current_room.x;
                 this.player.y = this.map._current_room.y;
             }
@@ -203,6 +206,12 @@ export class MapScene extends Phaser.Scene{
         */
 
         this.events.on("resume", () => {
+            this.scene.remove(CST.SCENES.BATTLE_LOAD);
+            this.scene.remove(CST.SCENES.BATTLE);
+            this.scene.remove(CST.SCENES.EXTRA);
+            this.scene.add(CST.SCENES.BATTLE_LOAD, BattleLoadScene, false);
+            this.scene.add(CST.SCENES.BATTLE, BattleScene, false);
+            this.scene.add(CST.SCENES.EXTRA, ExtraScene, false);
             this.encountersInteractive();
         });
 
@@ -232,21 +241,21 @@ export class MapScene extends Phaser.Scene{
                 this.player.x = this.map._current_room.x;
                 this.player.y = this.map._current_room.y;
 
-                if (adjacent[i].getEncounter().texture.key == "cards") {
+                if (adjacent[i].getVisited() == true) {
+                    this.resume_map();
+                } else if (adjacent[i].getEncounter().texture.key == "cards") {
                     this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
-                    this.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
+                    this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
                     let choice = Math.floor(Math.random() * 2);
                     if (choice == 0) {
-                        this.scene.start(CST.SCENES.EXTRA, {room : "chest"});
+                        this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest"});
                     } else {
-                        this.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername });
+                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                     }
-                }  else if (adjacent[i].getVisited() == true) {
-                    this.resume_map();
                 } else {
-                    this.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
+                    this.scene.pause().launch(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
                 }
                 
                 for (let i=0; i<adjacent.length; i++) {

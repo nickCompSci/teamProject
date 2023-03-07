@@ -197,7 +197,8 @@ export class ExtraScene extends Phaser.Scene {
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
+            this.scene.stop(CST.SCENES.EXTRA);
+            this.scene.resume(CST.SCENES.MAP);
         })
 
         

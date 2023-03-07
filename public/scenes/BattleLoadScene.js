@@ -1,6 +1,4 @@
 import { CST } from "../CST.js";
-import HandCard from "../helpers/classes/cards/handCard.js";
-import { BattleScene } from "./BattleScene.js";
 
 export class BattleLoadScene extends Phaser.Scene {
     constructor() {
