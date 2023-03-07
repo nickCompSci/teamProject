@@ -27,7 +27,7 @@ export class BattleScene extends Phaser.Scene {
         this.boss;
         this.otherPlayer;
         this.network = data.networkObj;
-        this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
+        // this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
     }
 
     preload() {
@@ -86,7 +86,7 @@ export class BattleScene extends Phaser.Scene {
         this.bg.displayWidth = 777;
     
         this.player = new Player(this, 0, 0, "player");
-        this.player.setEqual(this.playerData);
+        // this.player.setEqual(this.playerData);
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
@@ -137,16 +137,12 @@ export class BattleScene extends Phaser.Scene {
         }
 
         // soundtracks
-        if (this.level === 4) {
-            // spawn other player
-            this.spawnOtherPlayerOnScene();
-            this.sound.play("menuMusic", {loop: true, volume: 0.05});
-        } else if (this.level === 3) {
+        if (this.level === 3) {
             this.spawnBossOnScene();
-            this.sound.play("bossMusic", {loop: true, volume: 0.05});
+            this.sound.play("bossMusic", {loop: true, volume: 0.1});
         } else {
             this.spawnEnemyOnScene();
-            this.sound.play("battleMusic", {loop: true, volume: 0.05});
+            this.sound.play("battleMusic", {loop: true, volume: 0.1});
         }
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
@@ -189,7 +185,7 @@ export class BattleScene extends Phaser.Scene {
         // hover over listener
         this.input.on('gameobjectover', (pointer, gameObject) => {
             if (gameObject.type === "Sprite" && this.player.handArray.includes(gameObject)) {
-                this.sound.play("cardHover");
+                this.sound.play("cardHover", {volume: 0.7});
                 let yOffSet = 50;
                 this.tweens.add({
                     targets: gameObject,
@@ -248,7 +244,6 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.x = dropZone.x;
                 gameObject.y = dropZone.y + dropZone.y / 3;
 
-                
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
                 
@@ -256,7 +251,6 @@ export class BattleScene extends Phaser.Scene {
                 gameObject.setVisible(false); 
                 gameObject.activateCard(this);
 
-        
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 if (this.player.actionPoints > 6){
                     this.ap.setFrame(0);
@@ -398,11 +392,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     characterHealthbarCalculation(character) {
-        if (character.spriteType === "player") {
+        if (this.enemies.includes(character)) {
+            this.healthbars[this.enemies.indexOf(character)].show_health(this, character.health, character.armour)
+        } else if (character.spriteType === "player") {
             this.playerHealth.show_health(this, character.health, character.armour);
-        } else if (character.spriteType === "enemy") {
-            let enemyIndex = this.enemies.indexOf(character);
-            this.healthbars[enemyIndex].show_health(this, character.health, character.armour);
         }
     }
 
@@ -553,7 +546,9 @@ export class BattleScene extends Phaser.Scene {
         
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
-            if (this.enemies.includes(this.boss)) {
+            if (this.enemies[i].spriteType === "player") {
+                console.log("Hello");
+            } else if (this.enemies.includes(this.boss)) {
                 this.enemies[i].action(this);
             } else {
                 let base_damage = this.enemies[i].action();
@@ -578,8 +573,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-        this.scene.stop(CST.SCENES.BATTLE);
-        this.scene.resume(CST.SCENES.MAP);
+        // this.scene.stop(CST.SCENES.BATTLE);
+        // this.scene.resume(CST.SCENES.MAP);
+        this.showRewards();
     }
 
     spawnOtherPlayerOnScene() {
@@ -589,11 +585,11 @@ export class BattleScene extends Phaser.Scene {
         this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
         this.enemies.push(this.otherPlayer);
         let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
-        this.healthbars.push(otherPlayerHealth)
+        this.healthbars.push(otherPlayerHealth);
     }
 
     spawnBossOnScene() {
-        this.boss = new Boss(this, 0, 0, "boss", 0 , 120);
+        this.boss = new Boss(this, 0, 0, "boss", 0 , 100);
         this.enemies.push(this.boss);
         let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
         this.healthbars.push(bosshealth);
@@ -661,7 +657,9 @@ export class BattleScene extends Phaser.Scene {
                 }
                 pickCardsText.destroy();
                 scene.rewards=[];
-                // transition scene here
+                if (scene.level === 3) {
+                    scene.scene.start(CST.SCENES.INITIATEPVPSCENE,  {networkObj: this.network, playerUsername: this.playerUsername});
+                }
                 // this refers to the card btw here, not the scene
             })
 
@@ -686,4 +684,5 @@ export class BattleScene extends Phaser.Scene {
         this.input.off('gameobjectover');
         this.input.off('gameobjectout');
     }
+
 }

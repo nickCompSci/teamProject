@@ -134,7 +134,7 @@ export class LoadScene extends Phaser.Scene{
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
-            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
+            this.scene.start(CST.SCENES.MENU);
         })
     }
 }

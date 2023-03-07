@@ -32,6 +32,7 @@ export default class DamageCard extends HandCard {
 
                 // add the event listener back to the enemy
                 enemy.clickHandler = this.damageEnemy.bind(this, enemy, scene);
+
                 enemy.on("pointerdown", enemy.clickHandler);
 
             }
@@ -40,6 +41,10 @@ export default class DamageCard extends HandCard {
             this.resetCard();
         } else if (this.effect.target === "random") {
             for (let i=0; i < this.effect.randomAmount; i++) {
+                if (scene.enemies.length === 0) {
+                    break;
+                    // need to return to the map scene then
+                } 
                 let randomIndex = Math.floor(Math.random() * scene.enemies.length);
                 let randomEnemy = scene.enemies[randomIndex];
 
@@ -71,6 +76,7 @@ export default class DamageCard extends HandCard {
             }
             scene.damage_calculation(enemy, this.effect.damage, [1]);
             enemy.isBeingClicked = false;
+            enemy.removeListener("pointerdown", enemy.clickHandler);
             this.resetCard();
         }
 
@@ -93,8 +99,8 @@ export default class DamageCard extends HandCard {
     }
 
     dealDamageToAllEnemies(scene) {
-        for (let enemy of scene.enemies) {
-            scene.damage_calculation(enemy, this.effect.damage, [1]);
+        for (let i=scene.enemies.length-1; i >= 0; i--) {
+            scene.damage_calculation(scene.enemies[i], this.effect.damage, [1]);
         }
 
     }

@@ -172,7 +172,7 @@ export class MenuScene extends Phaser.Scene{
         mapButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
             this.sound.sounds[0].stop();
-            this.scene.start(CST.SCENES.MAP);
+            this.scene.start(CST.SCENES.MAP, {networkObj: this.network, playerUsername: this.playerUsername});
             console.log("click")
         })
     }

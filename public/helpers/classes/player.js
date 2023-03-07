@@ -20,7 +20,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.spriteType = "player";
         this.keepCards = [];
         this.keepCardsLimit = 1;
+        this.setInteractive();
 
+        this.enemyArrow = scene.add.image(this.x, this.y - this.height - 25, "enemyArrow").setScale(2).setVisible(false);
         this.setScale(1.5);
         scene.add.existing(this);
 

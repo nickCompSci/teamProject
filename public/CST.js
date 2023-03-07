@@ -16,6 +16,7 @@ export const CST = {
         MAP: "MAP",
         PROFILE : "PROFILE",
         EXTRA: "EXTRA",
-        PLAYGAME : "PLAYGAME"
+        PLAYGAME : "PLAYGAME",
+        INITIATEPVPSCENE: "INITIATEPVPSCENE"
     }
 }
