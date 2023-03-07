@@ -9,7 +9,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         super(scene, x, y, sprite, frame);
         this.maxHealth = 50;
         this.health = this.maxHealth;
-        this.armour = 0;
         this.maxActionPoints = 6;
         this.actionPoints = this.maxActionPoints;
         this.maxArmour = 25;
@@ -20,7 +19,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.graveYardArray = [];
         this.spriteType = "player";
         this.keepCards = [];
-        this.keepCardsLimit = 2;
+        this.keepCardsLimit = 1;
 
         this.setScale(1.5);
         scene.add.existing(this);
@@ -209,6 +208,16 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     getSpriteType() {
         return this.spriteType;
+    }
+
+    setEqual(playerData) {
+        console.log(playerData);
+        this.maxHealth = playerData.maxHealth;
+        this.health = playerData.health;
+        this.maxActionPoints = playerData.maxActionPoints;
+        this.actionPoints = playerData.actionPoints;
+        this.deckArray = playerData.deckArray;
+        this.keepCardsLimit = playerData.keepCardsLimit;
     }
 
     starterDeck(scene) {

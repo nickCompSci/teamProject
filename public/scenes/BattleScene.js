@@ -19,10 +19,11 @@ export class BattleScene extends Phaser.Scene {
 
     init(data) {
         // data returns a list of preloaded cards
+        this.playerData = data.playerObj;        
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
-        this.level = 4;
+        this.level = 1;
         this.boss;
         this.otherPlayer;
         this.network = data.networkObj;
@@ -32,8 +33,8 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("HUD", "../assets/resources/hud_bg.png");
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        this.load.image("player", "../assets/resources/sprites/otherplayer.png");
-        this.load.image("otherPlayer", "../assets/resources/sprites/player_enemy.png");
+        this.load.image("player", "../assets/resources/sprites/player.png");
+        this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
         this.load.image("deck", "../assets/resources/sprites/deck.png");
@@ -82,8 +83,9 @@ export class BattleScene extends Phaser.Scene {
         this.bg.setPosition(gameWidth/2, gameHeight/2.6);
         this.bg.setScale(0.65);
         this.bg.displayWidth = 777;
-        
+    
         this.player = new Player(this, 0, 0, "player");
+        this.player.setEqual(this.playerData);
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
@@ -120,7 +122,7 @@ export class BattleScene extends Phaser.Scene {
         }, this);
         this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         
-        this.endTurnButton = new Button(0, gameHeight/2, 8, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
+        this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);

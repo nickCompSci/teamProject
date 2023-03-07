@@ -3,6 +3,8 @@ This file is used to create the map scene.
 */
 import Map from "../helpers/classes/map.js";
 import { CST } from "../CST.js";
+import Player from "../helpers/classes/player.js";
+
 export class MapScene extends Phaser.Scene{
     constructor(){
         super({
@@ -27,8 +29,8 @@ export class MapScene extends Phaser.Scene{
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
-        let pointer = this.add.sprite(100, 100, "pointer");
-        pointer.setVisible(false);
+        this.pointer = this.add.sprite(100, 100, "pointer");
+        this.pointer.setVisible(false);
 
         // Back Button
         backButton.setInteractive();
@@ -160,9 +162,9 @@ export class MapScene extends Phaser.Scene{
             {x : this.game.renderer.width / 2+200, y : this.game.renderer.height / 2-60, room : 1}
         ]
 
-        const map = new Map(encounters, positions, doors, door_positions, startEnd);
+        this.map = new Map(encounters, positions, doors, door_positions, startEnd);
         // level counter top in the left
-        let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
+        let level = this.add.text(220, 100, this.map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
 
         let opponentLevel;
         try{
@@ -175,20 +177,20 @@ export class MapScene extends Phaser.Scene{
 
 
         // N.B. *** VERY IMPORTANT FUNCTION *** 
-        encountersInteractive(this)
+        this.encountersInteractive();
 
         // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
-            if (map.currentLocation == 11) {
-                network.send('{"type":"levelUpdate", "level":"'+(map._level+1).toString()+'"}')
-                for (let i=0; i<map.adjacent.length; i++) {
-                    map.adjacent[i].getEncounter().disableInteractive();
+            if (this.map.currentLocation == 11) {
+                network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
+                for (let i=0; i<this.map.adjacent.length; i++) {
+                    this.map.adjacent[i].getEncounter().disableInteractive();
                 }
-                map.levelInc();
-                level.text = map._level.toString();
+                this.map.levelInc();
+                level.text = this.map._level.toString();
                 encountersInteractive(this);
-                player.x = map._current_room.x;
-                player.y = map._current_room.y;
+                this.player.x = this.map._current_room.x;
+                this.player.y = this.map._current_room.y;
             }
         })
 
@@ -200,13 +202,13 @@ export class MapScene extends Phaser.Scene{
 
         */
 
-        this.events.on ("resume", () => {
-            encountersInteractive(this);
+        this.events.on("resume", () => {
+            this.encountersInteractive();
         });
 
-        // player icon on the map
-        let player = this.add.image(map._current_room.x, map._current_room.y, 'player_map').setDepth(4)
-        
+        // player icon on the this.map
+        this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);
+
         /*
         THIS IS WHERE THE INTERACTIVITY FOR THE ENCOUNTERS SHOULD BE DONE.
 
@@ -216,52 +218,54 @@ export class MapScene extends Phaser.Scene{
 
         ALSO LOGS THE ROOMS THAT HAVE BEEN VISITED.
         */
-
-        function encountersInteractive(scene) {
-            let adjacent = map.adjacent;
-
-            for (let i=0; i<adjacent.length; i++) {
-                adjacent[i].getEncounter().setInteractive();
-
-                adjacent[i].getEncounter().on("pointerup", ()=>{
-                    // Moves back to the main menu when the back button is clicked
-                    map.playerLocation(adjacent[i]);
-                    player.x = map._current_room.x;
-                    player.y = map._current_room.y;
-
-                    if (adjacent[i].getEncounter().texture.key == "cards") {
-                        scene.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
-                    } else if (adjacent[i].getEncounter().texture.key == "end") {
-                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: scene.network});
-                    } else if (adjacent[i].getEncounter().texture.key == "random") {
-                        let choice = Math.floor(Math.random() * 2);
-                        if (choice == 0) {
-                            scene.scene.start(CST.SCENES.EXTRA, {room : "chest"});
-                        } else {
-                            scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
-                        }
-                    }  else if (adjacent[i].getVisited() == true) {
-                        scene.resume_map();
-                    } else {
-                        scene.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
-                    }
-                    
-                    for (let i=0; i<adjacent.length; i++) {
-                        adjacent[i].getEncounter().disableInteractive();
-                    }
-                    map.setAdjacent();
-
-                    adjacent[i].setVisited();
-                })
-
-                adjacent[i].getEncounter().on("pointerover", ()=>{
-                    pointer.setVisible(true).setDepth(3);
-                    pointer.x = adjacent[i].getEncounter().x+60;
-                    pointer.y = adjacent[i].getEncounter().y-30;
-
-                })
-            }
-        }
-        
     }
-}
+
+    encountersInteractive() {
+        let adjacent = this.map.adjacent;
+
+        for (let i=0; i<adjacent.length; i++) {
+            adjacent[i].getEncounter().setInteractive();
+
+            adjacent[i].getEncounter().on("pointerup", ()=>{
+                // Moves back to the main menu when the back button is clicked
+                this.map.playerLocation(adjacent[i]);
+                this.player.x = this.map._current_room.x;
+                this.player.y = this.map._current_room.y;
+
+                if (adjacent[i].getEncounter().texture.key == "cards") {
+                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                } else if (adjacent[i].getEncounter().texture.key == "end") {
+                    this.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
+                } else if (adjacent[i].getEncounter().texture.key == "random") {
+                    let choice = Math.floor(Math.random() * 2);
+                    if (choice == 0) {
+                        this.scene.start(CST.SCENES.EXTRA, {room : "chest"});
+                    } else {
+                        this.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername });
+                    }
+                }  else if (adjacent[i].getVisited() == true) {
+                    this.resume_map();
+                } else {
+                    this.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
+                }
+                
+                for (let i=0; i<adjacent.length; i++) {
+                    adjacent[i].getEncounter().disableInteractive();
+                }
+                this.map.setAdjacent();
+
+                adjacent[i].setVisited();
+            })
+
+            adjacent[i].getEncounter().on("pointerover", ()=>{
+                this.pointer.setVisible(true).setDepth(3);
+                this.pointer.x = adjacent[i].getEncounter().x+60;
+                this.pointer.y = adjacent[i].getEncounter().y-30;
+            })
+        }
+    }
+
+    resume_map() {
+        this.encountersInteractive();
+    }
+}    
