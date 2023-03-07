@@ -27,7 +27,7 @@ export class BattleScene extends Phaser.Scene {
         this.boss;
         this.otherPlayer;
         this.network = data.networkObj;
-        //this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
+        this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
     }
 
     preload() {

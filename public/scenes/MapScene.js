@@ -15,7 +15,7 @@ export class MapScene extends Phaser.Scene{
     init(data){
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
-        //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
+        this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
 
     // Creates any images, text, etc.
