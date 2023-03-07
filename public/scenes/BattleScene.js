@@ -25,6 +25,7 @@ export class BattleScene extends Phaser.Scene {
         this.level = 4;
         this.boss;
         this.otherPlayer;
+        let network = data.networkObj;
     }
 
     preload() {

@@ -19,6 +19,7 @@ export class ExtraScene extends Phaser.Scene {
         // data returns a list of preloaded cards
         this.room = data.room;
         this.enemies = [];
+        this.network = data.network;
     }
 
     preload() {
@@ -179,7 +180,7 @@ export class ExtraScene extends Phaser.Scene {
         })
 
         return2rarity.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.EXTRA);
+            this.scene.start(CST.SCENES.EXTRA, {networkObj:this.network});
         })
 
         // Back Button for navigating back to the main menu
@@ -196,7 +197,7 @@ export class ExtraScene extends Phaser.Scene {
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MAP);
+            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
         })
 
         
@@ -254,7 +255,7 @@ export class ExtraScene extends Phaser.Scene {
                     this.setPicked += 1;
                         if (this.setPicked == 4) {
                             console.log(this.payment, this.purchase)
-                            this.scene.start(CST.SCENES.MAP);
+                            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
                         }
                     }
                 }

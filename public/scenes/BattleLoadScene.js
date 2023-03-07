@@ -9,6 +9,10 @@ export class BattleLoadScene extends Phaser.Scene {
         })
     }
 
+    init(data){
+        let network = data.networkObj;
+    }
+
     preload() {
         // damage
         this.load.image("cannonball", "../assets/resources/cards/Cannonball.png");
@@ -50,6 +54,6 @@ export class BattleLoadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start(CST.SCENES.BATTLE);
+        this.scene.start(CST.SCENES.BATTLE, {networkObj: network});
     }
 }

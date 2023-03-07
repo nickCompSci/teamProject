@@ -11,9 +11,8 @@ export class MapScene extends Phaser.Scene{
     }
 
     init(data){
-        this.network = data.networkObj;
+        let network = data.networkObj;
         this.playerUsername = data.playerUsername;
-        window.network = this.network;
     }
 
     // Creates any images, text, etc.
@@ -42,7 +41,7 @@ export class MapScene extends Phaser.Scene{
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
-            this.scene.start(CST.SCENES.MENU, {networkObj: this.network, playerUsername: this.playerUsername });
+            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: this.playerUsername });
         })
 
         // adds icons for map
@@ -172,7 +171,7 @@ export class MapScene extends Phaser.Scene{
             opponentLevel = 0;
         }
         let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-        this.network.handleDataMapScene(opponentLevelText);
+        network.handleDataMapScene(opponentLevelText);
 
 
         // N.B. *** VERY IMPORTANT FUNCTION *** 
@@ -181,7 +180,7 @@ export class MapScene extends Phaser.Scene{
         // for moving to next level (only works when in final room)
         let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
             if (map.currentLocation == 11) {
-                this.network.send('{"type":"levelUpdate", "level":"'+(map._level+1).toString()+'"}')
+                network.send('{"type":"levelUpdate", "level":"'+(map._level+1).toString()+'"}')
                 for (let i=0; i<map.adjacent.length; i++) {
                     map.adjacent[i].getEncounter().disableInteractive();
                 }
@@ -235,7 +234,7 @@ export class MapScene extends Phaser.Scene{
                     if (adjacent[i].getEncounter().texture.key == "cards") {
                         scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                     } else if (adjacent[i].getEncounter().texture.key == "end") {
-                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end"});
+                        scene.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: scene.network});
                     } else if (adjacent[i].getEncounter().texture.key == "random") {
                         let choice = Math.floor(Math.random() * 2);
                         if (choice == 0) {
