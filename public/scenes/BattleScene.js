@@ -27,6 +27,8 @@ export class BattleScene extends Phaser.Scene {
         this.level = 1;
         this.boss;
         this.otherPlayer;
+        this.network = data.networkObj;
+        //this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
     }
 
     preload() {
@@ -48,10 +50,6 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
         this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
         this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
-
-        // soundtrack;
-        this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
-        this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
 
         // sound effects
         this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
@@ -146,13 +144,13 @@ export class BattleScene extends Phaser.Scene {
         if (this.level === 4) {
             // spawn other player
             this.spawnOtherPlayerOnScene();
-            this.sound.play("menuMusic", {loop: true, volume: 0.5});
+            this.sound.sounds[0].play();
         } else if (this.level === 3) {
             this.spawnBossOnScene();
-            this.sound.play("bossMusic", {loop: true, volume: 0.5});
+            this.sound.sounds[4].play();
         } else {
             this.spawnEnemyOnScene();
-            this.sound.play("battleMusic", {loop: true, volume: 0.5});
+            this.sound.sounds[3].play();
         }
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
@@ -678,6 +676,9 @@ export class BattleScene extends Phaser.Scene {
                 scene.player.handArray = [];
                 scene.player.graveYardArray = [];
                 scene.playerData.setEqual(scene.player);
+
+                scene.sound.stopAll();
+                scene.sound.sounds[1].play();
                 scene.scene.stop(CST.SCENES.BATTLE);
                 scene.scene.resume(CST.SCENES.MAP);
                 

@@ -34,13 +34,6 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("background", "../assets/resources/tower2.jpg");
         this.load.image("arrow", "../assets/resources/arrow.png");
         this.load.image("tower", "../assets/resources/background.png");
-        // Load audio
-        this.load.audio("menuMusic", "../assets/resources/soundtrack.mp3");
-        this.load.html("searchFriendForm", "../searchFriendForm.html");
-        this.load.html("pendingAndFriends", "../pendingAndFriends.html");
-        this.load.html("enterCodeForm", "../enterCodeForm.html");
-        this.load.image("player_map", "../assets/resources/sprites/player_map.png");
-
         this.load.image("map", "../assets/resources/tower_floor_map.png");
         this.load.image("shop", "../assets/resources/shop.png");
         this.load.image("random", "../assets/resources/random.png");
@@ -48,8 +41,20 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("door", "../assets/resources/doorway.png");
         this.load.image("up", "../assets/resources/up_arrow.png");
         this.load.image("pointer", "../assets/resources/pointer.png");
-
         this.load.image("chest", "../assets/resources/chest.png");
+        // Load audio
+        this.load.html("searchFriendForm", "../searchFriendForm.html");
+        this.load.html("pendingAndFriends", "../pendingAndFriends.html");
+        this.load.html("enterCodeForm", "../enterCodeForm.html");
+        this.load.image("player_map", "../assets/resources/sprites/player_map.png");
+        // Soundtrack
+        this.load.audio("menuMusic", "../assets/resources/soundtrack.mp3");
+        this.load.audio('mapMusic', "../assets/resources/soundtrack/Map.mp3");
+        this.load.audio('doorOpen', "../assets/resources/sounds/doorOpen.wav");
+        this.load.audio('shop', "../assets/resources/soundtrack/shop.mp3");
+        this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
+        this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
+
 
         // Load plugins
         // this.load.scenePlugin({
@@ -134,6 +139,12 @@ export class LoadScene extends Phaser.Scene{
 
         // Loads menu when everything is loaded
         this.load.on("complete", ()=>{
+            this.sound.add("menuMusic", {loop: true, volume: 0.05});
+            this.sound.add("mapMusic", {loop: true, volume: 0.05});
+            this.sound.add("shop", {loop: true, volume: 0.05});
+            this.sound.add("battleMusic", {loop: true, volume: 0.05});
+            this.sound.add("bossMusic", {loop: true, volume: 0.05});
+            this.sound.add("doorOpen", {loop: false, volume: 0.05});
             this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
         })
     }

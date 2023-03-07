@@ -81,6 +81,8 @@ export class ExtraScene extends Phaser.Scene {
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
+        this.sound.sounds[2].play();
+
         this.setPicked = 0;
         this.payment = []
 
@@ -197,8 +199,11 @@ export class ExtraScene extends Phaser.Scene {
 
         backButton.on("pointerup", ()=>{
             // Moves back to the main menu when the back button is clicked
+            this.sound.stopAll();
+            this.sound.sounds[1].play();
             this.scene.stop(CST.SCENES.EXTRA);
             this.scene.resume(CST.SCENES.MAP);
+
         })
 
         
@@ -256,7 +261,10 @@ export class ExtraScene extends Phaser.Scene {
                     this.setPicked += 1;
                         if (this.setPicked == 4) {
                             console.log(this.payment, this.purchase)
-                            this.scene.start(CST.SCENES.MAP, {networkObj:this.network});
+                            this.sound.stopAll();
+                            this.sound.sounds[1].play();
+                            this.scene.stop(CST.SCENES.EXTRA);
+                            this.scene.resume(CST.SCENES.MAP, {networkObj:this.network});
                         }
                     }
                 }
@@ -266,9 +274,6 @@ export class ExtraScene extends Phaser.Scene {
         this.displayCards(this.rarityCards);
 
     }
-
-    
-    
 
     loadCards() {
         // damage cards
