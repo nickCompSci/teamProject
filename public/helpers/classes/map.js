@@ -36,7 +36,7 @@ export default class Map {
 
         this._doors = this._doors_temp;
 
-        this._level = 0;
+        this._level = 1;
         this._current_location = 0;
         this._adjacent = [];
         this._rooms = [];
@@ -44,7 +44,7 @@ export default class Map {
         shuffle(encounters);
         this.assignLocations(encounters, positions);
         this._rooms.push(new Room (0, this._start, true));
-        this._rooms.push(new Room(11, this._end));
+        this._rooms.push(new Room(11, this._end, true));
         this.setAdjacent();
     }
 

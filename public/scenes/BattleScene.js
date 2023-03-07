@@ -20,6 +20,7 @@ export class BattleScene extends Phaser.Scene {
     init(data) {
         // data returns a list of preloaded cards
         this.playerData = data.playerObj;        
+        this.network = data.networkObj;
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
@@ -27,7 +28,7 @@ export class BattleScene extends Phaser.Scene {
         this.boss;
         this.otherPlayer;
         this.network = data.networkObj;
-        // this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
+        //this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
     }
 
     preload() {
@@ -82,7 +83,21 @@ export class BattleScene extends Phaser.Scene {
         this.bg.displayWidth = 777;
     
         this.player = new Player(this, 0, 0, "player");
-        // this.player.setEqual(this.playerData);
+        this.player.setEqual(this.playerData);
+        for (let card of this.player.deckArray) {
+            let newCard;
+            if (card.cardType === "damage"){
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+            } else if (card.cardType === "healing") {
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+            } else if (card.cardType === "reload") {
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+            } else {
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+            }
+            let cardIndex = this.player.deckArray.indexOf(card);
+            this.player.deckArray[cardIndex] = newCard;
+        }
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
@@ -112,25 +127,18 @@ export class BattleScene extends Phaser.Scene {
 
         // launch the discard pile scene in parallel
         this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
+        this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
         this.discardPile.setInteractive({useHandCursor: true});
         this.discardPile.on('pointerdown', (event) => {
             let cardsInDiscardPile = this.player.graveYardArray;
             this.scene.pause().launch(CST.SCENES.DISCARD_PILE, {cardsInDiscardPile, cardsInDeck});
         }, this);
-        this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
+        
         
         this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
-
-        // temporarily adding random cards from deck to add to this.rewards
-        // remove when generating cards from map
-        for (let i=0; i < 2; i++) {
-            let randomIndex = Math.floor(Math.random() * this.player.deckArray.length);
-            let randomCard = this.player.deckArray[randomIndex];
-            this.rewards.push(randomCard);
-        }
 
         // soundtracks
         if (this.level === 3) {
@@ -429,17 +437,17 @@ export class BattleScene extends Phaser.Scene {
         let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
         let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
 
-        this.player.deckArray.push(cannonball);
-        this.player.deckArray.push(grenade);
-        this.player.deckArray.push(high_noon);
-        this.player.deckArray.push(fire_rain);
-        this.player.deckArray.push(minigun);
-        this.player.deckArray.push(launcher);
-        this.player.deckArray.push(ballistic);
-        this.player.deckArray.push(reinforce);
-        this.player.deckArray.push(blast);
-        this.player.deckArray.push(missile);
-        this.player.deckArray.push(molotov);
+        // this.player.deckArray.push(cannonball);
+        // this.player.deckArray.push(grenade);
+        // this.player.deckArray.push(high_noon);
+        // this.player.deckArray.push(fire_rain);
+        // this.player.deckArray.push(minigun);
+        // this.player.deckArray.push(launcher);
+        // this.player.deckArray.push(ballistic);
+        // this.player.deckArray.push(reinforce);
+        // this.player.deckArray.push(blast);
+        // this.player.deckArray.push(missile);
+        // this.player.deckArray.push(molotov);
 
         // combo cards
         let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
@@ -449,12 +457,12 @@ export class BattleScene extends Phaser.Scene {
         let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
         let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "blue", this, 0, 0, "nanotech");
 
-        this.player.deckArray.push(headshot);
-        this.player.deckArray.push(ricochet);
-        this.player.deckArray.push(pinpoint);
-        this.player.deckArray.push(bayonet);
-        this.player.deckArray.push(load);
-        this.player.deckArray.push(nanotech);
+        // this.player.deckArray.push(headshot);
+        // this.player.deckArray.push(ricochet);
+        // this.player.deckArray.push(pinpoint);
+        // this.player.deckArray.push(bayonet);
+        // this.player.deckArray.push(load);
+        // this.player.deckArray.push(nanotech);
        
         // reload cards
         let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
@@ -464,12 +472,12 @@ export class BattleScene extends Phaser.Scene {
         let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
         let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", this, 0, 0, "ammo_cache");
 
-        this.player.deckArray.push(reload);
-        this.player.deckArray.push(overload);
-        this.player.deckArray.push(bandolier);
-        this.player.deckArray.push(lock_and_load);
-        this.player.deckArray.push(holster);
-        this.player.deckArray.push(ammo_cache);
+        // this.player.deckArray.push(reload);
+        // this.player.deckArray.push(overload);
+        // this.player.deckArray.push(bandolier);
+        // this.player.deckArray.push(lock_and_load);
+        // this.player.deckArray.push(holster);
+        // this.player.deckArray.push(ammo_cache);
 
         // healing cards
         let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
@@ -479,13 +487,15 @@ export class BattleScene extends Phaser.Scene {
         let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
         let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", this, 0, 0, "morphine");
 
-        this.player.deckArray.push(medkit);
-        this.player.deckArray.push(kevlar);
-        this.player.deckArray.push(stim_pack)
-        this.player.deckArray.push(armour_plate);
-        this.player.deckArray.push(bourbon);
-        this.player.deckArray.push(morphine);
+        // this.player.deckArray.push(medkit);
+        // this.player.deckArray.push(kevlar);
+        // this.player.deckArray.push(stim_pack)
+        // this.player.deckArray.push(armour_plate);
+        // this.player.deckArray.push(bourbon);
+        // this.player.deckArray.push(morphine);
     
+        this.rewards.push(minigun);
+        this.rewards.push(blast);
     }
     
     
@@ -569,13 +579,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-        // this.scene.stop(CST.SCENES.BATTLE);
-        // this.scene.resume(CST.SCENES.MAP);
         this.showRewards();
-        this.sound.stopAll();
-        this.sound.sounds[1].play();
-        this.scene.stop(CST.SCENES.BATTLE);
-        this.scene.resume(CST.SCENES.MAP);
     }
 
     spawnOtherPlayerOnScene() {
@@ -657,10 +661,22 @@ export class BattleScene extends Phaser.Scene {
                 }
                 pickCardsText.destroy();
                 scene.rewards=[];
-                if (scene.level === 3) {
-                    scene.scene.start(CST.SCENES.INITIATEPVPSCENE,  {networkObj: this.network, playerUsername: this.playerUsername});
-                }
                 // this refers to the card btw here, not the scene
+                for (let card of scene.player.graveYardArray){
+                    scene.player.deckArray.push(card);
+                }
+                for (let card of scene.player.handArray){
+                    scene.player.deckArray.push(card);
+                }
+                scene.player.handArray = [];
+                scene.player.graveYardArray = [];
+                scene.playerData.setEqual(scene.player);
+
+                scene.sound.stopAll();
+                scene.sound.sounds[1].play();
+                scene.scene.stop(CST.SCENES.BATTLE);
+                scene.scene.resume(CST.SCENES.MAP);
+                
             })
 
             cards.setVisible(true);

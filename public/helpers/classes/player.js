@@ -27,7 +27,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
         // generate a starter deck for the player
-        // this.starterDeck(scene);
+        this.starterDeck(scene);
     }
 
     selectCardInHand(scene) {
@@ -213,11 +213,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     setEqual(playerData) {
-        console.log(playerData);
         this.maxHealth = playerData.maxHealth;
         this.health = playerData.health;
         this.maxActionPoints = playerData.maxActionPoints;
-        this.actionPoints = playerData.actionPoints;
         this.deckArray = playerData.deckArray;
         this.keepCardsLimit = playerData.keepCardsLimit;
     }

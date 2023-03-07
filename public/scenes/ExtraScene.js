@@ -202,7 +202,7 @@ export class ExtraScene extends Phaser.Scene {
             this.sound.stopAll();
             this.sound.sounds[1].play();
             this.scene.stop(CST.SCENES.EXTRA);
-            this.scene.resume(CST.SCENES.MAP, {networkObj:this.network});
+            this.scene.resume(CST.SCENES.MAP);
 
         })
 
