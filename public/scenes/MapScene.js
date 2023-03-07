@@ -15,17 +15,20 @@ export class MapScene extends Phaser.Scene{
     init(data){
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
-        this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
+        //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
 
     // Creates any images, text, etc.
     create(){
+        this.sound.stopAll();
 
         // Loads background
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'map').setSize(this.game.renderer.width, this.game.renderer.height).setDepth(0)
 
         // Back Button for navigating back to the main menu
         let backButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 300, 'Back', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+
+        this.sound.sounds[1].play();
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
@@ -229,25 +232,34 @@ export class MapScene extends Phaser.Scene{
 
             adjacent[i].getEncounter().on("pointerup", ()=>{
                 // Moves back to the main menu when the back button is clicked
+                this.sound.sounds[5].play();
+                console.log(this.sound.sounds[5]);
+
                 this.map.playerLocation(adjacent[i]);
                 this.player.x = this.map._current_room.x;
                 this.player.y = this.map._current_room.y;
 
-                if (adjacent[i].getEncounter().texture.key == "cards") {
-                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                if (adjacent[i].getVisited() == true) {
+                    this.resume_map();
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
-                    this.scene.start(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
+                    this.resume_map();
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
+                    this.sound.stopAll();
+                    this.sound.sounds[5].play();
                     let choice = Math.floor(Math.random() * 2);
                     if (choice == 0) {
-                        this.scene.start(CST.SCENES.EXTRA, {room : "chest"});
+                        this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest", networkObj: this.network});
                     } else {
-                        this.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername });
+                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                     }
-                }  else if (adjacent[i].getVisited() == true) {
-                    this.resume_map();
+                }  else if (adjacent[i].getEncounter().texture.key == "cards") {
+                    this.sound.stopAll();
+                    this.sound.sounds[5].play();
+                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                 } else {
-                    this.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
+                    this.sound.stopAll();
+                    this.sound.sounds[5].play();
+                    this.scene.pause().launch(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key, networkObj: this.network});
                 }
                 
                 for (let i=0; i<adjacent.length; i++) {
