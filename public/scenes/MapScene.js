@@ -190,11 +190,9 @@ export class MapScene extends Phaser.Scene{
 
         */
 
-        next_floor.on ("pointerover", ()=>{
-            pointer.x = next_floor.x+60;
-            pointer.y = next_floor.y-30;
+        this.events.on ("resume", () => {
             encountersInteractive(this);
-        })
+        });
 
         // player icon on the map
         let player = this.add.image(map._current_room.x, map._current_room.y, 'player_map').setDepth(4)
@@ -221,7 +219,7 @@ export class MapScene extends Phaser.Scene{
                     player.x = map._current_room.x;
                     player.y = map._current_room.y;
                     if (adjacent[i].getEncounter().texture.key == "cards") {
-                        scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
+                        scene.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                     } else if (adjacent[i].getEncounter().texture.key == "end") {
                         scene.scene.start(CST.SCENES.EXTRA,  {room : "end"});
                     } else if (adjacent[i].getEncounter().texture.key == "random") {
@@ -231,6 +229,8 @@ export class MapScene extends Phaser.Scene{
                         } else {
                             scene.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: scene.network, playerUsername: scene.playerUsername });
                         }
+                    }  else if (adjacent[i].getVisited() == true) {
+                        scene.resume_map();
                     } else {
                         scene.scene.start(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
                     }
@@ -253,4 +253,3 @@ export class MapScene extends Phaser.Scene{
         
     }
 }
-

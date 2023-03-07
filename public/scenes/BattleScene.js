@@ -479,6 +479,9 @@ export class BattleScene extends Phaser.Scene {
         for (let i=0; i < this.enemies.length; i++) {
             let base_damage = this.enemies[i].action();
             this.damage_calculation(this.player, base_damage);
+            if (this.player.health <= 0) {
+                this.lose();
+            }
         }
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
@@ -494,7 +497,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-        console.log("YOU WON!");
+        this.scene.stop(CST.SCENES.BATTLE);
+        this.scene.resume(CST.SCENES.MAP);
     }
 
     lose() {
