@@ -59,4 +59,14 @@ export class Network{
             }
         });
     }
+
+    handleDataFightScene(opponent){
+        this.peer.conn.off('data');
+        this.peer.conn.on('data', function(data){
+            var json_data = JSON.parse(data);
+            if(json_data['type'] == 'playerMove'){
+                console.log(json_data['action']);
+            }
+        })
+    }
 }
