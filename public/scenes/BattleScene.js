@@ -25,7 +25,7 @@ export class BattleScene extends Phaser.Scene {
         this.level = 4;
         this.boss;
         this.otherPlayer;
-        let network = data.networkObj;
+        this.network = data.networkObj;
     }
 
     preload() {
@@ -578,7 +578,7 @@ export class BattleScene extends Phaser.Scene {
         this.scene.stop(CST.SCENES.BATTLE);
         this.scene.resume(CST.SCENES.MAP);
     }
-    
+
     spawnOtherPlayerOnScene() {
         // equal to otherPlayer passed in
         let x = this.game.config.width * 0.7;

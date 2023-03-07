@@ -11,7 +11,7 @@ export class MapScene extends Phaser.Scene{
     }
 
     init(data){
-        let network = data.networkObj;
+        this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
     }
 
@@ -160,9 +160,9 @@ export class MapScene extends Phaser.Scene{
             {x : this.game.renderer.width / 2+200, y : this.game.renderer.height / 2-60, room : 1}
         ]
 
-        const map = new Map(encounters, positions, doors, door_positions, startEnd)
+        const map = new Map(encounters, positions, doors, door_positions, startEnd);
         // level counter top in the left
-        let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
+        let level = this.add.text(220, 100, map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
 
         let opponentLevel;
         try{
@@ -170,8 +170,8 @@ export class MapScene extends Phaser.Scene{
         } catch{
             opponentLevel = 0;
         }
-        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5)
-        network.handleDataMapScene(opponentLevelText);
+        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
+        //this.network.handleDataMapScene(opponentLevelText);
 
 
         // N.B. *** VERY IMPORTANT FUNCTION *** 

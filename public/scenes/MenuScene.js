@@ -141,7 +141,7 @@ export class MenuScene extends Phaser.Scene{
         if (!this.isMusicPlaying) {
             this.isMusicPlaying = true;
             this.sound.pauseOnBlur = false;
-            this.sound.play("soundtrack", { loop: true });
+            this.sound.play("menuMusic", { loop: true });
             this.sound.setVolume(0.2);
         }
 

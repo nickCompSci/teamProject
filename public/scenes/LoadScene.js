@@ -35,7 +35,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("arrow", "../assets/resources/arrow.png");
         this.load.image("tower", "../assets/resources/background.png");
         // Load audio
-        this.load.audio("soundtrack", "../assets/resources/soundtrack.mp3");
+        this.load.audio("menuMusic", "../assets/resources/soundtrack.mp3");
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         this.load.html("enterCodeForm", "../enterCodeForm.html");

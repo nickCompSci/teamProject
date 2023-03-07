@@ -10,7 +10,7 @@ export class BattleLoadScene extends Phaser.Scene {
     }
 
     init(data){
-        let network = data.networkObj;
+        this.network = data.networkObj;
     }
 
     preload() {
@@ -54,6 +54,6 @@ export class BattleLoadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start(CST.SCENES.BATTLE, {networkObj: network});
+        this.scene.start(CST.SCENES.BATTLE, {networkObj: this.network});
     }
 }
