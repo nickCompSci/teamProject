@@ -21,6 +21,7 @@ export class BattleScene extends Phaser.Scene {
         // data returns a list of preloaded cards
         this.playerData = data.playerObj;        
         this.network = data.networkObj;
+        this.network.handleDataBattleScene({playerObj: this.playerData, networkObj: this.network}, this, this.returnCardsToPlayer)
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
@@ -704,6 +705,19 @@ export class BattleScene extends Phaser.Scene {
     disableHover() {
         this.input.off('gameobjectover');
         this.input.off('gameobjectout');
+    }
+
+    returnCardsToPlayer(scene){
+        for (let card of scene.player.graveYardArray){
+            scene.player.deckArray.push(card);
+        }
+        for (let card of scene.player.handArray){
+            scene.player.deckArray.push(card);
+        }
+        scene.player.handArray = [];
+        scene.player.graveYardArray = [];
+        console.log("vnsjvkbewnoi");
+        scene.playerData.setEqual(scene.player);
     }
 
 }

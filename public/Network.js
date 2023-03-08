@@ -66,7 +66,24 @@ export class Network{
                 console.log(json_data['activity']);
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
-                console.log({playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
+                phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
+            }
+        });
+    }
+
+    handleDataBattleScene(gameData, phaser, returnCardsToPlayer){
+        console.log("LISTENING IN BATTLE SCENE");
+        this.peer.conn.off('data');
+        this.peer.conn.on('data', function(data){
+            var json_data = JSON.parse(data);
+            console.log(json_data);
+            if(json_data['type'] == 'levelUpdate'){
+                opponentLevelObj.setText(json_data['level']);
+            } else if (json_data['type'] == 'activityUpdate'){
+                console.log(json_data['activity']);
+            } if(json_data['type'] == 'finalBattleCall'){
+                // start final battle scene
+                returnCardsToPlayer(phaser);
                 phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
             }
         });
