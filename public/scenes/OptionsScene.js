@@ -90,7 +90,6 @@ export class OptionsScene extends Phaser.Scene{
             arrowSprite.setVisible(true);
             arrowSprite.x = disableMusicButton.x - disableMusicButton.width + 120;
             arrowSprite.y = disableMusicButton.y + disableMusicButton.height / 4;
-            console.log("hover")
         })
 
         // When clicked, music will be disabled
@@ -101,11 +100,9 @@ export class OptionsScene extends Phaser.Scene{
             if (musicEnabled) {
                 this.sound.stopAll();
                 musicEnabled = false;
-                console.log("Music disabled");
             } else {
                 this.sound.play("soundtrack", {loop: true});
                 musicEnabled = true;
-                console.log("Music enabled");
             }
         })
     }

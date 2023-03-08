@@ -276,7 +276,6 @@ export class MapScene extends Phaser.Scene{
             adjacent[i].getEncounter().on("pointerup", ()=>{
                 // Moves back to the main menu when the back button is clicked
                 this.sound.sounds[5].play();
-                console.log(this.sound.sounds[5]);
 
                 this.map.playerLocation(adjacent[i]);
                 this.player.x = this.map._current_room.x;
