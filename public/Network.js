@@ -2,9 +2,10 @@ import { CST } from "./CST.js";
 
 export class Network{
     constructor(username){  
-        this.peer = new Peer(username, ({host:'/', 
-         port:443,
-      path: '/'}));
+        this.peer = new Peer(username,// ({host:'/', 
+    //      port:443,
+    //   path: '/'})
+    );
         this._addPeerListeners();
         this.joineesReceiveMessage;
         this.hostRecieveMessage;
@@ -75,11 +76,13 @@ export class Network{
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
-            if(json_data['type'] == 'playerMove'){
-                console.log(json_data['action']);
+            if(json_data['type'] == 'opponentUpdate'){
+                console.log(json_data['health']);
             } else if(json_data['type'] == 'enemyTurnOver'){
                 console.log("starting your turn function");
                 yourTurnFunction(scene);
+            } else if(json_data['type'] == 'playerUpdate'){
+                console.log(json_data['health']);
             }
         })
     }
