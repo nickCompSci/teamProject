@@ -155,7 +155,7 @@ export class MenuScene extends Phaser.Scene{
 
         battleButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.BATTLE_LOAD);
+            this.scene.start(CST.SCENES.BATTLE);
 
         })
 

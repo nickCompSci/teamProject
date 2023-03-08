@@ -249,10 +249,8 @@ export class MapScene extends Phaser.Scene{
         */
 
         this.events.on("resume", () => {
-            this.scene.remove(CST.SCENES.BATTLE_LOAD);
             this.scene.remove(CST.SCENES.BATTLE);
             this.scene.remove(CST.SCENES.EXTRA);
-            this.scene.add(CST.SCENES.BATTLE_LOAD, BattleLoadScene, false);
             this.scene.add(CST.SCENES.BATTLE, BattleScene, false);
             this.scene.add(CST.SCENES.EXTRA, ExtraScene, false);
             this.encountersInteractive();
@@ -290,7 +288,7 @@ export class MapScene extends Phaser.Scene{
                 } else if (adjacent[i].getEncounter().texture.key == "cards") {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();
-                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                    this.scene.pause().launch(CST.SCENES.BATTLE, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
                     this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
@@ -300,7 +298,7 @@ export class MapScene extends Phaser.Scene{
                     if (choice == 0) {
                         this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest"});
                     } else {
-                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                        this.scene.pause().launch(CST.SCENES.BATTLE, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                     }
                 } else {
                     this.sound.stopAll();
