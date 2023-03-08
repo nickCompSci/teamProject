@@ -563,8 +563,8 @@ export class PVPScene extends Phaser.Scene{
     }
 
     startTurn(scene){
+        console.log(scene.opponentLastCard);
         scene.opponentLastCard.setVisible(false);
-        console.log("starting turn");
         scene.opponentTurn.setVisible(false);
         scene.yourTurn = true;
         scene.enableInteractionDuringYourTurn();
@@ -663,16 +663,16 @@ export class PVPScene extends Phaser.Scene{
         console.log("HI");
         let gameWidth = scene.game.config.width;
         let gameHeight = scene.game.config.height;
-        scene.opponentLastCard = scene.add.image(gameWidth / 2, gameHeight / 2, cardName)
+        scene.opponentLastCard = scene.add.image(gameWidth / 2, gameHeight / 2, cardName);
         setTimeout(function() {scene.opponentLastCard.setVisible(false)}, 3000);
 
         if(cardType == 'damage'){
             scene.damage_calculation(scene.player, quantity);
         } else if(cardType == 'healing'){
             if(healType == 'armour'){
-            scene.armour_calculation(scene.enemies[0], quantity);
+            scene.armour_calculation(scene.enemies[0], Number(quantity));
             } else{
-                scene.healing_calculation(scene.enemies[0], quantity);
+                scene.healing_calculation(scene.enemies[0], Number(quantity));
             }
         }
     }
