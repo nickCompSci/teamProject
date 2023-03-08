@@ -300,15 +300,19 @@ export class LobbyScene extends Phaser.Scene {
             })
 
         if (this.joinee) {
-            let waitForGameToStartAsJoinee = setInterval(function () {
-                if (scene.network.joineesReceiveMessage == "I have pressed start") {
-                    clearInterval(waitForGameToStartAsJoinee);
+            scene.network.peer.conn.on('data', function(data) {
+                if (data === "I have pressed start") {
                     tempAlert2("Host has started the game!",3000);
                     scene.sound.play("beginGame",{volume: 1});
                     scene.scene.start(CST.SCENES.MAP, { networkObj: scene.network, playerUsername: scene.playerUsername });
-                    // console.log("host pressed start, we may begin");
                 }
-            }, 500)
+                // if (scene.network.joineesReceiveMessage == "I have pressed start") {
+                //     tempAlert2("Host has started the game!",3000);
+                //     scene.sound.play("beginGame",{volume: 1});
+                //     scene.scene.start(CST.SCENES.MAP, { networkObj: scene.network, playerUsername: scene.playerUsername });
+                //     // console.log("host pressed start, we may begin");
+                // }
+            })
         }
 
 

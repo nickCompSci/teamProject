@@ -60,7 +60,7 @@ export class Network{
                 console.log(json_data['activity']);
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
-                //Phaser.scene.start(CST.SCENES.BATTLE, data)
+                Phaser.scene.start(CST.SCENES.PVPSCENE, data)
             }
         });
     }

@@ -40,6 +40,8 @@ export class initiatePVPScene extends Phaser.Scene{
         // send players data activated PVP flag
         // on opposite side when detect this flag via interval,
         // it needs to load them a battle scene with the same layout as this one no matter what
+        this.network.send('{"type": "finalBattleCall"}');
+        
         this.scene.start(CST.SCENES.PVPSCENE, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.playerData });
     }
 

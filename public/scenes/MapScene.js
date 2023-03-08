@@ -23,6 +23,7 @@ export class MapScene extends Phaser.Scene{
 
     // Creates any images, text, etc.
     create(){
+        this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
         this.sound.stopAll();
 
         // Loads background
@@ -180,7 +181,7 @@ export class MapScene extends Phaser.Scene{
             opponentLevel = 1;
         }
         let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
-        //this.network.handleDataMapScene(opponentLevelText);
+        this.network.handleDataMapScene(opponentLevelText, {playerObj: this.player, networkObj: this.network, playerUsername: this.playerUsername});
 
 
         // N.B. *** VERY IMPORTANT FUNCTION *** 

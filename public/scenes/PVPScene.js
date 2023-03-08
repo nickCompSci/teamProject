@@ -17,7 +17,7 @@ export class PVPScene extends Phaser.Scene{
 
     init(data){
         this.playerData = data.playerObj;
-        this.enemyPlayer = data.otherPlayerObj;
+        // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
         this.rewards = [];
