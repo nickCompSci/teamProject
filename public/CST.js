@@ -17,6 +17,7 @@ export const CST = {
         PROFILE : "PROFILE",
         EXTRA: "EXTRA",
         PLAYGAME : "PLAYGAME",
-        INITIATEPVPSCENE: "INITIATEPVPSCENE"
+        INITIATEPVPSCENE: "INITIATEPVPSCENE",
+        PVPSCENE: "PVPSCENE"
     }
 }
