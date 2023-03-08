@@ -533,20 +533,13 @@ export class PVPScene extends Phaser.Scene{
     
     // ends the player's turn
     endTurn() {
+        console.log("ending turn")
+        this.opponentTurn.setVisible(true);
+        this.yourTurn = false;
         this.keepCardButton.visible = true;
         this.endTurnButton.visible = false;
         this.player.moveCardsBackInDeck(this);
-        
-        // simulate enemies attacking
-        for (let i=0; i < this.enemies.length; i++) {
-            if (this.enemies[i].spriteType === "player") {
-                console.log("Now your turn bozo");
-            }
-
-            if (this.player.health <= 0) {
-                this.lose();
-            }
-        }
+        this.network.send('{"type":"enemyTurnOver"}');
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         
         // automatic drawing goes here and checking if needing to reshuffle the deck
@@ -558,6 +551,7 @@ export class PVPScene extends Phaser.Scene{
                 card.setTint(0xff0000);
             }
         }
+        this.disableInteractionDuringOpponentTurn();
     }
 
     win() {
