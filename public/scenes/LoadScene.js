@@ -128,7 +128,6 @@ export class LoadScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.45, 'Loading game...', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
         this.load.on("progress", (percent)=>{
             loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 40);
-            console.log(percent);
             })
 
             let network;

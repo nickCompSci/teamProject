@@ -326,12 +326,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-        console.log("YOU WON");
         this.showRewards();
     }
 
     lose() {
-        console.log("YOU LOSE");
         this.sound.play("playerDeath", {volume: 0.7});
     }
 
@@ -554,7 +552,6 @@ export class BattleScene extends Phaser.Scene {
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
             if (this.enemies[i].spriteType === "player") {
-                console.log("Hello");
             } else if (this.enemies.includes(this.boss)) {
                 this.enemies[i].action(this);
             } else {
@@ -716,7 +713,6 @@ export class BattleScene extends Phaser.Scene {
         }
         scene.player.handArray = [];
         scene.player.graveYardArray = [];
-        console.log("vnsjvkbewnoi");
         scene.playerData.setEqual(scene.player);
     }
 

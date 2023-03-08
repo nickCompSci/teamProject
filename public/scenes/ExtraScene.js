@@ -260,7 +260,6 @@ export class ExtraScene extends Phaser.Scene {
                     this.payment.push(this.rarityCards[i]);
                     this.setPicked += 1;
                         if (this.setPicked == 4) {
-                            console.log(this.payment, this.purchase)
                             this.sound.stopAll();
                             this.sound.sounds[1].play();
                             this.scene.stop(CST.SCENES.EXTRA);

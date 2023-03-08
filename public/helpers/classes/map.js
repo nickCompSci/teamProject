@@ -122,8 +122,6 @@ export default class Map {
 
         this.setAdjacent();
 
-        console.log(this._current_location, this._adjacent)
-
     }
 
     // for assigning the positions (x, y) to the icons/images.

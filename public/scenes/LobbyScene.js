@@ -19,18 +19,12 @@ export class LobbyScene extends Phaser.Scene {
         this.readyToStart = false;
         if (data.host) {
             this.host = true
-            console.log(`${this.playerUsername} is the host`);
         } else if (data.joinee) {
             this.joinee = true;
             this.otherPlayerName = data.playerToJoin;
             this.readyToStart = true;
-            // console.log("we have set start");
-            console.log(`${this.playerUsername} is the joinee`);
         }
-        console.log(this.network);
         window.network = this.network;
-        console.log(this.network.peer._connections.size)
-        console.log(this.network.peer._connections);
         if (this.network.peer._connections.size > 0) {
             this.network.send("i have joined the lobby, sending you hello!");
 
@@ -39,13 +33,6 @@ export class LobbyScene extends Phaser.Scene {
 
     // Creates any images, text, etc.
     create() {
-
-        // this.peer.conn.on('data', function(data){
-        //     console.log("this is the receiving function");
-        //     // seems to be for JOINEES
-        //     console.log("Data received: ", data);
-        // })
-
         function tempAlert(message, duration) {
             var tmpElement = document.createElement("div");
             tmpElement.setAttribute("style", "position:absolute;top:10%;left:23%;background-color:white;");
@@ -135,7 +122,6 @@ export class LobbyScene extends Phaser.Scene {
                     url: '/getOtherPlayersId',
                     data,
                     success: function (result) {
-                        console.log(result.otherUserName);
                         scene.otherPlayerName = result.otherUserName;
 
                         var data = {
@@ -305,12 +291,6 @@ export class LobbyScene extends Phaser.Scene {
                     scene.sound.play("beginGame",{volume: 1});
                     scene.scene.start(CST.SCENES.MAP, { networkObj: scene.network, playerUsername: scene.playerUsername });
                 }
-                // if (scene.network.joineesReceiveMessage == "I have pressed start") {
-                //     tempAlert2("Host has started the game!",3000);
-                //     scene.sound.play("beginGame",{volume: 1});
-                //     scene.scene.start(CST.SCENES.MAP, { networkObj: scene.network, playerUsername: scene.playerUsername });
-                //     // console.log("host pressed start, we may begin");
-                // }
             })
         }
 
@@ -333,8 +313,6 @@ export class LobbyScene extends Phaser.Scene {
                 backButton.setStyle({ fill: '#fff' });
             })
             .on("pointerup", () => {
-                // clearInterval(interval);
-                // console.log(this.network.peer._connections.size);
                 if (this.host == true) {
                     deleteJoinCodeRelationship(this.network.peer.id);
                     // /deleteLobby
@@ -373,11 +351,9 @@ export class LobbyScene extends Phaser.Scene {
                 if (this.network.peer._connections.size > 0) {
                     try {
                         this.network.peer.destroy();
-                        console.log("terminated connection");
                         window.location.replace('/game.html');
 
                     } catch {
-                        console.log("failed");
                     }
                 }
                 else {

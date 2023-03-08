@@ -17,7 +17,6 @@ export class PVPScene extends Phaser.Scene{
 
     init(data){
         this.playerData = data.playerObj;
-        console.log(this.playerData);
         // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
         this.network.handleDataFightScene(this.startTurn, this, this.displayCard);
@@ -29,7 +28,6 @@ export class PVPScene extends Phaser.Scene{
         if(!this.yourTurn){
             this.yourTurn=false;
         }
-        console.log(this.yourTurn);
     }
 
     preload() {
@@ -248,7 +246,6 @@ export class PVPScene extends Phaser.Scene{
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '"}');
                     }
                 } else if(gameObject.cardType == 'healing'){
-                    console.log('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
                 } else{
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '"}');
@@ -328,12 +325,10 @@ export class PVPScene extends Phaser.Scene{
     }
 
     win() {
-        console.log("YOU WON");
         this.showRewards();
     }
 
     lose() {
-        console.log("YOU LOSE");
         this.sound.play("playerDeath", {volume: 0.7});
     }
 
@@ -550,7 +545,6 @@ export class PVPScene extends Phaser.Scene{
     
     // ends the player's turn
     endTurn() {
-        console.log("ending turn")
         this.opponentTurn.setVisible(true);
         this.yourTurn = false;
         this.keepCardButton.visible = true;
@@ -572,7 +566,6 @@ export class PVPScene extends Phaser.Scene{
     }
 
     startTurn(scene){
-        console.log(scene.opponentLastCard);
         try{scene.opponentLastCard.setVisible(false);
         }catch{}
         scene.opponentTurn.setVisible(false);
@@ -588,7 +581,6 @@ export class PVPScene extends Phaser.Scene{
 
     lose() {
         // turn to black screen
-        console.log("YOU LOSE");
         this.cameras.main.backgroundColor.setTo(0, 0, 5);
     }
 

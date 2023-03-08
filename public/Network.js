@@ -14,7 +14,6 @@ export class Network{
 
     _addPeerListeners(){
         this.peer.on('open', function(id){
-            console.log("Connected with id: ", id);
             this._id = id;    
         });
 
@@ -23,13 +22,9 @@ export class Network{
             let joineesMessage = this;
 
             this.conn.on('data', (data)=>{
-                console.log("this is the hosts receiver");
                 joineesMessage.hostRecieveMessage = data;
                 joineesMessage.test = data;
-                console.log(joineesMessage.hostRecieveMessage);
-                console.log("Data received: ", data);
             })
-            console.log('Connected to peer with id: ', conn.peer);
         });
 
         this.peer.on('error', function(err){
@@ -39,7 +34,6 @@ export class Network{
 
     send(data){
         this.peer.conn.send(data);
-        console.log("Data sent: ", data);
     }
 
     connect(id){
@@ -48,22 +42,17 @@ export class Network{
         this.peer.conn = conn;
         let netMessage = this;
         this.peer.conn.on('data', function(data){
-            console.log("this is the joineees receiving function");
             netMessage.joineesReceiveMessage = data;
-            console.log("Data received: ", data);
         })
     }
 
     handleDataMapScene(opponentLevelObj, gameData, phaser) {
-        console.log(gameData.playerObj);
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
-            console.log(json_data);
             if(json_data['type'] == 'levelUpdate'){
                 opponentLevelObj.setText(json_data['level']);
             } else if (json_data['type'] == 'activityUpdate'){
-                console.log(json_data['activity']);
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
                 phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
@@ -72,15 +61,12 @@ export class Network{
     }
 
     handleDataBattleScene(gameData, phaser, returnCardsToPlayer){
-        console.log("LISTENING IN BATTLE SCENE");
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
-            console.log(json_data);
             if(json_data['type'] == 'levelUpdate'){
                 opponentLevelObj.setText(json_data['level']);
             } else if (json_data['type'] == 'activityUpdate'){
-                console.log(json_data['activity']);
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
                 returnCardsToPlayer(phaser);
@@ -94,13 +80,10 @@ export class Network{
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
             if(json_data['type'] == 'cardPlayed'){
-                console.log(json_data);
                 displayCard(scene, json_data);
             } else if(json_data['type'] == 'enemyTurnOver'){
-                console.log("starting your turn function");
                 yourTurnFunction(scene);
             } else if(json_data['type'] == 'cardPlayed'){
-                console.log(json_data['health']);
             }
         })
     }
