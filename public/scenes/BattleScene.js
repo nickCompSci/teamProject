@@ -677,7 +677,6 @@ export class BattleScene extends Phaser.Scene {
                 scene.sound.sounds[1].play();
 
                 if (scene.level === 3) {
-                    console.log(scene.player);
                     scene.scene.start(CST.SCENES.INITIATEPVPSCENE, {networkObj: scene.network, playerUsername: scene.playerUsername, playerObj: scene.player });
                 } else {
                     scene.scene.stop(CST.SCENES.BATTLE);

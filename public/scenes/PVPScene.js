@@ -8,7 +8,6 @@ import ComboCard from "../helpers/classes/cards/comboCard.js";
 import ReloadCard from "../helpers/classes/cards/reloadCard.js";
 import HealingCard from "../helpers/classes/cards/healingCard.js";
 
-
 export class PVPScene extends Phaser.Scene{
     constructor(){
         super({
@@ -18,8 +17,7 @@ export class PVPScene extends Phaser.Scene{
 
     init(data){
         this.playerData = data.playerObj;
-        this.currentPlayer;
-        this.enemyPlayer;
+        this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
         this.rewards = [];
@@ -27,8 +25,15 @@ export class PVPScene extends Phaser.Scene{
         this.enemies = [];
     }
 
-    // Creates any images, text, etc.
+    preload() {
+        this.load.image("fuse", "../assets/resources/cards/Fuse.png");
+    }
+
     create(){
+        // work work
+
+
+
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
@@ -67,6 +72,9 @@ export class PVPScene extends Phaser.Scene{
         this.deck.setOrigin(0, 0);
         this.deckAmount = this.add.text(this.deck.x + this.deck.width, this.deck.y + this.deck.height, this.player.deckArray.length, {fontSize: "20px"});
         this.deckAmount.setOrigin(0, 0);
+
+        this.fuse = this.add.sprite(0, 0, "fuse");
+        this.fuse.setVisible(false);
 
         // loads all the different types of cards
         this.loadCards();
@@ -209,7 +217,17 @@ export class PVPScene extends Phaser.Scene{
                 
                 // destroy breaks combo cards
                 gameObject.setActive(false).setVisible(false); 
+                // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY 
+
+                // send image of card
+                // send the effect over with the type
+                //this.network.send('{type: gameObject.type, effect: gameObject.effect, image: gameObject.sprite/texture}');
+
+
+
                 gameObject.activateCard(this);
+                // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+
 
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
                 if (this.player.actionPoints > 6){
@@ -450,8 +468,9 @@ export class PVPScene extends Phaser.Scene{
         // this.player.deckArray.push(bourbon);
         // this.player.deckArray.push(morphine);
     
-        this.rewards.push(minigun);
-        this.rewards.push(blast);
+        // this.rewards.push(minigun);
+        // this.rewards.push(blast);
+        this.rewards.push(this.fuse);
     }
     
     
@@ -509,14 +528,9 @@ export class PVPScene extends Phaser.Scene{
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
             if (this.enemies[i].spriteType === "player") {
-                console.log("Hello");
-            } else if (this.enemies.includes(this.boss)) {
-                this.enemies[i].action(this);
-            } else {
-                let base_damage = this.enemies[i].action();
-                this.damage_calculation(this.player, base_damage);
-                
+                console.log("Now your turn bozo");
             }
+
             if (this.player.health <= 0) {
                 this.lose();
             }
@@ -538,15 +552,87 @@ export class PVPScene extends Phaser.Scene{
         this.showRewards();
     }
 
+    lose() {
+        // turn to black screen
+        console.log("YOU LOSE");
+        this.cameras.main.backgroundColor.setTo(0, 0, 5);
+    }
+
     spawnOtherPlayerOnScene() {
         // equal to otherPlayer passed in
         let x = this.game.config.width * 0.7;
         let y = this.game.config.height * 0.6;
         this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
+        // set this.otherPlayer.setEqual()
         this.enemies.push(this.otherPlayer);
         let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
         this.healthbars.push(otherPlayerHealth);
     }
+
+    showRewards() {
+        // disable interaction of all elements besides hover
+        this.sound.play("playerWin");
+        this.disableInteractionDuringCard();
+        this.disableHover();
+        this.player.disableDragOnCards();
+
+        let centerX = this.game.config.width / 2;
+        let centerY = this.game.config.height / 2;
+
+        let pickCardsText = this.add.text(centerX, 100, "Pick One Card", {color:"#FD722A" , fontSize: "40px"});
+        pickCardsText.setOrigin(0.5, 0.5);
+        let player = this.player;
+        let scene = this;
+
+        for (let i=0; i < this.rewards.length; i++) {
+            let cards = this.rewards[i];
+            let cardXOffset = centerX + (i - (this.rewards.length - 1) / 2) * 300;
+
+            cards.setOrigin(0.5, 0.5);
+            cards.x = cardXOffset;
+            cards.y = centerY;
+            cards.angle = 0;
+            cards.displayWidth = gameOptions.cardWidth * 2;
+            cards.displayHeight = gameOptions.cardHeight * 2;
+            cards.setDepth(5);
+
+            // add the card to deckArray when clicked 
+            cards.on('pointerdown', function (event) {
+                // this refers to the card btw here, not the scene
+                player.deckArray.push(this);
+
+                for (let cards of scene.rewards) {
+                    cards.destroy();
+                }
+                pickCardsText.destroy();
+                scene.rewards=[];
+
+                for (let card of scene.player.graveYardArray){
+                    scene.player.deckArray.push(card);
+                }
+                for (let card of scene.player.handArray){
+                    scene.player.deckArray.push(card);
+                }
+                scene.player.handArray = [];
+                scene.player.graveYardArray = [];
+                scene.playerData.setEqual(scene.player);
+
+                scene.sound.stopAll();
+                scene.sound.sounds[1].play();
+
+                if (scene.level === 3) {
+                    scene.scene.start(CST.SCENES.INITIATEPVPSCENE, {networkObj: scene.network, playerUsername: scene.playerUsername, playerObj: scene.player });
+                } else {
+                    scene.scene.stop(CST.SCENES.BATTLE);
+                    scene.scene.resume(CST.SCENES.MAP);
+                }
+            })
+
+            cards.setVisible(true);
+            this.add.existing(cards);
+        }
+    }
+
 
     disableInteractionDuringCard() {
         this.keepCardButton.disableInteractive();

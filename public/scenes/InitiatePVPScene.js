@@ -13,7 +13,6 @@ export class initiatePVPScene extends Phaser.Scene{
     }
 
     init(data){
-        console.log(data.playerObj);
         this.playerData = data.playerObj;
         this.currentPlayer;
         this.enemyPlayer;
