@@ -1,3 +1,5 @@
+import { CST } from "./CST.js";
+
 export class Network{
     constructor(username){  
         this.peer = new Peer(username);
@@ -49,7 +51,8 @@ export class Network{
         })
     }
 
-    handleDataMapScene(opponentLevelObj, data){
+    handleDataMapScene(opponentLevelObj, gameData, phaser) {
+        console.log(gameData.playerObj);
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
@@ -60,7 +63,8 @@ export class Network{
                 console.log(json_data['activity']);
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
-                Phaser.scene.start(CST.SCENES.PVPSCENE, data)
+                console.log({playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
+                phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
             }
         });
     }

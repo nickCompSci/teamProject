@@ -17,6 +17,7 @@ export class PVPScene extends Phaser.Scene{
 
     init(data){
         this.playerData = data.playerObj;
+        console.log(this.playerData);
         // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
@@ -31,8 +32,6 @@ export class PVPScene extends Phaser.Scene{
 
     create(){
         // work work
-
-
 
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
