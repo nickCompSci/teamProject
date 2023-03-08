@@ -12,6 +12,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "peer": "^1.0.0",
     "phaser3-rex-plugins": "^1.1.81"
   },
   "name": "teamproject",
