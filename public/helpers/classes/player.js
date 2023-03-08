@@ -216,7 +216,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.maxHealth = playerData.maxHealth;
         this.health = playerData.health;
         this.maxActionPoints = playerData.maxActionPoints;
-        this.deckArray = playerData.deckArray;
+        this.deckArray = playerData.deckArray.slice(0);
         this.keepCardsLimit = playerData.keepCardsLimit;
     }
 

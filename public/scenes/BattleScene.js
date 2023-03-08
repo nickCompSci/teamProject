@@ -87,13 +87,13 @@ export class BattleScene extends Phaser.Scene {
         for (let card of this.player.deckArray) {
             let newCard;
             if (card.cardType === "damage"){
-                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else if (card.cardType === "healing") {
-                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else if (card.cardType === "reload") {
-                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else {
-                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             }
             let cardIndex = this.player.deckArray.indexOf(card);
             this.player.deckArray[cardIndex] = newCard;
@@ -652,6 +652,9 @@ export class BattleScene extends Phaser.Scene {
             cards.displayHeight = gameOptions.cardHeight * 2;
             cards.setDepth(5);
 
+            cards.setVisible(true);
+            this.add.existing(cards);
+
             // add the card to deckArray when clicked 
             cards.on('pointerdown', function (event) {
                 player.deckArray.push(this);
@@ -671,16 +674,12 @@ export class BattleScene extends Phaser.Scene {
                 scene.player.handArray = [];
                 scene.player.graveYardArray = [];
                 scene.playerData.setEqual(scene.player);
-
                 scene.sound.stopAll();
                 scene.sound.sounds[1].play();
                 scene.scene.stop(CST.SCENES.BATTLE);
                 scene.scene.resume(CST.SCENES.MAP);
                 
             })
-
-            cards.setVisible(true);
-            this.add.existing(cards);
         }
     }
 

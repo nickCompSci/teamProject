@@ -187,7 +187,9 @@ export class MapScene extends Phaser.Scene{
         this.encountersInteractive();
 
         // for moving to next level (only works when in final room)
-        let next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive().on("pointerup", ()=>{
+        this.next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive()
+        this.next_floor.on("pointerup", ()=>{
+            console.log("lolig")
             if (this.map.currentLocation == 11) {
                 //this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
                 for (let i=0; i<this.map.adjacent.length; i++) {
@@ -210,17 +212,12 @@ export class MapScene extends Phaser.Scene{
         */
 
         this.events.on("resume", () => {
-            this.scene.remove(CST.SCENES.BATTLE_LOAD);
-            this.scene.remove(CST.SCENES.BATTLE);
-            this.scene.remove(CST.SCENES.EXTRA);
-            this.scene.add(CST.SCENES.BATTLE_LOAD, BattleLoadScene, false);
-            this.scene.add(CST.SCENES.BATTLE, BattleScene, false);
-            this.scene.add(CST.SCENES.EXTRA, ExtraScene, false);
             this.encountersInteractive();
         });
 
         // player icon on the this.map
         this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);
+        this.player.disableInteractive();
 
         /*
         THIS IS WHERE THE INTERACTIVITY FOR THE ENCOUNTERS SHOULD BE DONE.
@@ -242,7 +239,6 @@ export class MapScene extends Phaser.Scene{
             adjacent[i].getEncounter().on("pointerup", ()=>{
                 // Moves back to the main menu when the back button is clicked
                 this.sound.sounds[5].play();
-                console.log(this.sound.sounds[5]);
 
                 this.map.playerLocation(adjacent[i]);
                 this.player.x = this.map._current_room.x;
@@ -255,20 +251,20 @@ export class MapScene extends Phaser.Scene{
                     this.sound.sounds[5].play();
                     this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
-                    this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network});
+                    this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network, playerObj: this.player});
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();
                     let choice = Math.floor(Math.random() * 2);
                     if (choice == 0) {
-                        this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest"});
+                        this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest", playerObj: this.player});
                     } else {
                         this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
                     }
                 } else {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();
-                    this.scene.pause().launch(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key});
+                    this.scene.pause().launch(CST.SCENES.EXTRA, {room : adjacent[i].getEncounter().texture.key, playerObj: this.player});
                 }
                 
                 for (let i=0; i<adjacent.length; i++) {

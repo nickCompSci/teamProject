@@ -20,6 +20,7 @@ export class ExtraScene extends Phaser.Scene {
         this.room = data.room;
         this.enemies = [];
         this.network = data.network;
+        this.playerData = data.playerObj;
     }
 
     preload() {
@@ -45,7 +46,7 @@ export class ExtraScene extends Phaser.Scene {
         // healing
         this.load.image("kevlar", "../assets/resources/cards/Kevlar.png");
         this.load.image("medkit", "../assets/resources/cards/Medkit.png");
-        this.load.image("armour_plate", "../assets/resources/cards/Armour_plate.png");
+        this.load.image("armour_plate", "../assets/resources/cards/Armour_Plate.png");
         this.load.image("stim_pack", "../assets/resources/cards/Stim_Pack.png");
         this.load.image("morphine", "../assets/resources/cards/Morphine.png");
         this.load.image("bourbon", "../assets/resources/cards/Bourbon.png");
@@ -53,7 +54,7 @@ export class ExtraScene extends Phaser.Scene {
         // reload
         this.load.image("overload", "../assets/resources/cards/Overload.png");
         this.load.image("reload", "../assets/resources/cards/Reload.png");
-        this.load.image("ammo_cache", "../assets/resources/cards/Ammo_cache.png");
+        this.load.image("ammo_cache", "../assets/resources/cards/Ammo_Cache.png");
         this.load.image("bandolier", "../assets/resources/cards/Bandolier.png");
         this.load.image("holster", "../assets/resources/cards/Holster.png");
         this.load.image("lock_and_load", "../assets/resources/cards/Lock_and_Load.png");
@@ -94,6 +95,21 @@ export class ExtraScene extends Phaser.Scene {
         card_bg.setScale(0.325).setScrollFactor(0).setDepth(1);
         
         this.player = new Player(this, 0, 0, "player");
+        this.player.setEqual(this.playerData);
+        for (let card of this.player.deckArray) {
+            let newCard;
+            if (card.cardType === "damage"){
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else if (card.cardType === "healing") {
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else if (card.cardType === "reload") {
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else {
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            }
+            let cardIndex = this.player.deckArray.indexOf(card);
+            this.player.deckArray[cardIndex] = newCard;
+        }
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.player.setScale(1.5).setScrollFactor(0).setDepth(2);
         
@@ -114,6 +130,10 @@ export class ExtraScene extends Phaser.Scene {
             this.chestRandomizer();
 
             this.arrangeCardsInCenter(this.chestCards);
+            for (let card of this.chestCards){
+                this.player.deckArray.push(card);
+                this.playerData.setEqual(this.player);
+            }
         } else {
 
             this.help = this.add.text(this.game.renderer.width / 2, 600 , 'Choose a rarity', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(2).setOrigin(0.5).setScrollFactor(0);
@@ -145,7 +165,7 @@ export class ExtraScene extends Phaser.Scene {
                 return2rarity.setInteractive();
                 return2rarity.setDepth(2);
 
-                this.getRarityCards("purple");
+                this.getRarityCards("purple", this.allCards);
 
                 this.displayCards(this.rarityCards);
 
@@ -165,7 +185,7 @@ export class ExtraScene extends Phaser.Scene {
                 return2rarity.setDepth(2);
 
 
-                this.getRarityCards("blue");
+                this.getRarityCards("blue", this.allCards);
 
                 this.displayCards(this.rarityCards);
 
@@ -182,7 +202,8 @@ export class ExtraScene extends Phaser.Scene {
         })
 
         return2rarity.on("pointerup", ()=>{
-            this.scene.start(CST.SCENES.EXTRA, {networkObj:this.network});
+            this.scene.stop(CST.SCENES.EXTRA);
+            this.scene.start(CST.SCENES.EXTRA, {networkObj:this.network, playerObj: this.playerData});
         })
 
         // Back Button for navigating back to the main menu
@@ -209,7 +230,7 @@ export class ExtraScene extends Phaser.Scene {
         
         let cam = this.cameras.main;
 
-        this.getRarityCards("blue")
+        this.getRarityCards("blue", this.allCards);
         
         let repeat = this.checkCardsInDiscardPile(this.rarityCards);
 
@@ -243,13 +264,13 @@ export class ExtraScene extends Phaser.Scene {
                     if (this.rarityCards[i].getRarity() == "blue") {
                         this.purchase = this.rarityCards[i];
                         this.disableCards()
-                        this.getRarityCards("white")
+                        this.getRarityCards("white", this.player.deckArray)
                         this.setCardsInteractive()
 
                     } else if (this.rarityCards[i].getRarity() == "purple") {
                         this.purchase = this.rarityCards[i];
                         this.disableCards()
-                        this.getRarityCards("blue")
+                        this.getRarityCards("blue", this.player.deckArray)
                         this.setCardsInteractive()
 
                         this.help.text = "Pick a card to purchase.";
@@ -260,7 +281,12 @@ export class ExtraScene extends Phaser.Scene {
                     this.payment.push(this.rarityCards[i]);
                     this.setPicked += 1;
                         if (this.setPicked == 4) {
-                            console.log(this.payment, this.purchase)
+                            for (let card of this.payment){
+                                let cardIndex = this.player.deckArray.indexOf(card);
+                                this.player.deckArray.splice(cardIndex, 1);
+                            }
+                            this.player.deckArray.push(this.purchase);
+                            this.playerData.setEqual(this.player);
                             this.sound.stopAll();
                             this.sound.sounds[1].play();
                             this.scene.stop(CST.SCENES.EXTRA);
@@ -276,6 +302,8 @@ export class ExtraScene extends Phaser.Scene {
     }
 
     loadCards() {
+        this.allCards = [];
+
         // damage cards
         let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 10, target: "single"}, "blue", this, 0, 0, "cannonball");
         let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", this, 0, 0, "grenade");
@@ -289,17 +317,17 @@ export class ExtraScene extends Phaser.Scene {
         let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
         let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
 
-        this.player.deckArray.push(cannonball);
-        this.player.deckArray.push(grenade);
-        this.player.deckArray.push(high_noon);
-        this.player.deckArray.push(fire_rain);
-        this.player.deckArray.push(minigun);
-        this.player.deckArray.push(launcher);
-        this.player.deckArray.push(ballistic);
-        this.player.deckArray.push(reinforce);
-        this.player.deckArray.push(blast);
-        this.player.deckArray.push(missile);
-        this.player.deckArray.push(molotov);
+        this.allCards.push(cannonball);
+        this.allCards.push(grenade);
+        this.allCards.push(high_noon);
+        this.allCards.push(fire_rain);
+        this.allCards.push(minigun);
+        this.allCards.push(launcher);
+        this.allCards.push(ballistic);
+        this.allCards.push(reinforce);
+        this.allCards.push(blast);
+        this.allCards.push(missile);
+        this.allCards.push(molotov);
 
         // combo cards
         let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
@@ -309,12 +337,12 @@ export class ExtraScene extends Phaser.Scene {
         let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
         let nanotech = new ComboCard("nanotech", 3, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", this, 0, 0, "nanotech");
 
-        this.player.deckArray.push(headshot);
-        this.player.deckArray.push(ricochet);
-        this.player.deckArray.push(pinpoint);
-        this.player.deckArray.push(bayonet);
-        this.player.deckArray.push(load);
-        this.player.deckArray.push(nanotech);
+        this.allCards.push(headshot);
+        this.allCards.push(ricochet);
+        this.allCards.push(pinpoint);
+        this.allCards.push(bayonet);
+        this.allCards.push(load);
+        this.allCards.push(nanotech);
        
         // reload cards
         let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
@@ -324,12 +352,12 @@ export class ExtraScene extends Phaser.Scene {
         let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
         let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", this, 0, 0, "ammo_cache");
 
-        this.player.deckArray.push(reload);
-        this.player.deckArray.push(overload);
-        this.player.deckArray.push(bandolier);
-        this.player.deckArray.push(lock_and_load);
-        this.player.deckArray.push(holster);
-        this.player.deckArray.push(ammo_cache);
+        this.allCards.push(reload);
+        this.allCards.push(overload);
+        this.allCards.push(bandolier);
+        this.allCards.push(lock_and_load);
+        this.allCards.push(holster);
+        this.allCards.push(ammo_cache);
 
         // healing cards
         let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
@@ -339,12 +367,12 @@ export class ExtraScene extends Phaser.Scene {
         let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
         let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, otherTarget: "armour", otherAmount: 8}, "blue", this, 0, 0, "morphine");
 
-        this.player.deckArray.push(medkit);
-        this.player.deckArray.push(kevlar);
-        this.player.deckArray.push(stim_pack)
-        this.player.deckArray.push(armour_plate);
-        this.player.deckArray.push(bourbon);
-        this.player.deckArray.push(morphine);
+        this.allCards.push(medkit);
+        this.allCards.push(kevlar);
+        this.allCards.push(stim_pack)
+        this.allCards.push(armour_plate);
+        this.allCards.push(bourbon);
+        this.allCards.push(morphine);
     
     }
     
@@ -451,14 +479,13 @@ export class ExtraScene extends Phaser.Scene {
 
     }
 
-    getRarityCards(rarity) {
+    getRarityCards(rarity, list) {
         this.rarityCards = [];
-        for (let i=0; i<this.player.deckArray.length; i++) {
-            if (this.player.deckArray[i].getRarity() == rarity) {
-                    this.rarityCards.push(this.player.deckArray[i]);
+        for (let i=0; i<list.length; i++) {
+            if (list[i].getRarity() == rarity) {
+                    this.rarityCards.push(list[i]);
                 }
             }
-
     }
 
     displayCards(choice) {
