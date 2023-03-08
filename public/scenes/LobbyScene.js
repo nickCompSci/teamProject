@@ -125,50 +125,48 @@ export class LobbyScene extends Phaser.Scene {
         // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
         // with the joinee
         if (this.host) {
-            const waitingForJoineeInterval = setInterval(function () {
-                // if detects an increase in connections
-                if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
-                    clearInterval(waitingForJoineeInterval)
-                    var data = {
-                        otherUser: scene.network.peer.conn.peer
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: '/getOtherPlayersId',
-                        data,
-                        success: function (result) {
-                            console.log(result.otherUserName);
-                            scene.otherPlayerName = result.otherUserName;
-
-                            var data = {
-                                username: scene.playerUsername,
-                                otherUser: scene.otherPlayerName,
-                            }
-                            $.ajax({
-                                type: 'POST',
-                                url: '/createLobby',
-                                data,
-                                success: function (result) {
-                                    scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-                                        .setDepth(1)
-                                        .setOrigin(0.5)
-                                    scene.readyToStart = true;
-                                },
-                                error: function (xhr) {
-                                    window.alert(JSON.stringify(xhr));
-                                    window.location.replace('/game.html');
-                                }
-                            });
-                            // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
-                        },
-                        error: function (xhr) {
-                            window.alert(JSON.stringify(xhr));
-                            window.location.replace('/game.html');
-                        }
-                    });
+            // if detects an increase in connections
+            scene.network.peer.on('connection', function(conn){
+                var data = {
+                    otherUser: scene.network.peer.conn.peer
                 }
-            }, 100);
-        }
+                $.ajax({
+                    type: 'POST',
+                    url: '/getOtherPlayersId',
+                    data,
+                    success: function (result) {
+                        console.log(result.otherUserName);
+                        scene.otherPlayerName = result.otherUserName;
+
+                        var data = {
+                            username: scene.playerUsername,
+                            otherUser: scene.otherPlayerName,
+                        }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/createLobby',
+                            data,
+                            success: function (result) {
+                                scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                                    .setDepth(1)
+                                    .setOrigin(0.5)
+                                scene.readyToStart = true;
+                            },
+                            error: function (xhr) {
+                                window.alert(JSON.stringify(xhr));
+                                window.location.replace('/game.html');
+                            }
+                        });
+                        // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                    },
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/game.html');
+                    }
+                });
+    });
+    }
+
         // a leaveGame detection interval
         // if the joinee leaves the game - he will peer.destroy and destroy his directional IN_LOBBY_TOGETHER
         // the host must detect this, peer.destroy himself, reallocate the peer to himself

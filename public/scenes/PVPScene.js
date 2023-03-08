@@ -117,9 +117,13 @@ export class PVPScene extends Phaser.Scene{
 
         // create text object displaying that it is opponent's turn, hide if not true initially
         this.opponentTurn = this.add.text(300, 25, "Opponent's Turn", {color:'#FFFFFF', fontSize:'50px'});
+        let yourTurnText = this.add.text(330, 25, "Your Turn", {color:'#FFFFFF', fontSize:'50px'}).setVisible(false);
+        this.yourTurnText = yourTurnText;
         this.disableInteractionDuringOpponentTurn();
         if(this.yourTurn){
             this.opponentTurn.setVisible(false);
+            yourTurnText.setVisible(true);
+            setTimeout(function(){yourTurnText.setVisible(false)}, 2000);
             this.enableInteractionDuringYourTurn();
         }
 
@@ -564,8 +568,11 @@ export class PVPScene extends Phaser.Scene{
 
     startTurn(scene){
         console.log(scene.opponentLastCard);
-        scene.opponentLastCard.setVisible(false);
+        try{scene.opponentLastCard.setVisible(false);
+        }catch{}
         scene.opponentTurn.setVisible(false);
+        scene.yourTurnText.setVisible(true);
+        setTimeout(function(){scene.yourTurnText.setVisible(false)}, 2000);
         scene.yourTurn = true;
         scene.enableInteractionDuringYourTurn();
     }
@@ -656,11 +663,13 @@ export class PVPScene extends Phaser.Scene{
     }
 
     displayCard(scene, json_data) {
+        try{
+            scene.opponentLastCard.setVisible(false);
+        } catch{}
         let cardName = json_data.name;
         let cardType = json_data.cardType;
         let healType = json_data.healType;
         let quantity = json_data.quantity;
-        console.log("HI");
         let gameWidth = scene.game.config.width;
         let gameHeight = scene.game.config.height;
         scene.opponentLastCard = scene.add.image(gameWidth / 2, gameHeight / 2, cardName);
