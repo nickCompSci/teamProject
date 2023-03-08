@@ -67,7 +67,7 @@ app.listen(process.env.PORT || 3000, () => {
 
  //Peer server
 
-// const { PeerServer } = require('peer');
-// const peerServer = PeerServer({ port: 443, 
-//                              path: '/'                         
-//                          });
+const { PeerServer } = require('peer');
+const peerServer = PeerServer({ port: 443, 
+                             path: '/'                         
+                         });

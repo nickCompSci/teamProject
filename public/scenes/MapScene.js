@@ -4,7 +4,6 @@ This file is used to create the map scene.
 import Map from "../helpers/classes/map.js";
 import { CST } from "../CST.js";
 import Player from "../helpers/classes/player.js";
-import { BattleLoadScene } from "./BattleLoadScene.js";
 import { BattleScene } from "./BattleScene.js";
 import { ExtraScene } from "./ExtraScene.js";
 
