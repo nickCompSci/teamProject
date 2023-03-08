@@ -72,13 +72,6 @@ export class PVPScene extends Phaser.Scene{
         this.player.setPosition(gameWidth/3.5, gameHeight/1.7);
         this.playerHealth = new HealthBar(this, this.player.x - 40, this.player.y + 100, this.player.health, this.player.maxHealth, this.player.armour, this.player.maxArmour)
 
-        // create text object displaying that it is opponent's turn, hide if not true initially
-        this.opponentTurn = this.add.text(300, 25, "Opponent's Turn", {color:'#FFFFFF', fontSize:'50px'});
-        if(this.yourTurn){
-            this.opponentTurn.setVisible(false);
-            this.disableInteractionDuringCard();
-        }
-
         this.deck = this.add.sprite(20, 550, "deck");
         this.deck.setOrigin(0, 0);
         this.deckAmount = this.add.text(this.deck.x + this.deck.width, this.deck.y + this.deck.height, this.player.deckArray.length, {fontSize: "20px"});
@@ -120,6 +113,14 @@ export class PVPScene extends Phaser.Scene{
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
 
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
+
+        // create text object displaying that it is opponent's turn, hide if not true initially
+        this.opponentTurn = this.add.text(300, 25, "Opponent's Turn", {color:'#FFFFFF', fontSize:'50px'});
+        this.disableInteractionDuringOpponentTurn();
+        if(this.yourTurn){
+            this.opponentTurn.setVisible(false);
+            this.enableInteractionDuringYourTurn();
+        }
 
         // soundtracks and enemies
         this.spawnOtherPlayerOnScene();
@@ -649,6 +650,24 @@ export class PVPScene extends Phaser.Scene{
         this.keepCardButton.disableInteractive();
         this.endTurnButton.disableInteractive();
         this.discardPile.disableInteractive();
+    }
+
+    disableInteractionDuringOpponentTurn(){
+        this.keepCardButton.disableInteractive();
+        this.endTurnButton.disableInteractive();
+        this.discardPile.disableInteractive();
+        for (let card of this.player.handArray) {
+            card.disableInteractive();
+        }
+    }
+
+    enableInteractionDuringYourTurn(){
+        this.keepCardButton.enableInteractive();
+        this.endTurnButton.enableInteractive();
+        this.discardPile.enableInteractive();
+        for (let card of this.player.handArray) {
+            card.enableInteractive();
+        }
     }
 
     enableInteractionAfterCard() {
