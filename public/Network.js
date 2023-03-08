@@ -78,7 +78,7 @@ export class Network{
             var json_data = JSON.parse(data);
             if(json_data['type'] == 'cardPlayed'){
                 console.log(json_data);
-                displayCard(scene, json_data.name);
+                displayCard(scene, json_data);
             } else if(json_data['type'] == 'enemyTurnOver'){
                 console.log("starting your turn function");
                 yourTurnFunction(scene);

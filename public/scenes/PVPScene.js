@@ -236,8 +236,14 @@ export class PVPScene extends Phaser.Scene{
                 // send image of card
                 // send the effect over with the type
                 // 2 cards - damage and healing cards
-                this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "effect": "' + gameObject.effect + '"}');
-                
+                if(gameObject.cardType == 'damage'){
+                    this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '"}');
+                } else if(gameObject.cardType == 'healing'){
+                    console.log('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
+                    this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
+                } else{
+                    this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '"}');
+                }
 
                 gameObject.activateCard(this);
                 // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
@@ -557,6 +563,7 @@ export class PVPScene extends Phaser.Scene{
     }
 
     startTurn(scene){
+        scene.opponentLastCard.setVisible(false);
         console.log("starting turn");
         scene.opponentTurn.setVisible(false);
         scene.yourTurn = true;
@@ -648,9 +655,26 @@ export class PVPScene extends Phaser.Scene{
         }
     }
 
-    displayCard(scene, cardName) {
+    displayCard(scene, json_data) {
+        let cardName = json_data.name;
+        let cardType = json_data.cardType;
+        let healType = json_data.healType;
+        let quantity = json_data.quantity;
         console.log("HI");
-        let card = scene.add.image(300, 300, cardName);
+        let gameWidth = scene.game.config.width;
+        let gameHeight = scene.game.config.height;
+        scene.opponentLastCard = scene.add.image(gameWidth / 2, gameHeight / 2, cardName)
+        setTimeout(function() {scene.opponentLastCard.setVisible(false)}, 3000);
+
+        if(cardType == 'damage'){
+            scene.damage_calculation(scene.player, quantity);
+        } else if(cardType == 'healing'){
+            if(healType == 'armour'){
+            scene.armour_calculation(scene.enemies[0], quantity);
+            } else{
+                scene.healing_calculation(scene.enemies[0], quantity);
+            }
+        }
     }
 
 
