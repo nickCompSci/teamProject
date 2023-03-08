@@ -24,7 +24,7 @@ export class BattleScene extends Phaser.Scene {
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
-        this.level = 1;
+        this.level = 3;
         this.boss;
         this.otherPlayer;
         this.network = data.networkObj;
@@ -495,7 +495,7 @@ export class BattleScene extends Phaser.Scene {
         // this.player.deckArray.push(morphine);
     
         this.rewards.push(minigun);
-        this.rewards.push(missile);
+        this.rewards.push(blast);
     }
     
     
@@ -593,7 +593,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     spawnBossOnScene() {
-        this.boss = new Boss(this, 0, 0, "boss", 0 , 100);
+        this.boss = new Boss(this, 0, 0, "boss", 0 , 1);
         this.enemies.push(this.boss);
         let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
         this.healthbars.push(bosshealth);
@@ -654,6 +654,7 @@ export class BattleScene extends Phaser.Scene {
 
             // add the card to deckArray when clicked 
             cards.on('pointerdown', function (event) {
+                // this refers to the card btw here, not the scene
                 player.deckArray.push(this);
 
                 for (let cards of scene.rewards) {
@@ -661,7 +662,7 @@ export class BattleScene extends Phaser.Scene {
                 }
                 pickCardsText.destroy();
                 scene.rewards=[];
-                // this refers to the card btw here, not the scene
+
                 for (let card of scene.player.graveYardArray){
                     scene.player.deckArray.push(card);
                 }
@@ -674,9 +675,14 @@ export class BattleScene extends Phaser.Scene {
 
                 scene.sound.stopAll();
                 scene.sound.sounds[1].play();
-                scene.scene.stop(CST.SCENES.BATTLE);
-                scene.scene.resume(CST.SCENES.MAP);
-                
+
+                if (scene.level === 3) {
+                    console.log(scene.player);
+                    scene.scene.start(CST.SCENES.INITIATEPVPSCENE, {networkObj: scene.network, playerUsername: scene.playerUsername, playerObj: scene.player });
+                } else {
+                    scene.scene.stop(CST.SCENES.BATTLE);
+                    scene.scene.resume(CST.SCENES.MAP);
+                }
             })
 
             cards.setVisible(true);

@@ -3,6 +3,7 @@ This file is used to create the initiatePVP scene.
 */
 import { CST } from "../CST.js";
 import Button from "../helpers/classes/button.js";
+import Player from "../helpers/classes/player.js";
 
 export class initiatePVPScene extends Phaser.Scene{
     constructor(){
@@ -12,6 +13,8 @@ export class initiatePVPScene extends Phaser.Scene{
     }
 
     init(data){
+        console.log(data.playerObj);
+        this.playerData = data.playerObj;
         this.currentPlayer;
         this.enemyPlayer;
         this.network = data.networkObj;
@@ -23,17 +26,22 @@ export class initiatePVPScene extends Phaser.Scene{
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
 
+        // play epic sound
+        this.sound.stopAll();
+        this.sound.play("beginGame",{volume: 0.01});
+
+
         this.cameras.main.backgroundColor.setTo(0, 0, 5);
         this.button = new Button(gameWidth/2, gameHeight/2, 20, 20, "Claim the Throne", this, this.startFinalBattle.bind(this), '#202529');
     }
 
-    startFinalBattle() {
+    startFinalBattle() {  
+       
         // this.healPlayerHealth();
         // send players data activated PVP flag
         // on opposite side when detect this flag via interval,
         // it needs to load them a battle scene with the same layout as this one no matter what
-
-        this.scene.start(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, level:4, })
+        this.scene.start(CST.SCENES.PVPSCENE, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.playerData });
     }
 
     healPlayerHealth() {
