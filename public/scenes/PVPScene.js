@@ -662,11 +662,11 @@ export class PVPScene extends Phaser.Scene{
     }
 
     enableInteractionDuringYourTurn(){
-        this.keepCardButton.enableInteractive();
-        this.endTurnButton.enableInteractive();
-        this.discardPile.enableInteractive();
+        this.keepCardButton.setInteractive();
+        this.endTurnButton.setInteractive();
+        this.discardPile.setInteractive();
         for (let card of this.player.handArray) {
-            card.enableInteractive();
+            card.setInteractive();
         }
     }
 
