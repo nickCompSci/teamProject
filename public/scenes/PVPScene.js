@@ -20,6 +20,7 @@ export class PVPScene extends Phaser.Scene{
         console.log(this.playerData);
         // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
+        this.network.handleDataFightScene(this.startTurn, this);
         this.playerUsername = data.playerUsername;
         this.rewards = [];
         this.healthbars = [];
@@ -552,6 +553,13 @@ export class PVPScene extends Phaser.Scene{
             }
         }
         this.disableInteractionDuringOpponentTurn();
+    }
+
+    startTurn(scene){
+        console.log("starting turn");
+        scene.opponentTurn.setVisible(false);
+        scene.yourTurn = true;
+        scene.enableInteractionDuringYourTurn();
     }
 
     win() {

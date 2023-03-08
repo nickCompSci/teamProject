@@ -71,12 +71,15 @@ export class Network{
         });
     }
 
-    handleDataFightScene(opponent){
+    handleDataFightScene(yourTurnFunction, scene){
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
             if(json_data['type'] == 'playerMove'){
                 console.log(json_data['action']);
+            } else if(json_data['type'] == 'enemyTurnOver'){
+                console.log("starting your turn function");
+                yourTurnFunction(scene);
             }
         })
     }
