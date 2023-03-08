@@ -72,16 +72,17 @@ export class Network{
         });
     }
 
-    handleDataFightScene(yourTurnFunction, scene){
+    handleDataFightScene(yourTurnFunction, scene, displayCard){
         this.peer.conn.off('data');
         this.peer.conn.on('data', function(data){
             var json_data = JSON.parse(data);
-            if(json_data['type'] == 'opponentUpdate'){
-                console.log(json_data['health']);
+            if(json_data['type'] == 'cardPlayed'){
+                console.log(json_data);
+                displayCard(scene, json_data.name);
             } else if(json_data['type'] == 'enemyTurnOver'){
                 console.log("starting your turn function");
                 yourTurnFunction(scene);
-            } else if(json_data['type'] == 'playerUpdate'){
+            } else if(json_data['type'] == 'cardPlayed'){
                 console.log(json_data['health']);
             }
         })

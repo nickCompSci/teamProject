@@ -20,7 +20,7 @@ export class PVPScene extends Phaser.Scene{
         console.log(this.playerData);
         // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
-        this.network.handleDataFightScene(this.startTurn, this);
+        this.network.handleDataFightScene(this.startTurn, this, this.displayCard);
         this.playerUsername = data.playerUsername;
         this.rewards = [];
         this.healthbars = [];
@@ -229,14 +229,15 @@ export class PVPScene extends Phaser.Scene{
                 this.player.discardPileUpdate(this);
                 
                 // destroy breaks combo cards
+
                 gameObject.setActive(false).setVisible(false); 
                 // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY 
 
                 // send image of card
                 // send the effect over with the type
-                //this.network.send('{type: gameObject.type, effect: gameObject.effect, image: gameObject.sprite/texture}');
-
-
+                // 2 cards - damage and healing cards
+                this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "effect": "' + gameObject.effect + '"}');
+                
 
                 gameObject.activateCard(this);
                 // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
@@ -647,6 +648,11 @@ export class PVPScene extends Phaser.Scene{
         }
     }
 
+    displayCard(scene, cardName) {
+        console.log("HI");
+        let card = scene.add.image(300, 300, cardName);
+    }
+
 
     disableInteractionDuringCard() {
         this.keepCardButton.disableInteractive();
@@ -658,18 +664,15 @@ export class PVPScene extends Phaser.Scene{
         this.keepCardButton.disableInteractive();
         this.endTurnButton.disableInteractive();
         this.discardPile.disableInteractive();
-        for (let card of this.player.handArray) {
-            card.disableInteractive();
-        }
+        this.player.disableDragOnCards();
+        
     }
 
     enableInteractionDuringYourTurn(){
         this.keepCardButton.setInteractive();
         this.endTurnButton.setInteractive();
         this.discardPile.setInteractive();
-        for (let card of this.player.handArray) {
-            card.setInteractive();
-        }
+        this.player.enableDragOnCards();
     }
 
     enableInteractionAfterCard() {
