@@ -24,6 +24,11 @@ export class PVPScene extends Phaser.Scene{
         this.rewards = [];
         this.healthbars = [];
         this.enemies = [];
+        this.yourTurn = data.yourTurn;
+        if(!this.yourTurn){
+            this.yourTurn=false;
+        }
+        console.log(this.yourTurn);
     }
 
     preload() {
