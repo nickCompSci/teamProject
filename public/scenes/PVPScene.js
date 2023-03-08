@@ -241,7 +241,12 @@ export class PVPScene extends Phaser.Scene{
                 // send the effect over with the type
                 // 2 cards - damage and healing cards
                 if(gameObject.cardType == 'damage'){
+                    if(gameObject.effect.randomAmount){
+                        this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '", "randomAmount":"'+gameObject.effect.randomAmount+'"}');
+
+                    }else {
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '"}');
+                    }
                 } else if(gameObject.cardType == 'healing'){
                     console.log('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
@@ -668,6 +673,7 @@ export class PVPScene extends Phaser.Scene{
         } catch{}
         let cardName = json_data.name;
         let cardType = json_data.cardType;
+        let randomAmount = json_data.randomAmount;
         let healType = json_data.healType;
         let quantity = json_data.quantity;
         let gameWidth = scene.game.config.width;
@@ -676,7 +682,13 @@ export class PVPScene extends Phaser.Scene{
         setTimeout(function() {scene.opponentLastCard.setVisible(false)}, 3000);
 
         if(cardType == 'damage'){
-            scene.damage_calculation(scene.player, quantity);
+            if(randomAmount){
+                for(let i = 0; i < randomAmount; i++){
+                    scene.damage_calculation(scene.player, quantity);
+                }
+            } else{
+                scene.damage_calculation(scene.player, quantity);
+            }
         } else if(cardType == 'healing'){
             if(healType == 'armour'){
             scene.armour_calculation(scene.enemies[0], Number(quantity));
