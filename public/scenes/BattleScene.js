@@ -252,7 +252,7 @@ export class BattleScene extends Phaser.Scene {
                 this.player.discardPileUpdate(this);
                 
                 // destroy breaks combo cards
-                gameObject.setVisible(false); 
+                gameObject.setActive(false).setVisible(false); 
                 gameObject.activateCard(this);
 
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
@@ -495,7 +495,7 @@ export class BattleScene extends Phaser.Scene {
         // this.player.deckArray.push(morphine);
     
         this.rewards.push(minigun);
-        this.rewards.push(blast);
+        this.rewards.push(missile);
     }
     
     
