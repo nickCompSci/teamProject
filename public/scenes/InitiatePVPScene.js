@@ -29,9 +29,19 @@ export class initiatePVPScene extends Phaser.Scene{
         this.sound.stopAll();
         this.sound.play("beginGame",{volume: 0.01});
 
-
+        let throne = this.add.image(gameWidth/2, gameHeight/2, "throne");
         this.cameras.main.backgroundColor.setTo(0, 0, 5);
-        this.button = new Button(gameWidth/2, gameHeight/2, 20, 20, "Claim the Throne", this, this.startFinalBattle.bind(this), '#202529');
+        this.button = new Button(throne.x, throne.y + throne.height / 2 + 50, 20, 20, "Claim the Throne", this, this.startFinalBattle.bind(this), '#202529');
+        this.button.setOrigin(0.5, 0.5);
+
+        this.button.alpha = 0;
+        this.tweens.add({
+            targets: this.button,
+            alpha: {from: 0, to: 1},
+            ease: 'Sine.InOut',
+            duration: 3000,
+            yoyo:false
+        })
     }
 
     startFinalBattle() {  

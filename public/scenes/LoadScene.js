@@ -3,17 +3,7 @@ This file is used to load all the assets for the game.
 */
 import { CST } from "../CST.js";
 import { Network } from "../Network.js";
-import { MenuScene } from "./MenuScene.js";
-import { OptionsScene } from "./OptionsScene.js";
-import { CreditsScene } from "./CreditsScene.js";
-import { JoinGameScene } from "./JoinGameScene.js";
-// import { CreateGameScene } from "./CreateGameScene.js";
-import { LobbyScene } from "./LobbyScene.js";
-import { friendScene } from "./FriendScene.js";
-import { BattleScene } from "./BattleScene.js";
-import { MapScene } from "./MapScene.js";
-import { ProfileScene } from "./ProfileScene.js";
-import { PlayGameScene } from "./PlayGameScene.js";
+
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -77,6 +67,8 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("up", "../assets/resources/up_arrow.png");
         this.load.image("pointer", "../assets/resources/pointer.png");
         this.load.image("chest", "../assets/resources/chest.png");
+        this.load.image("throne", "../assets/resources/sprites/throne.png");
+
         // Load audio
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");

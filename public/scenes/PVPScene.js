@@ -683,7 +683,7 @@ export class PVPScene extends Phaser.Scene{
             }
         } else if(cardType == 'healing'){
             if(healType == 'armour'){
-            scene.armour_calculation(scene.enemies[0], Number(quantity));
+                scene.armour_calculation(scene.enemies[0], Number(quantity));
             } else{
                 scene.healing_calculation(scene.enemies[0], Number(quantity));
             }
