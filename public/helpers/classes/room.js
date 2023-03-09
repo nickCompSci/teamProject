@@ -147,7 +147,7 @@ export default class Room {
             let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", scene, 0, 0, "missile");
             let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", scene, 0, 0, "molotov");
             let nanotech = new ComboCard("nanotech", 3, "combo", {target: "healing", effect: "multiply", amount: 2}, "purple", scene, 0, 0, "nanotech");
-            let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -10}, "purple", scene, 0, 0, "overload");
+            let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: -10, overload: true}, "purple", scene, 0, 0, "overload");
             let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", scene, 0, 0, "ammo_cache");
             let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", scene, 0, 0, "bourbon");
 
