@@ -33,11 +33,6 @@ export class LobbyScene extends Phaser.Scene {
     // Creates any images, text, etc.
     create() {
 
-        // this.peer.conn.on('data', function(data){
-        //     console.log("this is the receiving function");
-        //     // seems to be for JOINEES
-        //     console.log("Data received: ", data);
-        // })
         let scene = this;
 
         function tempAlert(message, duration) {
@@ -111,61 +106,6 @@ export class LobbyScene extends Phaser.Scene {
         function deleteJoinCodeRelationshipCallback(result) {
             // no need to do anything here for now
         }
-
-
-
-
-        // this interval must keep checking for a connection 
-        // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
-        // with the joinee
-
-        // KEVIN AND ZHI: sprite assigning
-        // if (this.host) {
-        //     const waitingForJoineeInterval = setInterval(function () {
-        //         // if detects an increase in connections
-        //         if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
-        //             clearInterval(waitingForJoineeInterval)
-        //             var data = {
-        //                 otherUser: scene.network.peer.conn.peer
-                
-        //             }
-        //             $.ajax({
-        //                 type: 'POST',
-        //                 url: '/getOtherPlayersUsername',
-        //                 data,
-        //                 success: function (result) {
-        //                     console.log(result.otherUserName);
-        //                     scene.otherPlayerName = result.otherUserName;
-
-        //                     var data = {
-        //                         username: scene.playerUsername,
-        //                         otherUser: scene.otherPlayerName,
-        //                     }
-        //                     $.ajax({
-        //                         type: 'POST',
-        //                         url: '/createLobby',
-        //                         data,
-        //                         success: function (result) {
-        //                             scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-        //                                 .setDepth(1)
-        //                                 .setOrigin(0.5)
-        //                             scene.readyToStart = true;
-        //                         },
-        //                         error: function (xhr) {
-        //                             window.alert(JSON.stringify(xhr));
-        //                             window.location.replace('/game.html');
-        //                         }
-        //                     });
-        //                     // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
-        //                 },
-        //                 error: function (xhr) {
-        //                     window.alert(JSON.stringify(xhr));
-        //                     window.location.replace('/game.html');
-        //                 }
-        //             });
-        //         }
-        //     }, 100);
-        // }
 
         let joineeDidLeave = false;
         let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Start Game', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
@@ -405,6 +345,7 @@ export class LobbyScene extends Phaser.Scene {
                         url: '/deleteLobby',
                         data,
                         success: function (result) {
+                            window.location.replace('/game.html');
                         },
                         error: function (xhr) {
                             window.alert(JSON.stringify(xhr));
@@ -421,6 +362,7 @@ export class LobbyScene extends Phaser.Scene {
                         url: '/joineeLeft',
                         data,
                         success: function (result) {
+                            window.location.replace('/game.html');
                         },
                         error: function (xhr) {
                             window.alert(JSON.stringify(xhr));
@@ -438,7 +380,8 @@ export class LobbyScene extends Phaser.Scene {
                     }
                 }
                 else {
-                    this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
+                    // this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
+                    window.location.replace('/game.html');
                 }
             })
 
