@@ -107,21 +107,7 @@ export class MenuScene extends Phaser.Scene{
             this.scene.start(CST.SCENES.CREDITS, {networkObj:this.network, playerUsername: this.playerUsername})
         })
 
-        let battleButton = this.add.text(this.game.renderer.width / 2 + 200, this.game.renderer.height / 2 + 350, 'Battle', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-        .setDepth(1)
-        .setOrigin(0.5)
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            battleButton.setStyle({fill: '#fff'});
-        })
-
-        let mapButton = this.add.text(this.game.renderer.width/ 2 + 400 , this.game.renderer.height / 2 + 350, 'Map', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-        .setDepth(1)
-        .setOrigin(0.5)
-        .on("pointerout", () => {
-            arrowSprite.setVisible(false);
-            mapButton.setStyle({fill: '#fff'});
-        })
+       
 
         // Adds the hover arrow that will appear when hovering over a button
         let arrowSprite = this.add.sprite(100, 100, "arrow");
@@ -137,34 +123,7 @@ export class MenuScene extends Phaser.Scene{
             this.sound.setVolume(0.2);
         }
 
-        battleButton.setInteractive({useHandCursor: true})
 
-        battleButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = battleButton.x - battleButton.width +100;
-            arrowSprite.y = battleButton.y + battleButton.height / 4;
-        })
-
-        battleButton.on("pointerup", ()=>{
-            // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.BATTLE);
-
-        })
-
-        // Map Button
-        mapButton.setInteractive({useHandCursor: true})
-
-        mapButton.on("pointerover", ()=>{
-            arrowSprite.setVisible(true);
-            arrowSprite.x = mapButton.x - mapButton.width +50;
-            arrowSprite.y = mapButton.y + mapButton.height / 4 ;
-        })
-
-        mapButton.on("pointerup", ()=>{
-            // Moves to options menu when clicked
-            this.sound.sounds[0].stop();
-            this.scene.start(CST.SCENES.MAP, {networkObj: this.network, playerUsername: this.playerUsername});
-        })
     }
 
 }
