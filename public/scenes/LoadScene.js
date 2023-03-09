@@ -70,6 +70,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("throne", "../assets/resources/sprites/throne.png");
         this.load.image("fuseThrone", "../assets/resources/sprites/fuse_throne.png")
         this.load.image("fuse", "../assets/resources/cards/Fuse.png");
+        this.load.image("logo", "../assets/resources/logo.png");
 
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");

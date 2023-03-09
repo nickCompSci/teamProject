@@ -108,7 +108,6 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        this.loadCards();
         let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
         // shuffles the deck and sets up the visual for the deck cards
@@ -134,7 +133,6 @@ export class BattleScene extends Phaser.Scene {
             let cardsInDiscardPile = this.player.graveYardArray;
             this.scene.pause().launch(CST.SCENES.DISCARD_PILE, {cardsInDiscardPile, cardsInDeck});
         }, this);
-        
         
         this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
@@ -422,81 +420,6 @@ export class BattleScene extends Phaser.Scene {
         return character;
     }
 
-    loadCards() {
-        // damage cards
-        let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 8, target: "single", discard: 1}, "blue", this, 0, 0, "cannonball");
-        let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", this, 0, 0, "grenade");
-        let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", this, 0, 0, "high_noon");
-        let fire_rain = new DamageCard("fire_rain", 3, "damage", {damage: 8, target: "random", randomAmount: 3, discard: 1}, "blue", this, 0, 0, "fire_rain");
-        let minigun = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", this, 0, 0, "minigun");
-        let launcher = new DamageCard("launcher", 2, "damage", {damage: 6, target: "all"}, "blue", this, 0, 0, "launcher");
-        let ballistic = new DamageCard("ballistic", 1, "damage", {damage: this.player.armour, target: "single"}, "white", this, 0, 0, "ballistic");
-        let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single", armour: 5}, "white", this, 0, 0, "reinforce");
-        let blast = new DamageCard("blast", 2, "damage", {damage: 10, target: "single", cards: 1}, "blue", this, 0, 0, "blast");
-        let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
-        let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
-
-        // this.player.deckArray.push(cannonball);
-        // this.player.deckArray.push(grenade);
-        // this.player.deckArray.push(high_noon);
-        // this.player.deckArray.push(fire_rain);
-        // this.player.deckArray.push(minigun);
-        // this.player.deckArray.push(launcher);
-        // this.player.deckArray.push(ballistic);
-        // this.player.deckArray.push(reinforce);
-        // this.player.deckArray.push(blast);
-        // this.player.deckArray.push(missile);
-        // this.player.deckArray.push(molotov);
-
-        // combo cards
-        let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
-        let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", this, 0, 0, "ricochet");
-        let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
-        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
-        let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
-        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "blue", this, 0, 0, "nanotech");
-
-        // this.player.deckArray.push(headshot);
-        // this.player.deckArray.push(ricochet);
-        // this.player.deckArray.push(pinpoint);
-        // this.player.deckArray.push(bayonet);
-        // this.player.deckArray.push(load);
-        // this.player.deckArray.push(nanotech);
-       
-        // reload cards
-        let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: 10, overload: true}, "purple", this, 0, 0, "overload");
-        let lock_and_load = new ReloadCard("lock_and_load", 0, "reload", {amount: 2, cards: 2}, "blue", this, 0, 0, "lock_and_load");
-        let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", this, 0, 0, "bandolier");
-        let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
-        let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", this, 0, 0, "ammo_cache");
-
-        // this.player.deckArray.push(reload);
-        // this.player.deckArray.push(overload);
-        // this.player.deckArray.push(bandolier);
-        // this.player.deckArray.push(lock_and_load);
-        // this.player.deckArray.push(holster);
-        // this.player.deckArray.push(ammo_cache);
-
-        // healing cards
-        let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
-        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 5}, "white", this, 0, 0, "kevlar");
-        let stim_pack = new HealingCard("stim_pack", 1, "healing", {target: "health", amount: 14}, "white", this, 0, 0, "stim_pack");
-        let armour_plate = new HealingCard("armour_plate", 2, "healing", {target: "armour", amount: 10}, "blue", this, 0, 0, "armour_plate");
-        let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
-        let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", this, 0, 0, "morphine");
-
-        // this.player.deckArray.push(medkit);
-        // this.player.deckArray.push(kevlar);
-        // this.player.deckArray.push(stim_pack)
-        // this.player.deckArray.push(armour_plate);
-        // this.player.deckArray.push(bourbon);
-        // this.player.deckArray.push(morphine);
-    
-        this.rewards.push(minigun);
-        this.rewards.push(blast);
-    }
-    
     
     arrangeCardsInCenter(handArray) {
         // arranges for the cards to be organised around the bottom middle of the screen
