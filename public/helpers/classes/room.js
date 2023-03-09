@@ -126,7 +126,7 @@ export default class Room {
             let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", scene, 0, 0, "bandolier");
             let stim_pack = new HealingCard("stim_pack", 1, "healing", {target: "health", amount: 14}, "blue", scene, 0, 0, "stim_pack");
             let armour_plate = new HealingCard("armour_plate", 2, "healing", {target: "armour", amount: 10}, "blue", scene, 0, 0, "armour_plate");
-            let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, otherTarget: "armour", otherAmount: 8}, "blue", scene, 0, 0, "morphine");
+            let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", scene, 0, 0, "morphine");
 
             this.allCards.push(cannonball);
             this.allCards.push(fire_rain);

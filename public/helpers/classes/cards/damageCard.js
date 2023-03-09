@@ -19,6 +19,9 @@ export default class DamageCard extends HandCard {
         let card = this;
         if (this.effect.target === "single") {
             if (scene.enemies.length === 1) {
+                if (this.name === "ballistic") {
+                    this.effect.damage = scene.player.armour;
+                }
                 scene.damage_calculation(scene.enemies[0], this.effect.damage);
                 this.resetCard();
             } else {

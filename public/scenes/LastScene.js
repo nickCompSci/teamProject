@@ -36,7 +36,13 @@ export class LastScene extends Phaser.Scene {
             yoyo: false
         })
 
+        // go back to menu menu
+        this.time.delayedCall(7000, this.reset, [], 7000);
 
+    }
+
+    reset() {
+        window.location.replace('/game.html');
     }
 
 }
