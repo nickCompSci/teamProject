@@ -952,7 +952,7 @@ router.post("/cleanup", (request, response) => {
                 tx.run(writeQuery, { currentUsername })
             );
             const writeQuery2 = `
-                MATCH (a:Person {username: $currentUsername})-[r:JOIN_GAME]->(n:Person)
+                MATCH (a:Person {username: $currentUsername})-[r:JOIN_CODE]->(n:Person)
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery2, { currentUsername })

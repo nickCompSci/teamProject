@@ -17,7 +17,6 @@ export class PVPScene extends Phaser.Scene{
 
     init(data){
         this.playerData = data.playerObj;
-        // this.enemyPlayer = data.otherPlayerObj;
         this.network = data.networkObj;
         this.network.handleDataFightScene(this.startTurn, this, this.displayCard);
         this.playerUsername = data.playerUsername;
@@ -30,12 +29,8 @@ export class PVPScene extends Phaser.Scene{
         }
     }
 
-    preload() {
-        this.load.image("fuse", "../assets/resources/cards/Fuse.png");
-    }
 
     create(){
-        // work work
 
         let gameWidth = this.game.config.width;
         let gameHeight = this.game.config.height;
@@ -51,6 +46,7 @@ export class PVPScene extends Phaser.Scene{
         this.bg.setPosition(gameWidth/2, gameHeight/2.6);
         this.bg.setScale(0.65);
         this.bg.displayWidth = 777;
+
     
         this.player = new Player(this, 0, 0, "player");
         this.player.setEqual(this.playerData);
@@ -125,7 +121,9 @@ export class PVPScene extends Phaser.Scene{
             this.enableInteractionDuringYourTurn();
         }
 
-        // soundtracks and enemies
+        // soundtrack and other player
+        this.sound.play("menuMusic", {loop: true});
+        this.sound.setVolume(0.15);
         this.spawnOtherPlayerOnScene();
 
         // trying to fix the clicking on cards issue where the card goes out of bounds
@@ -230,29 +228,22 @@ export class PVPScene extends Phaser.Scene{
                 this.player.graveYardArray.push(gameObject);
                 this.player.discardPileUpdate(this);
                 
-                // destroy breaks combo cards
 
                 gameObject.setActive(false).setVisible(false); 
-                // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY 
-
-                // send image of card
-                // send the effect over with the type
-                // 2 cards - damage and healing cards
-                if(gameObject.cardType == 'damage'){
-                    if(gameObject.effect.randomAmount){
+                
+                if (gameObject.cardType == 'damage') {
+                    if (gameObject.effect.randomAmount) {
                         this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '", "randomAmount":"'+gameObject.effect.randomAmount+'"}');
-
-                    }else {
-                    this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '"}');
+                    } else {
+                        this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.damage + '", "cardType":"' + gameObject.cardType + '"}');
                     }
-                } else if(gameObject.cardType == 'healing'){
+                } else if (gameObject.cardType == 'healing') {
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '", "quantity": "' + gameObject.effect.amount + '", "cardType":"' + gameObject.cardType + '", "healType":"'+ gameObject.effect.target +'"}');
-                } else{
+                } else {
                     this.network.send('{ "type": "cardPlayed", "name": "' + gameObject.name + '"}');
                 }
 
                 gameObject.activateCard(this);
-                // SURELYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 
 
                 this.player.actionPoints = this.player.getActionPoints() - gameObject.getCost();
@@ -329,7 +320,11 @@ export class PVPScene extends Phaser.Scene{
     }
 
     lose() {
+        this.sound.stopAll();
         this.sound.play("playerDeath", {volume: 0.7});
+        this.cameras.main.shake(200, 0.05);
+        this.cameras.main.fadeOut(3000);
+        this.time.delayedCall(4000, this.lastScene, [], this);
     }
 
     damage_calculation(character, damage) {
@@ -422,78 +417,6 @@ export class PVPScene extends Phaser.Scene{
     }
 
     loadCards() {
-        // damage cards
-        let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 8, target: "single", discard: 1}, "blue", this, 0, 0, "cannonball");
-        let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", this, 0, 0, "grenade");
-        let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", this, 0, 0, "high_noon");
-        let fire_rain = new DamageCard("fire_rain", 3, "damage", {damage: 8, target: "random", randomAmount: 3, discard: 1}, "blue", this, 0, 0, "fire_rain");
-        let minigun = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", this, 0, 0, "minigun");
-        let launcher = new DamageCard("launcher", 2, "damage", {damage: 6, target: "all"}, "blue", this, 0, 0, "launcher");
-        let ballistic = new DamageCard("ballistic", 1, "damage", {damage: this.player.armour, target: "single"}, "white", this, 0, 0, "ballistic");
-        let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single", armour: 5}, "white", this, 0, 0, "reinforce");
-        let blast = new DamageCard("blast", 2, "damage", {damage: 10, target: "single", cards: 1}, "blue", this, 0, 0, "blast");
-        let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
-        let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
-
-        // this.player.deckArray.push(cannonball);
-        // this.player.deckArray.push(grenade);
-        // this.player.deckArray.push(high_noon);
-        // this.player.deckArray.push(fire_rain);
-        // this.player.deckArray.push(minigun);
-        // this.player.deckArray.push(launcher);
-        // this.player.deckArray.push(ballistic);
-        // this.player.deckArray.push(reinforce);
-        // this.player.deckArray.push(blast);
-        // this.player.deckArray.push(missile);
-        // this.player.deckArray.push(molotov);
-
-        // combo cards
-        let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
-        let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", this, 0, 0, "ricochet");
-        let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
-        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
-        let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
-        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "blue", this, 0, 0, "nanotech");
-
-        // this.player.deckArray.push(headshot);
-        // this.player.deckArray.push(ricochet);
-        // this.player.deckArray.push(pinpoint);
-        // this.player.deckArray.push(bayonet);
-        // this.player.deckArray.push(load);
-        // this.player.deckArray.push(nanotech);
-       
-        // reload cards
-        let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: 10, overload: true}, "purple", this, 0, 0, "overload");
-        let lock_and_load = new ReloadCard("lock_and_load", 0, "reload", {amount: 2, cards: 2}, "blue", this, 0, 0, "lock_and_load");
-        let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", this, 0, 0, "bandolier");
-        let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
-        let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", this, 0, 0, "ammo_cache");
-
-        // this.player.deckArray.push(reload);
-        // this.player.deckArray.push(overload);
-        // this.player.deckArray.push(bandolier);
-        // this.player.deckArray.push(lock_and_load);
-        // this.player.deckArray.push(holster);
-        // this.player.deckArray.push(ammo_cache);
-
-        // healing cards
-        let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
-        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 5}, "white", this, 0, 0, "kevlar");
-        let stim_pack = new HealingCard("stim_pack", 1, "healing", {target: "health", amount: 14}, "white", this, 0, 0, "stim_pack");
-        let armour_plate = new HealingCard("armour_plate", 2, "healing", {target: "armour", amount: 10}, "blue", this, 0, 0, "armour_plate");
-        let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
-        let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", this, 0, 0, "morphine");
-
-        // this.player.deckArray.push(medkit);
-        // this.player.deckArray.push(kevlar);
-        // this.player.deckArray.push(stim_pack)
-        // this.player.deckArray.push(armour_plate);
-        // this.player.deckArray.push(bourbon);
-        // this.player.deckArray.push(morphine);
-    
-        // this.rewards.push(minigun);
-        // this.rewards.push(blast);
         this.rewards.push(this.fuse);
     }
     
@@ -565,9 +488,9 @@ export class PVPScene extends Phaser.Scene{
         this.disableInteractionDuringOpponentTurn();
     }
 
-    startTurn(scene){
-        try{scene.opponentLastCard.setVisible(false);
-        }catch{}
+    startTurn(scene) {
+        try { scene.opponentLastCard.setVisible(false);
+        } catch {}
         scene.opponentTurn.setVisible(false);
         scene.yourTurnText.setVisible(true);
         setTimeout(function(){scene.yourTurnText.setVisible(false)}, 2000);
@@ -575,21 +498,10 @@ export class PVPScene extends Phaser.Scene{
         scene.enableInteractionDuringYourTurn();
     }
 
-    win() {
-        this.showRewards();
-    }
-
-    lose() {
-        // turn to black screen
-        this.cameras.main.backgroundColor.setTo(0, 0, 5);
-    }
-
     spawnOtherPlayerOnScene() {
-        // equal to otherPlayer passed in
         let x = this.game.config.width * 0.7;
         let y = this.game.config.height * 0.6;
         this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
-        // set this.otherPlayer.setEqual()
         this.enemies.push(this.otherPlayer);
         let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
         this.healthbars.push(otherPlayerHealth);
@@ -607,8 +519,8 @@ export class PVPScene extends Phaser.Scene{
 
         let pickCardsText = this.add.text(centerX, 100, "Pick One Card", {color:"#FD722A" , fontSize: "40px"});
         pickCardsText.setOrigin(0.5, 0.5);
-        let player = this.player;
         let scene = this;
+        this.sound.stopAll();
 
         for (let i=0; i < this.rewards.length; i++) {
             let cards = this.rewards[i];
@@ -620,47 +532,22 @@ export class PVPScene extends Phaser.Scene{
             cards.angle = 0;
             cards.displayWidth = gameOptions.cardWidth * 2;
             cards.displayHeight = gameOptions.cardHeight * 2;
-            cards.setDepth(5);
-
-            // add the card to deckArray when clicked 
-            cards.on('pointerdown', function (event) {
-                // this refers to the card btw here, not the scene
-                player.deckArray.push(this);
-
-                for (let cards of scene.rewards) {
-                    cards.destroy();
-                }
-                pickCardsText.destroy();
-                scene.rewards=[];
-
-                for (let card of scene.player.graveYardArray){
-                    scene.player.deckArray.push(card);
-                }
-                for (let card of scene.player.handArray){
-                    scene.player.deckArray.push(card);
-                }
-                scene.player.handArray = [];
-                scene.player.graveYardArray = [];
-                scene.playerData.setEqual(scene.player);
-
-                scene.sound.stopAll();
-                scene.sound.sounds[1].play();
-
-                if (scene.level === 3) {
-                    scene.scene.start(CST.SCENES.INITIATEPVPSCENE, {networkObj: scene.network, playerUsername: scene.playerUsername, playerObj: scene.player });
-                } else {
-                    scene.scene.stop(CST.SCENES.BATTLE);
-                    scene.scene.resume(CST.SCENES.MAP);
-                }
-            })
-
+            
             cards.setVisible(true);
             this.add.existing(cards);
+            this.cameras.main.shake(200, 0.05);
         }
+
+        this.cameras.main.fadeOut(3000);
+        this.time.delayedCall(4000, this.lastScene, [], this); 
+    }
+
+    lastScene() {
+        this.scene.start(CST.SCENES.LASTSCENE);
     }
 
     displayCard(scene, json_data) {
-        try{
+        try {
             scene.opponentLastCard.setVisible(false);
         } catch{}
         let cardName = json_data.name;
@@ -671,20 +558,20 @@ export class PVPScene extends Phaser.Scene{
         let gameWidth = scene.game.config.width;
         let gameHeight = scene.game.config.height;
         scene.opponentLastCard = scene.add.image(gameWidth / 2, gameHeight / 2, cardName);
-        setTimeout(function() {scene.opponentLastCard.setVisible(false)}, 3000);
+        setTimeout(function() {scene.opponentLastCard.setVisible(false)}, 1500);
 
-        if(cardType == 'damage'){
-            if(randomAmount){
-                for(let i = 0; i < randomAmount; i++){
+        if (cardType == 'damage') {
+            if (randomAmount) {
+                for (let i = 0; i < randomAmount; i++) {
                     scene.damage_calculation(scene.player, quantity);
                 }
-            } else{
+            } else {
                 scene.damage_calculation(scene.player, quantity);
             }
-        } else if(cardType == 'healing'){
-            if(healType == 'armour'){
+        } else if (cardType == 'healing') {
+            if (healType == 'armour') {
                 scene.armour_calculation(scene.enemies[0], Number(quantity));
-            } else{
+            } else {
                 scene.healing_calculation(scene.enemies[0], Number(quantity));
             }
         }

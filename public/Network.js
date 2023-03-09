@@ -70,6 +70,7 @@ export class Network{
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
                 returnCardsToPlayer(phaser);
+                phaser.sound.stopAll();
                 phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
             }
         });

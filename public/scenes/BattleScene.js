@@ -591,7 +591,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     spawnBossOnScene() {
-        this.boss = new Boss(this, 0, 0, "boss", 0 , 1);
+        this.boss = new Boss(this, 0, 0, "boss", 0 , 120);
         this.enemies.push(this.boss);
         let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
         this.healthbars.push(bosshealth);

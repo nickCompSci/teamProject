@@ -68,12 +68,14 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("pointer", "../assets/resources/pointer.png");
         this.load.image("chest", "../assets/resources/chest.png");
         this.load.image("throne", "../assets/resources/sprites/throne.png");
+        this.load.image("fuseThrone", "../assets/resources/sprites/fuse_throne.png")
+        this.load.image("fuse", "../assets/resources/cards/Fuse.png");
 
-        // Load audio
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         this.load.html("enterCodeForm", "../enterCodeForm.html");
         this.load.image("player_map", "../assets/resources/sprites/player_map.png");
+
         // Soundtrack
         this.load.audio("menuMusic", "../assets/resources/soundtrack.mp3");
         this.load.audio('mapMusic', "../assets/resources/soundtrack/Map.mp3");
@@ -81,6 +83,7 @@ export class LoadScene extends Phaser.Scene{
         this.load.audio('shop', "../assets/resources/soundtrack/shop.mp3");
         this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
         this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
+        this.load.audio('endOfTrail', "../assets/resources/soundtrack/end_of_trail.mp3");
 
 
         // Load plugins

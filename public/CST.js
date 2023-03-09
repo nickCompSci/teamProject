@@ -17,6 +17,7 @@ export const CST = {
         EXTRA: "EXTRA",
         PLAYGAME : "PLAYGAME",
         INITIATEPVPSCENE: "INITIATEPVPSCENE",
-        PVPSCENE: "PVPSCENE"
+        PVPSCENE: "PVPSCENE",
+        LASTSCENE: "LASTSCENE"
     }
 }

@@ -20,6 +20,7 @@ export default class DamageCard extends HandCard {
         if (this.effect.target === "single") {
             if (scene.enemies.length === 1) {
                 scene.damage_calculation(scene.enemies[0], this.effect.damage);
+                this.resetCard();
             } else {
                 for (let enemy of scene.enemies) {
                 // remove all interaction when playing a single target card
