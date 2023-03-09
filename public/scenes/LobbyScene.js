@@ -56,7 +56,7 @@ export class LobbyScene extends Phaser.Scene {
 
         function tempAlert2(message, duration) {
             var tmpElement = document.createElement("div");
-            tmpElement.setAttribute("style", "position:absolute;top:10%;left:15%;background-color:white;");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
             tmpElement.innerHTML = message;
             tmpElement.style.color = "white"
             tmpElement.style.backgroundColor = "black"
