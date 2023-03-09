@@ -22,10 +22,31 @@ export class ProfileScene extends Phaser.Scene{
             .setDisplaySize(this.game.renderer.width, this.game.renderer.height)
             .setDepth(0)
 
-        // PLayer username text on top of screen
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.10, this.playerUsername, {fontFamily: 'font1', fill: '#ffffff', fontSize: '80px'})
-            .setDepth(1)
-            .setOrigin(0.5)
+        let profile = this.add.image(this.game.renderer.width/2 - 200, this.game.renderer.height * 0.25, "profile");
+        let name = this.add.text(profile.x, profile.y + profile.height/2, this.playerUsername, {fontFamily: 'font1', fill: "#FD722A", fontSize: "60px"});
+        name.x -= name.width / 2;
+
+        let biography = this.add.text(profile.x + profile.width/2, profile.y - profile.height /2 + 12, "Biography", {fontFamily: 'font1', fill: '#FD722a', fontSize: "60px"});
+
+        let allFacts = [
+            "Says lad far too much.",
+            "Will throw hands",
+            "Minigun their beloved",
+            "Scared behaviour",
+            "Looks nicer than they are",
+            "CHEESE"
+        ]
+
+        let chosenFacts = this.getRandomBiography(allFacts);
+        let factYOffset = 20;
+        for (let i=0; i < chosenFacts.length; i++) {
+            let bulletPoint = this.add.image(biography.x, biography.y + biography.height + factYOffset, "bulletpoint");
+            bulletPoint.x += bulletPoint.width/2;
+            bulletPoint.y += bulletPoint.height/2;
+            let profileFacts = this.add.text(bulletPoint.x + 20, biography.y + biography.height + factYOffset, chosenFacts[i], {fontFamily: 'font1', fill: "#FFFFFF", fontSize: "35px"});
+            factYOffset += 50;
+        }
+
 
         let logoutButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 200, "Logout") 
             .setStyle({fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
@@ -103,5 +124,9 @@ export class ProfileScene extends Phaser.Scene{
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
 
+    }
+
+    getRandomBiography(list) {
+        return [...list].sort(() => Math.random > 0.5 ? 1 : -1).slice(0, 3);
     }
 }
