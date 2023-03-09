@@ -24,6 +24,7 @@ export class LobbyScene extends Phaser.Scene {
             this.otherPlayerName = data.playerToJoin;
             this.readyToStart = true;
         }
+        window.network = this.network;
         if (this.network.peer._connections.size > 0) {
             this.network.send("i have joined the lobby, sending you hello!");
         }
@@ -119,52 +120,52 @@ export class LobbyScene extends Phaser.Scene {
         // with the joinee
 
         // KEVIN AND ZHI: sprite assigning
-        if (this.host) {
-            const waitingForJoineeInterval = setInterval(function () {
-                // if detects an increase in connections
-                if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
-                    clearInterval(waitingForJoineeInterval)
-                    var data = {
-                        otherUser: scene.network.peer.conn.peer
+        // if (this.host) {
+        //     const waitingForJoineeInterval = setInterval(function () {
+        //         // if detects an increase in connections
+        //         if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
+        //             clearInterval(waitingForJoineeInterval)
+        //             var data = {
+        //                 otherUser: scene.network.peer.conn.peer
                 
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: '/getOtherPlayersUsername',
-                        data,
-                        success: function (result) {
-                            console.log(result.otherUserName);
-                            scene.otherPlayerName = result.otherUserName;
+        //             }
+        //             $.ajax({
+        //                 type: 'POST',
+        //                 url: '/getOtherPlayersUsername',
+        //                 data,
+        //                 success: function (result) {
+        //                     console.log(result.otherUserName);
+        //                     scene.otherPlayerName = result.otherUserName;
 
-                            var data = {
-                                username: scene.playerUsername,
-                                otherUser: scene.otherPlayerName,
-                            }
-                            $.ajax({
-                                type: 'POST',
-                                url: '/createLobby',
-                                data,
-                                success: function (result) {
-                                    scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-                                        .setDepth(1)
-                                        .setOrigin(0.5)
-                                    scene.readyToStart = true;
-                                },
-                                error: function (xhr) {
-                                    window.alert(JSON.stringify(xhr));
-                                    window.location.replace('/game.html');
-                                }
-                            });
-                            // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
-                        },
-                        error: function (xhr) {
-                            window.alert(JSON.stringify(xhr));
-                            window.location.replace('/game.html');
-                        }
-                    });
-                }
-            }, 100);
-        }
+        //                     var data = {
+        //                         username: scene.playerUsername,
+        //                         otherUser: scene.otherPlayerName,
+        //                     }
+        //                     $.ajax({
+        //                         type: 'POST',
+        //                         url: '/createLobby',
+        //                         data,
+        //                         success: function (result) {
+        //                             scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+        //                                 .setDepth(1)
+        //                                 .setOrigin(0.5)
+        //                             scene.readyToStart = true;
+        //                         },
+        //                         error: function (xhr) {
+        //                             window.alert(JSON.stringify(xhr));
+        //                             window.location.replace('/game.html');
+        //                         }
+        //                     });
+        //                     // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+        //                 },
+        //                 error: function (xhr) {
+        //                     window.alert(JSON.stringify(xhr));
+        //                     window.location.replace('/game.html');
+        //                 }
+        //             });
+        //         }
+        //     }, 100);
+        // }
 
         let joineeDidLeave = false;
         let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Start Game', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
@@ -195,6 +196,46 @@ export class LobbyScene extends Phaser.Scene {
             arrowSprite.setVisible(false);
             startGameButton.setStyle({ fill: '#fff' });
         })
+            // if detects an increase in connections
+        scene.network.peer.on('connection', function(conn){
+            var data = {
+                otherUser: scene.network.peer.conn.peer
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/getOtherPlayersUsername',
+                data,
+                success: function (result) {
+                    scene.otherPlayerName = result.otherUserName;
+
+                    var data = {
+                        username: scene.playerUsername,
+                        otherUser: scene.otherPlayerName,
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/createLobby',
+                        data,
+                        success: function (result) {
+                            scene.add.text(scene.game.renderer.width / 2, scene.game.renderer.height * 0.50, `Player 2: ${scene.otherPlayerName}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
+                                .setDepth(1)
+                                .setOrigin(0.5)
+                            scene.readyToStart = true;
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+                    // scene.add.text(test.game.renderer.width / 2, test.game.renderer.height * 0.50, result.otherUserName, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' }).setDepth(1).setOrigin(0.5)
+                },
+                error: function (xhr) {
+                    window.alert(JSON.stringify(xhr));
+                    window.location.replace('/game.html');
+                }
+            });
+        });
+
         // a leaveGame detection interval
         // if the joinee leaves the game - he will peer.destroy and destroy his directional IN_LOBBY_TOGETHER
         // the host must detect this, peer.destroy himself, reallocate the peer to himself
@@ -325,15 +366,13 @@ export class LobbyScene extends Phaser.Scene {
        
 
         if (this.joinee) {
-            let waitForGameToStartAsJoinee = setInterval(function () {
-                if (scene.network.joineesReceiveMessage == "I have pressed start") {
-                    clearInterval(waitForGameToStartAsJoinee);
+            scene.network.peer.conn.on('data', function(data) {
+                if (data === "I have pressed start") {
                     tempAlert2("Host has started the game!",3000);
                     scene.sound.play("beginGame",{volume: 1});
                     scene.scene.start(CST.SCENES.MAP, { networkObj: scene.network, playerUsername: scene.playerUsername });
-                    // console.log("host pressed start, we may begin");
                 }
-            }, 500)
+            })
         }
 
 
@@ -355,8 +394,6 @@ export class LobbyScene extends Phaser.Scene {
                 backButton.setStyle({ fill: '#fff' });
             })
             .on("pointerup", () => {
-                // clearInterval(interval);
-                // console.log(this.network.peer._connections.size);
                 if (this.host == true) {
                     deleteJoinCodeRelationship(this.network.peer.id);
                     // /deleteLobby
@@ -395,11 +432,9 @@ export class LobbyScene extends Phaser.Scene {
                 if (this.network.peer._connections.size > 0) {
                     try {
                         this.network.peer.destroy();
-                        console.log("terminated connection");
                         window.location.replace('/game.html');
 
                     } catch {
-                        console.log("failed");
                     }
                 }
                 else {

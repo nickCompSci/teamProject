@@ -93,7 +93,7 @@ export default class Room {
             let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", scene, 0, 0, "grenade");
             let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", scene, 0, 0, "high_noon");
             let ballistic = new DamageCard("ballistic", 1, "damage", {damage: 0, target: "single"}, "white", scene, 0, 0, "ballistic");
-            let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single"}, "white", scene, 0, 0, "reinforce");
+            let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single", "armour": 5}, "white", scene, 0, 0, "reinforce");
             let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", scene, 0, 0, "headshot");
             let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", scene, 0, 0, "ricochet");
             let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", scene, 0, 0, "reload");
@@ -115,7 +115,7 @@ export default class Room {
         } 
         
         if (level > 1){
-            let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 10, target: "single"}, "blue", scene, 0, 0, "cannonball");
+            let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 8, target: "single"}, "blue", scene, 0, 0, "cannonball");
             let fire_rain = new DamageCard("fire_rain", 3, "damage", {damage: 8, target: "random", randomAmount: 3, discard: 1}, "blue", scene, 0, 0, "fire_rain");
             let launcher = new DamageCard("launcher", 2, "damage", {damage: 6, target: "all"}, "blue", scene, 0, 0, "launcher");
             let blast = new DamageCard("blast", 2, "damage", {damage: 10, target: "single", cards: 1}, "blue", scene, 0, 0, "blast");

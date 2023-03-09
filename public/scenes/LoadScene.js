@@ -3,17 +3,7 @@ This file is used to load all the assets for the game.
 */
 import { CST } from "../CST.js";
 import { Network } from "../Network.js";
-import { MenuScene } from "./MenuScene.js";
-import { OptionsScene } from "./OptionsScene.js";
-import { CreditsScene } from "./CreditsScene.js";
-import { JoinGameScene } from "./JoinGameScene.js";
-// import { CreateGameScene } from "./CreateGameScene.js";
-import { LobbyScene } from "./LobbyScene.js";
-import { friendScene } from "./FriendScene.js";
-import { BattleScene } from "./BattleScene.js";
-import { MapScene } from "./MapScene.js";
-import { ProfileScene } from "./ProfileScene.js";
-import { PlayGameScene } from "./PlayGameScene.js";
+
 
 // Creates the LoadScene class
 export class LoadScene extends Phaser.Scene{
@@ -29,6 +19,53 @@ export class LoadScene extends Phaser.Scene{
 
     // Used to load all the assets
     preload(){
+        //battle scene
+        this.load.image("HUD", "../assets/resources/hud_bg.png");
+        this.load.image("backgroundBattle", "../assets/resources/background.png");
+        this.load.image("card_holder", "../assets/resources/card_holder.jpg");
+        this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
+        this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
+        this.load.image("deck", "../assets/resources/sprites/deck.png");
+        this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
+
+        //damage
+        this.load.image("cannonball", "../assets/resources/cards/Cannonball.png");
+        this.load.image("grenade", "../assets/resources/cards/Grenade.png");
+        this.load.image("ballistic", "../assets/resources/cards/Ballistic.png");
+        this.load.image("blast", "../assets/resources/cards/Blast.png");
+        this.load.image("fire_rain", "../assets/resources/cards/Fire_Rain.png");
+        this.load.image("high_noon", "../assets/resources/cards/High_Noon.png");
+        this.load.image("launcher", "../assets/resources/cards/Launcher.png");
+        this.load.image("missile", "../assets/resources/cards/Missile.png");
+        this.load.image("molotov", "../assets/resources/cards/Molotov.png");
+        this.load.image("minigun", "../assets/resources/cards/Minigun.png");
+        this.load.image("reinforce", "../assets/resources/cards/Reinforce.png");
+
+        // healing
+        this.load.image("kevlar", "../assets/resources/cards/Kevlar.png");
+        this.load.image("medkit", "../assets/resources/cards/Medkit.png");
+        this.load.image("armour_plate", "../assets/resources/cards/Armour_Plate.png");
+        this.load.image("stim_pack", "../assets/resources/cards/Stim_Pack.png");
+        this.load.image("morphine", "../assets/resources/cards/Morphine.png");
+        this.load.image("bourbon", "../assets/resources/cards/Bourbon.png");
+
+        // reload
+        this.load.image("overload", "../assets/resources/cards/Overload.png");
+        this.load.image("reload", "../assets/resources/cards/Reload.png");
+        this.load.image("ammo_cache", "../assets/resources/cards/Ammo_Cache.png");
+        this.load.image("bandolier", "../assets/resources/cards/Bandolier.png");
+        this.load.image("holster", "../assets/resources/cards/Holster.png");
+        this.load.image("lock_and_load", "../assets/resources/cards/Lock_and_Load.png");
+
+        // combo
+        this.load.image("headshot", "../assets/resources/cards/Headshot.png");
+        this.load.image("bayonet", "../assets/resources/cards/Bayonet.png");
+        this.load.image("load", "../assets/resources/cards/Load.png");
+        this.load.image("pinpoint", "../assets/resources/cards/Pinpoint.png");
+        this.load.image("nanotech", "../assets/resources/cards/Nanotech.png");
+        this.load.image("ricochet", "../assets/resources/cards/Ricochet.png");
+
         // Load images
         this.load.image("background", "../assets/resources/tower2.jpg");
         this.load.image("arrow", "../assets/resources/arrow.png");
@@ -41,20 +78,39 @@ export class LoadScene extends Phaser.Scene{
         this.load.image("up", "../assets/resources/up_arrow.png");
         this.load.image("pointer", "../assets/resources/pointer.png");
         this.load.image("chest", "../assets/resources/chest.png");
-        // Load audio
+        this.load.image("throne", "../assets/resources/sprites/throne.png");
+        this.load.image("fuseThrone", "../assets/resources/sprites/fuse_throne.png")
+        this.load.image("fuse", "../assets/resources/cards/Fuse.png");
+        this.load.image("logo", "../assets/resources/logo.png");
+        this.load.image("profile", "../assets/resources/profile.png");
+        this.load.image("bulletpoint", "../assets/resources/bulletpoint.png");
+
         this.load.html("searchFriendForm", "../searchFriendForm.html");
         this.load.html("pendingAndFriends", "../pendingAndFriends.html");
         this.load.html("enterCodeForm", "../enterCodeForm.html");
         //this.load.image("player_map", "../assets/resources/sprites/player_map.png");
-        // Soundtrack
+        
+        // Soundtrack and sounds
         this.load.audio("menuMusic", "../assets/resources/soundtrack.mp3");
         this.load.audio('mapMusic', "../assets/resources/soundtrack/Map.mp3");
         this.load.audio('doorOpen', "../assets/resources/sounds/doorOpen.wav");
         this.load.audio('shop', "../assets/resources/soundtrack/shop.mp3");
         this.load.audio('battleMusic', "../assets/resources/soundtrack/battle/battle.mp3");
         this.load.audio('bossMusic', "../assets/resources/soundtrack/battle/boss.mp3");
-
-
+        this.load.audio('endOfTrail', "../assets/resources/soundtrack/end_of_trail.mp3");
+        this.load.audio('playCard', "../assets/resources/sounds/battle/playCard.mp3");
+        this.load.audio('comboWrong', "../assets/resources/sounds/battle/comboWrong.mp3");
+        this.load.audio('heal', "../assets/resources/sounds/battle/heal.mp3");
+        this.load.audio('armour', "../assets/resources/sounds/battle/armour.mp3");
+        this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
+        this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
+        this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
+        // this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
+        this.load.audio("died", "../assets/resources/sounds/battle/died.mp3");
+        this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
+        this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
+        this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
+        this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
         // Load plugins
         // this.load.scenePlugin({
         //     key: 'rexuiplugin',
@@ -92,7 +148,6 @@ export class LoadScene extends Phaser.Scene{
         this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.45, 'Loading game...', {fontFamily: 'font1', fill: '#ffffff', fontSize: '40px'}).setDepth(1).setOrigin(0.5)
         this.load.on("progress", (percent)=>{
             loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 40);
-            console.log(percent);
             })
 
         let network;

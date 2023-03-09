@@ -21,12 +21,12 @@ export default class Boss extends Enemy {
     }
 
     attack(scene) {
-        let attackDamage = Math.floor((Math.random() * 15) + 5);
+        let attackDamage = Math.floor((Math.random() * 22) + 12);
         scene.damage_calculation(scene.player, attackDamage);
     }
 
     heal(scene) {
-        let heal = Math.floor((Math.random() * 12) + 6);
+        let heal = Math.floor((Math.random() * 15) + 10);
         scene.healing_calculation(this, heal);
     }
 

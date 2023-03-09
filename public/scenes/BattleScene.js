@@ -27,39 +27,10 @@ export class BattleScene extends Phaser.Scene {
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
+        this.network.handleDataBattleScene({playerObj: this.playerData, networkObj: this.network}, this, this.returnCardsToPlayer)
         this.boss;
         this.otherPlayer;
         //this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
-    }
-
-    preload() {
-        this.load.image("HUD", "../assets/resources/hud_bg.png");
-        this.load.image("backgroundBattle", "../assets/resources/background.png");
-        this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        //this.load.image("player", "../assets/resources/sprites/player.png");
-        //this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
-        this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
-        this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
-        this.load.image("deck", "../assets/resources/sprites/deck.png");
-        this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
-        
-        // enemies
-        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
-        this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
-
-        // sound effects
-        this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
-        this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
-        this.load.audio('playCard', "../assets/resources/sounds/battle/playCard.mp3");
-        this.load.audio('comboWrong', "../assets/resources/sounds/battle/comboWrong.mp3");
-        this.load.audio('heal', "../assets/resources/sounds/battle/heal.mp3");
-        this.load.audio('armour', "../assets/resources/sounds/battle/armour.mp3");
-        this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
-        this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
-        this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
-        this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
-        this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
-        this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
     }
 
     create() {
@@ -103,9 +74,9 @@ export class BattleScene extends Phaser.Scene {
         this.deckAmount.setOrigin(0, 0);
 
         // loads all the different types of cards
-        this.loadCards();
         let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
+        console.log("HERE");
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
@@ -118,9 +89,6 @@ export class BattleScene extends Phaser.Scene {
         this.actiontext.setOrigin(0,0);
         this.actiontext.setPosition(gameWidth/8.2, gameHeight/2 + 300);
 
-        // indicator for player when keeping cards
-        this.keepCardsText = this.add.text(this.ap.x + this.ap.width, this.ap.y + this.ap.height, this.player.keepCards.length +  " / " + this.player.keepCardsLimit).setVisible(false);
-
         // launch the discard pile scene in parallel
         this.discardPile = this.add.sprite(20, 750, "discardPile").setOrigin(0, 1);
         this.discardPileAmount = this.add.text(this.discardPile.x + this.discardPile.width, this.discardPile.y, this.player.graveYardArray.length, {fontSize: "20px"});
@@ -129,7 +97,6 @@ export class BattleScene extends Phaser.Scene {
             let cardsInDiscardPile = this.player.graveYardArray;
             this.scene.pause().launch(CST.SCENES.DISCARD_PILE, {cardsInDiscardPile, cardsInDeck});
         }, this);
-        
         
         this.endTurnButton = new Button(0, gameHeight/2, 18, 15, "End Turn", this, this.endTurn.bind(this, this.player, this.endTurnButton), '#202529');
         this.keepCardButton = new Button(0, gameHeight/2, 8, 15, "Keep Cards", this, this.keepCard.bind(this, this.player, this.keepCardButton), '#202529');
@@ -321,16 +288,25 @@ export class BattleScene extends Phaser.Scene {
     }
 
     win() {
-        console.log("YOU WON");
         this.showRewards();
     }
 
     die() {
-        console.log("YOU DIED");
-        this.sound.play("playerDeath", {volume: 0.7});
+        // this.sound.play("playerDeath", {volume: 0.7});
+        this.sound.stopAll();
+        this.sound.play("died", {volume: 0.7});
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
-        this.lose_text = this.add.text(this.game.config.width/4, this.game.config.height/4, "YOU DIED", {color: "red", backgroundColor: "black", fontSize: "100px"});
-        this.time.delayedCall(1000, this.load_out, [], this);
+        this.cameras.main.fadeOut(5000);
+        this.lose_text = this.add.text(this.game.config.width/ 2, this.game.config.height/2, "YOU DIED", {color: "red", backgroundColor: "black", fontSize: "100px"});
+        this.lose_text.alpha = 0;
+        this.tweens.add({
+            targets: this.lose_text,
+            alpha: {from: 0, to: 1},
+            ease: 'Sine.InOut',
+            duration: 4000,
+            yoyo: false
+        })
+        this.time.delayedCall(6000, this.load_out, [], this);
     }
 
     load_out() {
@@ -441,81 +417,6 @@ export class BattleScene extends Phaser.Scene {
         return character;
     }
 
-    loadCards() {
-        // damage cards
-        let cannonball = new DamageCard("cannonball", 1, "damage", {damage: 8, target: "single", discard: 1}, "blue", this, 0, 0, "cannonball");
-        let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", this, 0, 0, "grenade");
-        let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", this, 0, 0, "high_noon");
-        let fire_rain = new DamageCard("fire_rain", 3, "damage", {damage: 8, target: "random", randomAmount: 3, discard: 1}, "blue", this, 0, 0, "fire_rain");
-        let minigun = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", this, 0, 0, "minigun");
-        let launcher = new DamageCard("launcher", 2, "damage", {damage: 6, target: "all"}, "blue", this, 0, 0, "launcher");
-        let ballistic = new DamageCard("ballistic", 1, "damage", {damage: this.player.armour, target: "single"}, "white", this, 0, 0, "ballistic");
-        let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single", armour: 5}, "white", this, 0, 0, "reinforce");
-        let blast = new DamageCard("blast", 2, "damage", {damage: 10, target: "single", cards: 1}, "blue", this, 0, 0, "blast");
-        let missile = new DamageCard("missile", 3, "damage", {damage: 4, target: "random", randomAmount: 4}, "purple", this, 0, 0, "missile");
-        let molotov = new DamageCard("molotov", 3, "damage", {damage: 10, target: "all", discard: 1}, "purple", this, 0, 0, "molotov");
-
-        // this.player.deckArray.push(cannonball);
-        // this.player.deckArray.push(grenade);
-        // this.player.deckArray.push(high_noon);
-        // this.player.deckArray.push(fire_rain);
-        // this.player.deckArray.push(minigun);
-        // this.player.deckArray.push(launcher);
-        // this.player.deckArray.push(ballistic);
-        // this.player.deckArray.push(reinforce);
-        // this.player.deckArray.push(blast);
-        // this.player.deckArray.push(missile);
-        // this.player.deckArray.push(molotov);
-
-        // combo cards
-        let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", this, 0, 0, "headshot");
-        let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", this, 0, 0, "ricochet");
-        let pinpoint = new ComboCard("pinpoint", 1, "combo", {target: "damage", effect: "multiply", amount: 3}, "blue", this, 0, 0, "pinpoint");
-        let bayonet = new ComboCard("bayonet", 2, "combo", {target: "damage", effect: "addition", amount: 6, sideEffects: 8}, "blue", this, 0, 0, "bayonet");
-        let load = new ComboCard("load", 2, "combo", {cards: 2, discard: 1}, "blue", this, 0, 0, "load");
-        let nanotech = new ComboCard("nanotech", 1, "combo", {target: "healing", effect: "multiply", amount: 2}, "blue", this, 0, 0, "nanotech");
-
-        // this.player.deckArray.push(headshot);
-        // this.player.deckArray.push(ricochet);
-        // this.player.deckArray.push(pinpoint);
-        // this.player.deckArray.push(bayonet);
-        // this.player.deckArray.push(load);
-        // this.player.deckArray.push(nanotech);
-       
-        // reload cards
-        let reload = new ReloadCard("reload", 0, "reload", {amount: 2}, "white", this, 0, 0, "reload");
-        let overload = new ReloadCard("overload", 0, "reload", {amount: 4, sideEffects: 10, overload: true}, "purple", this, 0, 0, "overload");
-        let lock_and_load = new ReloadCard("lock_and_load", 0, "reload", {amount: 2, cards: 2}, "blue", this, 0, 0, "lock_and_load");
-        let bandolier = new ReloadCard("bandolier", 0, "reload", {amount: 4}, "blue", this, 0, 0, "bandolier");
-        let holster = new ReloadCard("holster", 0, "reload", {amount: 1, cards: 1}, "white", this, 0, 0, "holster");
-        let ammo_cache = new ReloadCard("ammo_cache", 0, "reload", {amount: 6}, "purple", this, 0, 0, "ammo_cache");
-
-        // this.player.deckArray.push(reload);
-        // this.player.deckArray.push(overload);
-        // this.player.deckArray.push(bandolier);
-        // this.player.deckArray.push(lock_and_load);
-        // this.player.deckArray.push(holster);
-        // this.player.deckArray.push(ammo_cache);
-
-        // healing cards
-        let medkit = new HealingCard("medkit", 0, "healing", {target: "health", amount: 7}, "white", this, 0, 0, "medkit");
-        let kevlar = new HealingCard("kevlar", 1, "healing", {target: "armour", amount: 5}, "white", this, 0, 0, "kevlar");
-        let stim_pack = new HealingCard("stim_pack", 1, "healing", {target: "health", amount: 14}, "white", this, 0, 0, "stim_pack");
-        let armour_plate = new HealingCard("armour_plate", 2, "healing", {target: "armour", amount: 10}, "blue", this, 0, 0, "armour_plate");
-        let bourbon = new HealingCard("bourbon", 2, "healing", {target: "health", amount: 30, discard: 1}, "purple", this, 0, 0, "bourbon");
-        let morphine = new HealingCard("morphine", 2, "healing", {target: "health", amount: 8, cards: 1}, "blue", this, 0, 0, "morphine");
-
-        // this.player.deckArray.push(medkit);
-        // this.player.deckArray.push(kevlar);
-        // this.player.deckArray.push(stim_pack)
-        // this.player.deckArray.push(armour_plate);
-        // this.player.deckArray.push(bourbon);
-        // this.player.deckArray.push(morphine);
-    
-        // this.rewards.push(minigun);
-        // this.rewards.push(missile);
-    }
-    
     
     arrangeCardsInCenter(handArray) {
         // arranges for the cards to be organised around the bottom middle of the screen
@@ -571,7 +472,6 @@ export class BattleScene extends Phaser.Scene {
         // simulate enemies attacking
         for (let i=0; i < this.enemies.length; i++) {
             if (this.enemies[i].spriteType === "player") {
-                console.log("Hello");
             } else if (this.enemies.includes(this.boss)) {
                 this.enemies[i].action(this);
             } else {
@@ -611,7 +511,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     spawnBossOnScene() {
-        this.boss = new Boss(this, 0, 0, "boss", 0 , 100);
+        this.boss = new Boss(this, 0, 0, "boss", 0 , 120);
         this.enemies.push(this.boss);
         let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
         this.healthbars.push(bosshealth);
@@ -688,6 +588,7 @@ export class BattleScene extends Phaser.Scene {
 
             // add the card to deckArray when clicked 
             cards.on('pointerdown', function (event) {
+                // this refers to the card btw here, not the scene
                 player.deckArray.push(this);
 
                 for (let cards of scene.rewards) {
@@ -695,7 +596,7 @@ export class BattleScene extends Phaser.Scene {
                 }
                 pickCardsText.destroy();
                 scene.rewards=[];
-                // this refers to the card btw here, not the scene
+
                 for (let card of scene.player.graveYardArray){
                     scene.player.deckArray.push(card);
                 }
@@ -707,9 +608,13 @@ export class BattleScene extends Phaser.Scene {
                 scene.playerData.setEqual(scene.player);
                 scene.sound.stopAll();
                 scene.sound.sounds[1].play();
+
+                // if (scene.level === 3) {
+                //     scene.scene.start(CST.SCENES.INITIATEPVPSCENE, {networkObj: scene.network, playerUsername: scene.playerUsername, playerObj: scene.player });
+                // } else {
                 scene.scene.stop(CST.SCENES.BATTLE);
                 scene.scene.resume(CST.SCENES.MAP);
-                
+                // }
             })
         }
     }
@@ -729,6 +634,18 @@ export class BattleScene extends Phaser.Scene {
     disableHover() {
         this.input.off('gameobjectover');
         this.input.off('gameobjectout');
+    }
+
+    returnCardsToPlayer(scene){
+        for (let card of scene.player.graveYardArray){
+            scene.player.deckArray.push(card);
+        }
+        for (let card of scene.player.handArray){
+            scene.player.deckArray.push(card);
+        }
+        scene.player.handArray = [];
+        scene.player.graveYardArray = [];
+        scene.playerData.setEqual(scene.player);
     }
 
 }

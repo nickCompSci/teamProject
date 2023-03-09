@@ -18,18 +18,10 @@ export class MenuScene extends Phaser.Scene{
     create(){
 
         // Adds background image to the scene - (x, y, image)
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
-            .setDisplaySize(this.game.renderer.width, this.game.renderer.height)
-            .setDepth(0)
-
-        // Adds the title image to the scene - (x, y, image), setDepth() is used to set the depth of the image (higher depth = higher priority)
-        this.add.text(this.game.renderer.width / 2 - 330, this.game.renderer.height * 0.20, 'Dual Ascent', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-            .setDepth(1)
-            .setOrigin(0.5)
-
-        this.add.text(this.game.renderer.width / 2 + 300, this.game.renderer.height * 0.20, 'Tower of Cards', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
-            .setDepth(1)
-            .setOrigin(0.5)
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background').setDisplaySize(this.game.renderer.width, this.game.renderer.height).setDepth(0);
+        
+        // logo
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, "logo").setDepth(1);
 
         let playGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 , 'Play Game', {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'})
             .setDepth(1)
@@ -155,7 +147,7 @@ export class MenuScene extends Phaser.Scene{
 
         battleButton.on("pointerup", ()=>{
             // Moves to options menu when clicked
-            this.scene.start(CST.SCENES.BATTLE_LOAD);
+            this.scene.start(CST.SCENES.BATTLE);
 
         })
 
@@ -172,7 +164,6 @@ export class MenuScene extends Phaser.Scene{
             // Moves to options menu when clicked
             this.sound.sounds[0].stop();
             this.scene.start(CST.SCENES.MAP, {networkObj: this.network, playerUsername: this.playerUsername});
-            console.log("click")
         })
     }
 

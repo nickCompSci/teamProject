@@ -23,6 +23,41 @@ export class MapScene extends Phaser.Scene{
         }
         //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
+    
+    preload() {
+        // this.load.image("HUD", "../assets/resources/hud_bg.png");
+        // this.load.image("backgroundBattle", "../assets/resources/background.png");
+        // this.load.image("card_holder", "../assets/resources/card_holder.jpg");
+        // this.load.image("player", "../assets/resources/sprites/player.png");
+        // this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
+        // this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
+        // this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
+        // this.load.image("deck", "../assets/resources/sprites/deck.png");
+        // this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
+        
+        // // enemies
+        // this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
+        // this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
+        // this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
+        // this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
+        // this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+        // this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
+        // this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
+
+        // // sound effects
+        // this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
+        // this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
+        // this.load.audio('playCard', "../assets/resources/sounds/battle/playCard.mp3");
+        // this.load.audio('comboWrong', "../assets/resources/sounds/battle/comboWrong.mp3");
+        // this.load.audio('heal', "../assets/resources/sounds/battle/heal.mp3");
+        // this.load.audio('armour', "../assets/resources/sounds/battle/armour.mp3");
+        // this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
+        // this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
+        // this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
+        // this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
+        // this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
+        // this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
+    }
 
     preload(){
         if (this.host === true){
@@ -39,10 +74,12 @@ export class MapScene extends Phaser.Scene{
         this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
         this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
         this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
     }
 
     // Creates any images, text, etc.
     create(){
+        this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
         this.sound.stopAll();
 
         // Loads background
@@ -199,9 +236,12 @@ export class MapScene extends Phaser.Scene{
         } catch{
             opponentLevel = 1;
         }
-        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
-        //this.network.handleDataMapScene(opponentLevelText);
 
+        // player icon on the this.map
+        this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);
+
+        let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
+        this.network.handleDataMapScene(opponentLevelText, {playerObj: this.player, networkObj: this.network, playerUsername: this.playerUsername}, this);
 
         // N.B. *** VERY IMPORTANT FUNCTION *** 
         this.encountersInteractive();
@@ -210,7 +250,7 @@ export class MapScene extends Phaser.Scene{
         this.next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive()
         this.next_floor.on("pointerup", ()=>{
             if (this.map.currentLocation == 11) {
-                //this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
+                this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
                 for (let i=0; i<this.map.adjacent.length; i++) {
                     this.map.adjacent[i].getEncounter().disableInteractive();
                 }
@@ -277,7 +317,7 @@ export class MapScene extends Phaser.Scene{
                 } else if (adjacent[i].getEncounter().texture.key == "cards") {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();
-                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
+                    this.scene.pause().launch(CST.SCENES.BATTLE, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
                     this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network, playerObj: this.player});
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
@@ -287,7 +327,7 @@ export class MapScene extends Phaser.Scene{
                     if (choice == 0) {
                         this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest", playerObj: this.player});
                     } else {
-                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
+                        this.scene.pause().launch(CST.SCENES.BATTLE, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
                     }
                 } else {
                     this.sound.stopAll();

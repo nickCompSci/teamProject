@@ -10,7 +10,6 @@ export const CST = {
         JOIN: "JOIN",
         LOBBY: "LOBBY",
         FRIENDS: "FRIENDS",
-        BATTLE_LOAD: "BATTLE_LOAD",
         BATTLE: "BATTLE",
         DISCARD_PILE: "DISCARD_PILE",
         MAP: "MAP",
@@ -18,6 +17,7 @@ export const CST = {
         EXTRA: "EXTRA",
         PLAYGAME : "PLAYGAME",
         INITIATEPVPSCENE: "INITIATEPVPSCENE",
-        PVPSCENE: "PVPSCENE"
+        PVPSCENE: "PVPSCENE",
+        LASTSCENE: "LASTSCENE"
     }
 }
