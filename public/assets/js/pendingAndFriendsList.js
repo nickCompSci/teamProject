@@ -29,11 +29,11 @@ function showFriends() {
             document.getElementById("currentFriends").innerHTML = "";
 
             const onlineListElement = document.createElement("li");
-            onlineListElement.innerHTML = "Online (" + inLobbyPlayers.length + "):";
+            onlineListElement.innerHTML = "Waiting in lobby (" + inLobbyPlayers.length + "):";
             document.getElementById("currentFriends").appendChild(onlineListElement);
+            onlineListElement.style.color = "lightgreen";
             if (inLobbyPlayers.length > 0) {
-                onlineListElement.style.color = "lightgreen";
-
+                
                 for (let i = 0; i < inLobbyPlayers.length; i++) {
                     const listElement = document.createElement("li");
                     // add the friend to the dictionary
@@ -55,10 +55,10 @@ function showFriends() {
             document.getElementById("currentFriends").appendChild(inGameListElement);
             inGameListElement.style.borderTop = "2px solid grey";
             inGameListElement.style.paddingTop = "5%";
+            inGameListElement.style.color = "cyan";
 
             if (friendsInGame.length > 0) {
-                inGameListElement.style.color = "lightblue";
-
+                
                 for (let i = 0; i < friendsInGame.length; i++) {
                     const listElement = document.createElement("li");
                     // add the friend to the dictionary
@@ -77,6 +77,7 @@ function showFriends() {
             offlineListElement.innerHTML = "Offline (" + allFriends.length + "):";
             offlineListElement.style.borderTop = "2px solid grey";
             offlineListElement.style.paddingTop = "5%";
+            offlineListElement.style.color = "lightgrey"
             document.getElementById("currentFriends").appendChild(offlineListElement);
 
             for (let i = 0; i < allFriends.length; i++) {
