@@ -16,7 +16,7 @@ export class friendScene extends Phaser.Scene {
     }
     // Creates any images, text, etc.
     create() {
-
+        
         function tempAlert(message, duration) {
             var tmpElement = document.createElement("div");
             tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
@@ -113,9 +113,11 @@ export class friendScene extends Phaser.Scene {
             }
         }, 15000);
 
+        firstTime = true;
         showPending(); // call pending list to load in all the elements
-        showFriends(); // on load call the friends function to load in the friends list
-
+        // showFriends(); // on load call the friends function to load in the friends list
+        // showFriends()
+        // const myTimeout = setTimeout(showFriends(),2000)
         const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' })
             .setInteractive({ useHandCursor: true })
             .on("pointerup", () => {

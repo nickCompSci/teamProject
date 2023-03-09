@@ -2,7 +2,7 @@ const pendingFriends = {};
 const friendsList = {};
 const sentRequests = {};
 const inLobbyList = {};
-
+let firstTime = true;
 function showFriends() {
     // where a call to a route occurs to find all friends
     // the result which is looped through and displays each friend in a new line
@@ -138,6 +138,11 @@ function showPending() {
             const iconElement = document.createElement("i");
             iconElement.innerHTML = '<i class="fa-solid fa-arrows-rotate" title="Refresh your pending list" onClick="showPending()"></i>';
             document.getElementById("toDoWithFriends").appendChild(iconElement);
+            if(firstTime == true){
+                firstTime = false;
+                console.log("im so sick of this shit");
+                showFriends()
+            }
         },
         error: function (xhr) {
             window.alert(JSON.stringify(xhr));
