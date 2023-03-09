@@ -17,18 +17,6 @@ export class friendScene extends Phaser.Scene {
     // Creates any images, text, etc.
     create() {
         
-        function tempAlert(message, duration) {
-            var tmpElement = document.createElement("div");
-            tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
-            tmpElement.innerHTML = message;
-            tmpElement.style.color = "white"
-            tmpElement.style.backgroundColor = "black"
-            tmpElement.style.padding = "1%"
-            setTimeout(function () {
-                tmpElement.parentNode.removeChild(tmpElement);
-            }, duration);
-            document.body.appendChild(tmpElement);
-        }
 
         function searchForValidUsername(usernameToSearch, callback) {
             // data to send to the route
@@ -52,7 +40,7 @@ export class friendScene extends Phaser.Scene {
         function searchForValidUsernameCallback(result) {
             if (result.found == "None") {
                 scene.sound.play("failedToSendFriendRequest");
-                tempAlert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`, 5000)
+                alert(`Username: ${scene.nameInput.getChildByName("friendUsername").value} does not exist!`)
             } else {
                 if (confirm("Player found! Are you sure you want to send them a friend request") == true) {
                     sendFriendRequest(scene.nameInput.getChildByName("friendUsername").value, sendFriendRequestCallback);
@@ -118,7 +106,7 @@ export class friendScene extends Phaser.Scene {
         // showFriends(); // on load call the friends function to load in the friends list
         // showFriends()
         // const myTimeout = setTimeout(showFriends(),2000)
-        const searchButton = this.add.text(100, 500, "Search", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' })
+        const searchButton = this.add.text(100, 500, "Send", { fontFamily: 'font1', fill: '#fff', fontSize: '60px' })
             .setInteractive({ useHandCursor: true })
             .on("pointerup", () => {
                 this.sound.play("menuButtonPress", { volume: 0.4 });
