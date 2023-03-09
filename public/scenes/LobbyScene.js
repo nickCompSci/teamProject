@@ -56,12 +56,12 @@ export class LobbyScene extends Phaser.Scene {
 
         function tempAlert2(message, duration) {
             var tmpElement = document.createElement("div");
-            tmpElement.setAttribute("style", "position:absolute;top:10%;left:15%;background-color:white;");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
             tmpElement.innerHTML = message;
             tmpElement.style.color = "white"
             tmpElement.style.backgroundColor = "black"
-            tmpElement.style.padding = "25px"
-            tmpElement.style.fontSize = "larger"
+            tmpElement.style.padding = "5%"
+            tmpElement.style.fontSize = "25px"
             setTimeout(function () {
                 tmpElement.parentNode.removeChild(tmpElement);
             }, duration);
@@ -117,12 +117,13 @@ export class LobbyScene extends Phaser.Scene {
         // this interval must keep checking for a connection 
         // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
         // with the joinee
+
+        // KEVIN AND ZHI: sprite assigning
         if (this.host) {
             const waitingForJoineeInterval = setInterval(function () {
                 // if detects an increase in connections
                 if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
                     clearInterval(waitingForJoineeInterval)
-                    console.log(`${scene.network.peer.conn.peer} lalalalalalalalalal`);
                     var data = {
                         otherUser: scene.network.peer.conn.peer
                 
@@ -311,6 +312,7 @@ export class LobbyScene extends Phaser.Scene {
             // let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, `Join Code: ${joinCode}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px', align: 'left', wordWrap: true, wordWrapWidth: 50 })
         }
 
+        // KEVIN AND ZHI: sprite management
         if (this.joinee == true) {
             this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Player 2: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
                 .setDepth(1)
