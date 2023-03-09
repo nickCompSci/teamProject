@@ -2,10 +2,7 @@ import { CST } from "./CST.js";
 
 export class Network{
     constructor(username){  
-        this.peer = new Peer(username, ({host:'/', 
-         port:443,
-      path: '/'})
-    );
+        this.peer = new Peer(username);
         this._addPeerListeners();
         this.joineesReceiveMessage;
         this.hostRecieveMessage;

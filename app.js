@@ -63,11 +63,3 @@ app.use((err, request, response, next) => {
 app.listen(process.env.PORT || 3000, () => {
     console.log(`Server started on port ${process.env.PORT || 3000}`);
 });
-
-
- //Peer server
-
-const { PeerServer } = require('peer');
-const peerServer = PeerServer({ port: 443, 
-                             path: '/'                         
-                         });
