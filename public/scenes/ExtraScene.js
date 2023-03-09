@@ -467,11 +467,7 @@ export class ExtraScene extends Phaser.Scene {
                     break;
             }
 
-            for (let i=0; i<this.player.deckArray.length; i++) {
-            if (this.player.deckArray[i].getRarity() == this.choice) {
-                    this.rarityCards.push(this.player.deckArray[i]);
-                }
-            }
+            this.getRarityCards(this.choice, this.allCards);
 
             this.rarityCards = shuffle(this.rarityCards);
             this.chestCards.push(this.rarityCards[0]);
