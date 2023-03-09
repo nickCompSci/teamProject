@@ -15,13 +15,13 @@
   <form>
     <h1>Register</h1>
     <label for="email">Email address</label>
-    <input type="email" id="email" placeholder="Email address" required autofocus>
+    <input type="email" id="email" maxlength="50" placeholder="Email address" required autofocus>
 
     <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Password" required>
+    <input type="password" id="password" maxlength="50" placeholder="Password" required>
 
     <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Username" required>
+    <input type="text" id="username" maxlength="12" placeholder="Username" required>
 
     <div class="links"><a onClick="signUp()">Register</a></div>
     <div class="links"><a href="/index.html">Already have an account? Login here.</a></div>
@@ -48,11 +48,19 @@
         },
         // on error return registration back to user again
         error: function (xhr) {
+          // xhr.responseJSON.error.email
+          try{
+          if(xhr.responseJSON.error.errors.email.message){
+            window.alert(`${xhr.responseJSON.error.errors.email.message}`);
+          }}catch{window.location.replace('registration.html');}
+          try{
           if (xhr.responseJSON.error.keyPattern.email) {
             window.alert("Something went wrong, User Registration failed!");
-          }else if (xhr.responseJSON.error.keyPattern.username){
+          }}catch{window.location.replace('registration.html');} 
+          try{
+          if (xhr.responseJSON.error.keyPattern.username){
             window.alert("That username already exists!");
-          }
+          }}catch{window.location.replace('registration.html');}
           window.location.replace('registration.html');
         }
       });

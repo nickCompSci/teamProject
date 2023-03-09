@@ -10,14 +10,23 @@ const Schema = mongoose.Schema;
 const ProfileSchema = new Schema({
     email : {
         type : String,
-        required : true,
+
         unique : true,
-        maxLength : 50 },
+        trim: true,
+        lowercase: true,
+        maxLength : 50,
+        validate:{
+            validator: function(v){
+                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+            },
+            message: "Please enter a valid email"
+        },
+        required : [true, "Email required"] },
     password : {
         type : String,
         required : true,
         minLength : 5,
-        maxLength : 30 },
+        maxLength : 50 },
     username : {
         type : String,
         required : true,
