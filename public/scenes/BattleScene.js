@@ -36,8 +36,8 @@ export class BattleScene extends Phaser.Scene {
         this.load.image("HUD", "../assets/resources/hud_bg.png");
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        this.load.image("player", "../assets/resources/sprites/player.png");
-        this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
+        //this.load.image("player", "../assets/resources/sprites/player.png");
+        //this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
         this.load.image("deck", "../assets/resources/sprites/deck.png");

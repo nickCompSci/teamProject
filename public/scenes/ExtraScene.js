@@ -27,7 +27,7 @@ export class ExtraScene extends Phaser.Scene {
         this.load.image("HUD", "../assets/resources/hud_bg.png");
         this.load.image("backgroundBattle", "../assets/resources/background.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        this.load.image("player", "../assets/resources/sprites/player.png");
+        //this.load.image("player", "../assets/resources/sprites/player.png");
         this.load.image("vending_machine", "../assets/resources/vending_machine.png");
         this.load.image("chest", "../assets/resources/chest.png");
 

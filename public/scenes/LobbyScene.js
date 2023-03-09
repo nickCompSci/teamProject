@@ -120,6 +120,9 @@ export class LobbyScene extends Phaser.Scene {
 
         // KEVIN AND ZHI: sprite assigning
         if (this.host) {
+            this.load.image("player", "../assets/resources/sprites/player.png");
+            this.load.image("player_map", "../assets/resources/sprites/player_map.png");
+            this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
             const waitingForJoineeInterval = setInterval(function () {
                 // if detects an increase in connections
                 if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
@@ -314,6 +317,9 @@ export class LobbyScene extends Phaser.Scene {
 
         // KEVIN AND ZHI: sprite management
         if (this.joinee == true) {
+            this.load.image("player", "../assets/resources/sprites/otherplayer.png");
+            this.load.image("player_map", "../assets/resources/sprites/otherplayer_map.png");
+            this.load.image("otherPlayer", "../assets/resources/sprites/player_enemy.png");
             this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Player 2: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
                 .setDepth(1)
                 .setOrigin(0.5)
