@@ -9,7 +9,23 @@ export class Network{
         this.test = null;
     }
 
+    tempAlert(message, duration) {
+        var tmpElement = document.createElement("div");
+        tmpElement.setAttribute("style", "position:absolute;top:10%;left:15%;background-color:white;");
+        tmpElement.innerHTML = message;
+        tmpElement.style.color = "white"
+        tmpElement.style.backgroundColor = "black"
+        tmpElement.style.padding = "5%"
+        tmpElement.style.fontSize = "25px"
+        setTimeout(function () {
+            tmpElement.parentNode.removeChild(tmpElement);
+            window.location.replace('/game.html');
+        }, duration);
+        document.body.appendChild(tmpElement);
+    }
+
     _addPeerListeners(){
+        let network = this;
         this.peer.on('open', function(id){
             this._id = id;    
         });
@@ -21,6 +37,11 @@ export class Network{
             this.conn.on('data', (data)=>{
                 joineesMessage.hostRecieveMessage = data;
                 joineesMessage.test = data;
+            });
+
+            this.conn.on('close', function(){
+                console.log("DISCONNECTION!!");
+                network.tempAlert("Connection interrupted - exiting game.", 1000);
             })
         });
 
