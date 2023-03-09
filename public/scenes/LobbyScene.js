@@ -312,6 +312,7 @@ export class LobbyScene extends Phaser.Scene {
                 this.sound.play("menuButtonPress", { volume: 0.4 });
                 if (this.network.peer._connections.size > 0) {
                     try {
+                        this.network.peer.close();
                         this.network.peer.destroy();
                         window.location.replace('/game.html');
 
