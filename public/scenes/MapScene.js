@@ -21,6 +21,14 @@ export class MapScene extends Phaser.Scene{
         //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
 
+    preload(){
+        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
+        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
+        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
+        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
+        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+    }
+
     // Creates any images, text, etc.
     create(){
         this.sound.stopAll();
@@ -169,7 +177,7 @@ export class MapScene extends Phaser.Scene{
             {x : this.game.renderer.width / 2+200, y : this.game.renderer.height / 2-60, room : 1}
         ]
 
-        this.map = new Map(encounters, positions, doors, door_positions, startEnd);
+        this.map = new Map(this, encounters, positions, doors, door_positions, startEnd);
         // level counter top in the left
         let level = this.add.text(220, 100, this.map._level.toString(), {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
 
@@ -189,7 +197,6 @@ export class MapScene extends Phaser.Scene{
         // for moving to next level (only works when in final room)
         this.next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive()
         this.next_floor.on("pointerup", ()=>{
-            console.log("lolig")
             if (this.map.currentLocation == 11) {
                 //this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
                 for (let i=0; i<this.map.adjacent.length; i++) {
@@ -249,7 +256,7 @@ export class MapScene extends Phaser.Scene{
                 } else if (adjacent[i].getEncounter().texture.key == "cards") {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();
-                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                    this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
                 } else if (adjacent[i].getEncounter().texture.key == "end") {
                     this.scene.pause().launch(CST.SCENES.EXTRA,  {room : "end", networkObj: this.network, playerObj: this.player});
                 } else if (adjacent[i].getEncounter().texture.key == "random") {
@@ -259,7 +266,7 @@ export class MapScene extends Phaser.Scene{
                     if (choice == 0) {
                         this.scene.pause().launch(CST.SCENES.EXTRA, {room : "chest", playerObj: this.player});
                     } else {
-                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player });
+                        this.scene.pause().launch(CST.SCENES.BATTLE_LOAD, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
                     }
                 } else {
                     this.sound.stopAll();

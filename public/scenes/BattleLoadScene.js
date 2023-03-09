@@ -9,8 +9,9 @@ export class BattleLoadScene extends Phaser.Scene {
 
     init(data){
         this.network = data.networkObj;
-        this.playerData = data.playerObj;
-        this.level = data.level;
+        this.playerData = data.playerObj;   
+        this.enemies = data.enemies;
+        this.rewards = data.rewards;
     }
 
     preload() {
@@ -54,6 +55,6 @@ export class BattleLoadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start(CST.SCENES.BATTLE, {networkObj: this.network, playerObj: this.playerData, level: this.level});
+        this.scene.start(CST.SCENES.BATTLE, {networkObj: this.network, playerObj: this.playerData, enemies: this.enemies, rewards: this.rewards});
     }
 }
