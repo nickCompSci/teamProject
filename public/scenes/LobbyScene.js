@@ -41,12 +41,12 @@ export class LobbyScene extends Phaser.Scene {
 
         function tempAlert(message, duration) {
             var tmpElement = document.createElement("div");
-            tmpElement.setAttribute("style", "position:absolute;top:10%;left:23%;background-color:white;");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:15%;background-color:white;");
             tmpElement.innerHTML = message;
             tmpElement.style.color = "white"
             tmpElement.style.backgroundColor = "black"
             tmpElement.style.padding = "5%"
-            tmpElement.style.fontSize = "larger"
+            tmpElement.style.fontSize = "25px"
             setTimeout(function () {
                 tmpElement.parentNode.removeChild(tmpElement);
                 window.location.replace('/game.html');
@@ -56,11 +56,11 @@ export class LobbyScene extends Phaser.Scene {
 
         function tempAlert2(message, duration) {
             var tmpElement = document.createElement("div");
-            tmpElement.setAttribute("style", "position:absolute;top:10%;left:35%;background-color:white;");
+            tmpElement.setAttribute("style", "position:absolute;top:10%;left:15%;background-color:white;");
             tmpElement.innerHTML = message;
             tmpElement.style.color = "white"
             tmpElement.style.backgroundColor = "black"
-            tmpElement.style.padding = "5%"
+            tmpElement.style.padding = "25px"
             tmpElement.style.fontSize = "larger"
             setTimeout(function () {
                 tmpElement.parentNode.removeChild(tmpElement);
