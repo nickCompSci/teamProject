@@ -678,7 +678,7 @@ router.post("/getFriends", (request, response) => {
                     }
                     // listOfFriends.remove(record.get("everyone"));
                 })
-                console.log(listOfFriends, friendsCurrentlyInLobby,friendsInGame);
+               
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
@@ -929,7 +929,6 @@ router.post("/doubleCheckEmpty", (request, response) => {
 
             
             readResult.records.forEach(record => {
-                console.log(record.get("exists"));
                 if (record.get("exists") == true) {
                     isLobbyStillEmpty = "true";
                 };
@@ -971,7 +970,6 @@ router.post("/doubleCheckEmptyFromJoinGameScene", (request, response) => {
 
             
             readResult.records.forEach(record => {
-                console.log(record.get("exists"));
                 if (record.get("exists") == true) {
                     isLobbyStillEmpty = "true";
                 };
