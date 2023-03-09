@@ -319,7 +319,7 @@ export class PVPScene extends Phaser.Scene{
 
     lose() {
         this.sound.stopAll();
-        this.sound.play("playerDeath", {volume: 0.7});
+        this.sound.play("died", {volume: 0.7});
         this.cameras.main.shake(200, 0.05);
         this.cameras.main.fadeOut(3000);
         this.time.delayedCall(4000, this.lastScene, [], this);

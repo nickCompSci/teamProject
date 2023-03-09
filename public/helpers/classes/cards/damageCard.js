@@ -16,6 +16,18 @@ export default class DamageCard extends HandCard {
     } 
 
     activateCard(scene) {
+        if ("cards" in this.effect) {
+            scene.player.drawCard(this.effect.cards, scene);
+        }
+
+        if ("discard" in this.effect) {
+            scene.player.discardCard(this.effect.discard, scene);
+        }
+
+        if ("armour" in this.effect) {
+            scene.armour_calculation(scene.player, this.effect.armour);
+        }
+        
         let card = this;
         if (this.effect.target === "single") {
             if (scene.enemies.length === 1) {
@@ -60,19 +72,6 @@ export default class DamageCard extends HandCard {
             this.resetCard();
         }
         // check enemy dead here
-
-        if ("cards" in this.effect) {
-            scene.player.drawCard(this.effect.cards, scene);
-        }
-
-        if ("discard" in this.effect) {
-            scene.player.discardCard(this.effect.discard, scene);
-        }
-
-        if ("armour" in this.effect) {
-            scene.armour_calculation(scene.player, this.effect.armour);
-        }
-        
     }
 
     damageEnemy(enemy, scene) {

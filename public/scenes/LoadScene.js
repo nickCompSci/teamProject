@@ -105,7 +105,6 @@ export class LoadScene extends Phaser.Scene{
         this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
         this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
         this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
-        // this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
         this.load.audio("died", "../assets/resources/sounds/battle/died.mp3");
         this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
         this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
