@@ -1,6 +1,6 @@
 import { CST } from "../CST.js";
 import Button from '../helpers/classes/button.js';
-import { gameOptions } from "../helpers/config.js";
+import { gameOptions, eventsCentre } from "../helpers/config.js";
 import HealthBar from "../helpers/classes/healthBar.js";
 import Player from "../helpers/classes/player.js";
 import DamageCard from "../helpers/classes/cards/damageCard.js";
@@ -316,7 +316,7 @@ export class BattleScene extends Phaser.Scene {
 
     check_player_death() {
         if (this.player.health <= 0) {
-            this.lose();
+            this.die();
         }
     }
 
@@ -325,9 +325,31 @@ export class BattleScene extends Phaser.Scene {
         this.showRewards();
     }
 
-    lose() {
-        console.log("YOU LOSE");
+    die() {
+        console.log("YOU DIED");
         this.sound.play("playerDeath", {volume: 0.7});
+        this.playerHealth.show_health(this, this.player.health, this.player.armour);
+        this.lose_text = this.add.text(this.game.config.width/4, this.game.config.height/4, "YOU DIED", {color: "red", backgroundColor: "black", fontSize: "100px"});
+        this.time.delayedCall(1000, this.load_out, [], this);
+    }
+
+    load_out() {
+        this.lose_text.destroy();
+        for (let card of this.player.graveYardArray){
+            this.player.deckArray.push(card);
+        }
+        for (let card of this.player.handArray){
+            this.player.deckArray.push(card);
+        }
+        this.player.handArray = [];
+        this.player.graveYardArray = [];
+        this.player.health = this.player.maxHealth;
+        this.playerData.setEqual(this.player);
+        this.sound.stopAll();
+        this.sound.sounds[1].play();
+        eventsCentre.emit("death");
+        this.scene.stop(CST.SCENES.BATTLE);
+        this.scene.resume(CST.SCENES.MAP);
     }
 
     damage_calculation(character, damage) {
@@ -558,7 +580,7 @@ export class BattleScene extends Phaser.Scene {
                 
             }
             if (this.player.health <= 0) {
-                this.lose();
+                this.die();
             }
         }
         this.playerHealth.show_health(this, this.player.health, this.player.armour);

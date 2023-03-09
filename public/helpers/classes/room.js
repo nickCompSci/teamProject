@@ -92,7 +92,7 @@ export default class Room {
         if (level >= 1){
             let grenade = new DamageCard("grenade", 1, "damage", {damage: 3, target: "all"}, "white", scene, 0, 0, "grenade");
             let high_noon = new DamageCard("high_noon", 1, "damage", {damage: 5, target: "single"}, "white", scene, 0, 0, "high_noon");
-            let ballistic = new DamageCard("ballistic", 1, "damage", {damage: "armour", target: "single"}, "white", scene, 0, 0, "ballistic");
+            let ballistic = new DamageCard("ballistic", 1, "damage", {damage: 0, target: "single"}, "white", scene, 0, 0, "ballistic");
             let reinforce = new DamageCard("reinforce", 2, "damage", {damage: 5, target: "single"}, "white", scene, 0, 0, "reinforce");
             let headshot = new ComboCard("headshot", 1, "combo", {target: "damage", effect: "multiply", amount: 2}, "white", scene, 0, 0, "headshot");
             let ricochet = new ComboCard("ricochet", 1, "combo", {target: "damage", effect: "convert"}, "white", scene, 0, 0, "ricochet");

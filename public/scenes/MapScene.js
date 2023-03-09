@@ -4,9 +4,7 @@ This file is used to create the map scene.
 import Map from "../helpers/classes/map.js";
 import { CST } from "../CST.js";
 import Player from "../helpers/classes/player.js";
-import { BattleLoadScene } from "./BattleLoadScene.js";
-import { BattleScene } from "./BattleScene.js";
-import { ExtraScene } from "./ExtraScene.js";
+import { eventsCentre } from "../helpers/config.js";
 
 export class MapScene extends Phaser.Scene{
     constructor(){
@@ -204,7 +202,7 @@ export class MapScene extends Phaser.Scene{
                 }
                 this.map.levelInc();
                 level.text = this.map._level.toString();
-                this.encountersInteractive();
+                this.resume_map();
                 this.player.x = this.map._current_room.x;
                 this.player.y = this.map._current_room.y;
             }
@@ -219,8 +217,17 @@ export class MapScene extends Phaser.Scene{
         */
 
         this.events.on("resume", () => {
-            this.encountersInteractive();
+            this.resume_map();
         });
+
+        eventsCentre.on("death", () => {
+            this.map._level--;
+            this.map.levelInc();
+            level.text = this.map._level.toString();
+            this.resume_map();
+            this.player.x = this.map._current_room.x;
+            this.player.y = this.map._current_room.y;
+        }, this)
 
         // player icon on the this.map
         this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);

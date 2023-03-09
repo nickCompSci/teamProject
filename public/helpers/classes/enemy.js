@@ -22,7 +22,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     // generates a random number between min and max parameters
     // min and max included
     action() {
-        return (Math.floor(Math.random() * (this.maxDamage - this.minDamage + 1)) + this.minDamage) + this.level;
+        return ((Math.floor(Math.random() * (this.maxDamage - this.minDamage + 1)) + this.minDamage) + (this.level + 1));
     }
 
     updateArrow() {
