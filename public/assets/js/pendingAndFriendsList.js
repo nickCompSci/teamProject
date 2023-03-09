@@ -2,6 +2,7 @@ const pendingFriends = {};
 const friendsList = {};
 const sentRequests = {};
 const inLobbyList = {};
+const inGameList = {};
 let firstTime = true;
 function showFriends() {
     // where a call to a route occurs to find all friends
@@ -21,6 +22,9 @@ function showFriends() {
         success: function (result) {
             const allFriends = result.friends;
             const inLobbyPlayers = result.friendsInLobby;
+            const friendsInGame = result.friendsInGame;
+            console.log(friendsInGame);
+            console.log(allFriends);
             // accessing this has the friends usernames
             document.getElementById("currentFriends").innerHTML = "";
 
@@ -44,6 +48,30 @@ function showFriends() {
                     // document.getElementById(inLobbyPlayers[i]).style.color = "green";
                 }
             }
+
+
+            const inGameListElement = document.createElement("li");
+            inGameListElement.innerHTML = "In game (" + friendsInGame.length + "):";
+            document.getElementById("currentFriends").appendChild(inGameListElement);
+            inGameListElement.style.borderTop = "2px solid grey";
+            inGameListElement.style.paddingTop = "5%";
+
+            if (friendsInGame.length > 0) {
+                inGameListElement.style.color = "lightblue";
+
+                for (let i = 0; i < friendsInGame.length; i++) {
+                    const listElement = document.createElement("li");
+                    // add the friend to the dictionary
+                    inGameList[i] = friendsInGame[i];
+                    // console.log(inLobbyList);
+
+                    listElement.innerHTML = friendsInGame[i] + ' <i id="' + friendsInGame[i]
+                        + '<i onClick="deleteFriend('+ `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + friendsInGame[i] + ' from your friends list"></i>';
+
+                    document.getElementById("currentFriends").appendChild(listElement);
+                }
+            }
+
 
             const offlineListElement = document.createElement("li");
             offlineListElement.innerHTML = "Offline (" + allFriends.length + "):";

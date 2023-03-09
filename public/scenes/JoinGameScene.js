@@ -97,6 +97,7 @@ export class JoinGameScene extends Phaser.Scene {
                                 data,
                                 // on success call the callback function
                                 success: function (result) {
+                                    console.log(result.found)
                                     if (result.found != "None") {
 
                                         if (confirm(`Are you sure you want to join ${otherUsername} via code.`) == true) {
@@ -106,10 +107,11 @@ export class JoinGameScene extends Phaser.Scene {
                                             };
                                             $.ajax({
                                                 type: 'POST',
-                                                url: '/doubleCheckEmpty',
+                                                url: '/doubleCheckEmptyFromJoinGameScene',
                                                 data,
                                                 // on success call the callback function
                                                 success: function (result) {
+                                                    console.log(result.isLobbyStillEmpty);
                                                     if (result.isLobbyStillEmpty == "true") {
 
                                                         thisScene.network.connect(code.value);

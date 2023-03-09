@@ -261,7 +261,7 @@ router.post("/registration", passport.authenticate("registration",
         try {
             const newPerson = request.body.username;
             const session = driver.session({ database: 'neo4j' });
-            const writeQuery = `CREATE (n:Person { username: $newPerson })`;
+            const writeQuery = `CREATE (n:Person { username: $newPerson, inGame : "false" })`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { newPerson })
             );
@@ -619,9 +619,9 @@ router.post("/cancelRequest", (request, response) => {
     cancelRequest(currentUser, otherUser, cancelRequestCallback);
 })
 router.post("/getFriends", (request, response) => {
-    function retrieveAllFriendsCallback(listOfFriends, friendsCurrentlyInLobby) {
+    function retrieveAllFriendsCallback(listOfFriends, friendsCurrentlyInLobby,friendsInGame) {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ friends: listOfFriends, friendsInLobby: friendsCurrentlyInLobby }));
+        response.end(JSON.stringify({ friends: listOfFriends, friendsInLobby: friendsCurrentlyInLobby, friendsInGame : friendsInGame }));
     }
 
     function retrieveAllFriends(currentUsername, callback) {
@@ -632,13 +632,14 @@ router.post("/getFriends", (request, response) => {
             const password = process.env.NEO4J_PASSWORD;
             const listOfFriends = [];
             const friendsCurrentlyInLobby = [];
+            const friendsInGame = [];
             // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
                 // query to get all friends of the specified user
-                const retreiveFriendsQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(People)
-                    RETURN People.username as users ORDER BY users ASC`;
+                const retreiveFriendsQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(n:Person {inGame: 'false'})
+                    RETURN n.username as users ORDER BY users ASC`;
                 const retreiveFriendsQueryResult = await session.executeRead(tx =>
                     tx.run(retreiveFriendsQuery, { currentUsername })
                 );
@@ -663,12 +664,26 @@ router.post("/getFriends", (request, response) => {
                         listOfFriends.splice(index, 1)
                     }
                 })
-
+                const checkInGameQuery = `MATCH (:Person {username: $currentUsername})-[:FRIENDS_WITH]-(n:Person{inGame: 'true'})
+                RETURN n.username as users ORDER BY users ASC`
+                const checkInGameQueryResult = await session.executeRead(tx =>
+                    tx.run(checkInGameQuery, { currentUsername })
+                );
+                checkInGameQueryResult.records.forEach(record => {
+                    // friends currently sitting in a lobby
+                    friendsInGame.push(record.get("users"));
+                    const index = listOfFriends.indexOf(record.get("users"));
+                    if (index > -1) {
+                        listOfFriends.splice(index, 1)
+                    }
+                    // listOfFriends.remove(record.get("everyone"));
+                })
+                console.log(listOfFriends, friendsCurrentlyInLobby,friendsInGame);
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
                 await driver.close();
-                callback(listOfFriends, friendsCurrentlyInLobby);
+                callback(listOfFriends, friendsCurrentlyInLobby, friendsInGame);
             }
         })();
     }
@@ -836,6 +851,8 @@ router.post("/createLobby", (request, response) => {
 
             const lobbyWriteQuery = `
                 MATCH (a:Person {username : $currentUsername}), (b:Person {username : $otherUser})
+                SET a.inGame = 'true'
+                SET b.inGame = 'true'
                 CREATE (a)-[r:IN_LOBBY_TOGETHER]->(b)
                 CREATE (a)<-[:IN_LOBBY_TOGETHER]-(b)
                 RETURN type(r)`
@@ -910,7 +927,9 @@ router.post("/doubleCheckEmpty", (request, response) => {
                 tx.run(readQuery, { currentUsername, otherUser })
             );
 
+            
             readResult.records.forEach(record => {
+                console.log(record.get("exists"));
                 if (record.get("exists") == true) {
                     isLobbyStillEmpty = "true";
                 };
@@ -926,6 +945,49 @@ router.post("/doubleCheckEmpty", (request, response) => {
 
     })();
 })
+
+router.post("/doubleCheckEmptyFromJoinGameScene", (request, response) => {
+    (async () => {
+        const currentUsername = request.body.username;
+        const otherUser = request.body.otherUser;
+        let isLobbyStillEmpty = "false";
+        // now connect to neo4j
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // since  when 2 people are in a lobby together, the hosts JOIN_CODE will be terminated
+            // when another player joins, this read query checks for the existence of the relationship
+            // when a user is asked to confirm if they want to join a lobby.
+            const readQuery = `
+                OPTIONAL MATCH (n:Person {username : $otherUser, inGame : "false"})
+                RETURN n IS NOT NULL AS exists`;
+            const readResult = await session.executeRead(tx =>
+                tx.run(readQuery, { currentUsername, otherUser })
+            );
+
+            
+            readResult.records.forEach(record => {
+                console.log(record.get("exists"));
+                if (record.get("exists") == true) {
+                    isLobbyStillEmpty = "true";
+                };
+            })
+
+        } catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            response.end(JSON.stringify({ isLobbyStillEmpty: isLobbyStillEmpty }));
+        }
+
+    })();
+})
+
 
 router.post("/checkIfHostLeft", (request, response) => {
     (async () => {
@@ -1016,17 +1078,27 @@ router.post("/cleanup", (request, response) => {
             const writeQuery = `
                 MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]-(n:Person)
                 REMOVE a.peerId
+                SET a.inGame = "false"
+                SET n.inGame = "false"
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { currentUsername })
             );
             const writeQuery2 = `
                 MATCH (a:Person {username: $currentUsername})-[r:JOIN_CODE]->(n:Person)
+                SET a.inGame = "false"
+                SET n.inGame = "false"
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery2, { currentUsername })
             );
-            
+            const writeQuery3 = `
+            MATCH (a:Person {username: $currentUsername})
+            SET a.inGame = "false"`;
+        await session.executeWrite(tx =>
+            tx.run(writeQuery3, { currentUsername })
+        );
+
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
