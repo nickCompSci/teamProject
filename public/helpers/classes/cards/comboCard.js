@@ -15,6 +15,22 @@ export default class ComboCard extends HandCard {
     } 
 
     activateCard(scene) {
+        // take away health from player 
+        if ("sideEffects" in this.effect) {
+            scene.damage_calculation(scene.player, this.effect.sideEffects, [1]);
+        }
+
+        // need to add a duration to see the card being drawn and discarded
+        // player draws 
+        if ("cards" in this.effect) {
+            scene.player.drawCard(this.effect.cards, scene);
+        }
+
+        // player discards
+        if ("discard" in this.effect) {
+            scene.player.discardCard(this.effect.discard, scene);
+        }
+        
         let card = this;
 
         // if combo cards is the only card in your hand
@@ -40,21 +56,7 @@ export default class ComboCard extends HandCard {
             }
         }
 
-        // take away health from player 
-        if ("sideEffects" in this.effect) {
-            scene.damage_calculation(scene.player, this.effect.sideEffects, [1]);
-        }
-
-        // need to add a duration to see the card being drawn and discarded
-        // player draws 
-        if ("cards" in this.effect) {
-            scene.player.drawCard(this.effect.cards, scene);
-        }
-
-        // player discards
-        if ("discard" in this.effect) {
-            scene.player.discardCard(this.effect.discard, scene);
-        }
+        
 
     }
 

@@ -45,6 +45,10 @@ export class JoinGameScene extends Phaser.Scene {
         .on("pointerup", () => {
             this.scene.start(CST.SCENES.MENU, { networkObj: this.network, playerUsername: this.playerUsername });
         })
+        .on("pointerout", () => {
+            arrowSprite.setVisible(false);
+            backButton.setStyle({fill: '#fff'});
+        })
 
         let arrowSprite = this.add.sprite(100, 100, "arrow");
         arrowSprite.setVisible(false);
