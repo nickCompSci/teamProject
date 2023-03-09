@@ -23,41 +23,6 @@ export class MapScene extends Phaser.Scene{
         }
         //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
-    
-    preload() {
-        // this.load.image("HUD", "../assets/resources/hud_bg.png");
-        // this.load.image("backgroundBattle", "../assets/resources/background.png");
-        // this.load.image("card_holder", "../assets/resources/card_holder.jpg");
-        // this.load.image("player", "../assets/resources/sprites/player.png");
-        // this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
-        // this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
-        // this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
-        // this.load.image("deck", "../assets/resources/sprites/deck.png");
-        // this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
-        
-        // // enemies
-        // this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
-        // this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
-        // this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
-        // this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
-        // this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
-        // this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
-        // this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
-
-        // // sound effects
-        // this.load.audio('cardHover', "../assets/resources/sounds/battle/hover.mp3");
-        // this.load.audio('drawCard', "../assets/resources/sounds/battle/drawCard.mp3");
-        // this.load.audio('playCard', "../assets/resources/sounds/battle/playCard.mp3");
-        // this.load.audio('comboWrong', "../assets/resources/sounds/battle/comboWrong.mp3");
-        // this.load.audio('heal', "../assets/resources/sounds/battle/heal.mp3");
-        // this.load.audio('armour', "../assets/resources/sounds/battle/armour.mp3");
-        // this.load.audio('reload', "../assets/resources/sounds/battle/reload.mp3");
-        // this.load.audio('playerHurt', "../assets/resources/sounds/battle/playerHurt.mp3");
-        // this.load.audio('playerWin', "../assets/resources/sounds/battle/playerWin.mp3");
-        // this.load.audio('playerDeath', "../assets/resources/sounds/battle/playerDeath.mp3");
-        // this.load.audio('enemyHurt', "../assets/resources/sounds/battle/enemyHurt.mp3");
-        // this.load.audio('enemyDeath', "../assets/resources/sounds/battle/enemyDeath.mp3");
-    }
 
     preload(){
         if (this.host === true){
@@ -239,6 +204,7 @@ export class MapScene extends Phaser.Scene{
 
         // player icon on the this.map
         this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);
+        this.player.disableInteractive();
 
         let opponentLevelText = this.add.text(780, 100, opponentLevel, {fontFamily: 'font1', fill: '#ffffff', fontSize: '60px'}).setDepth(1).setOrigin(0.5);
         this.network.handleDataMapScene(opponentLevelText, {playerObj: this.player, networkObj: this.network, playerUsername: this.playerUsername}, this);
@@ -284,8 +250,7 @@ export class MapScene extends Phaser.Scene{
         }, this)
 
         // player icon on the this.map
-        this.player = new Player(this, this.map._current_room.x, this.map._current_room.y, 'player_map').setScale(1).setDepth(4);
-        this.player.disableInteractive();
+
 
         /*
         THIS IS WHERE THE INTERACTIVITY FOR THE ENCOUNTERS SHOULD BE DONE.

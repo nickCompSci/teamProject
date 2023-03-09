@@ -17,7 +17,7 @@ import {DiscardPileScene} from "./scenes/DiscardPileScene.js"
 import { ProfileScene } from "./scenes/ProfileScene.js";
 import {ExtraScene} from "./scenes/ExtraScene.js";
 import { PlayGameScene } from "./scenes/PlayGameScene.js";
-import { initiatePVPScene } from "./scenes/initiatePVPScene.js";
+import { initiatePVPScene } from "./scenes/InitiatePVPScene.js";
 import { PVPScene } from "./scenes/PVPScene.js";
 import { LastScene } from "./scenes/LastScene.js";
 
