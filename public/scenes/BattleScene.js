@@ -297,13 +297,13 @@ export class BattleScene extends Phaser.Scene {
         this.sound.play("died", {volume: 0.7});
         this.playerHealth.show_health(this, this.player.health, this.player.armour);
         this.cameras.main.fadeOut(5000);
-        this.lose_text = this.add.text(this.game.config.width/ 2, this.game.config.height/2, "YOU DIED", {color: "red", backgroundColor: "black", fontSize: "100px"});
+        this.lose_text = this.add.text(this.game.config.width / 4, this.game.config.height/2, "YOU DIED", {color: "red", backgroundColor: "black", fontSize: "100px"}).setDepth(10);
         this.lose_text.alpha = 0;
         this.tweens.add({
             targets: this.lose_text,
             alpha: {from: 0, to: 1},
             ease: 'Sine.InOut',
-            duration: 4000,
+            duration: 3000,
             yoyo: false
         })
         this.time.delayedCall(6000, this.load_out, [], this);
