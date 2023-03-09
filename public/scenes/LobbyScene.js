@@ -60,8 +60,8 @@ export class LobbyScene extends Phaser.Scene {
             tmpElement.innerHTML = message;
             tmpElement.style.color = "white"
             tmpElement.style.backgroundColor = "black"
-            tmpElement.style.padding = "25px"
-            tmpElement.style.fontSize = "larger"
+            tmpElement.style.padding = "5%"
+            tmpElement.style.fontSize = "25px"
             setTimeout(function () {
                 tmpElement.parentNode.removeChild(tmpElement);
             }, duration);
