@@ -18,16 +18,17 @@ export class BattleScene extends Phaser.Scene {
     }
 
     init(data) {
-        // data returns a list of preloaded cards
-        this.playerData = data.playerObj;        
+        // data returns a list of preloaded cards     
         this.network = data.networkObj;
+        this.playerData = data.playerObj;   
+        this.enemyData = data.enemies;
+        this.rewardData = data.rewards;
+        
         this.enemies = [];
         this.healthbars = [];
         this.rewards = [];
-        this.level = 1;
         this.boss;
         this.otherPlayer;
-        this.network = data.networkObj;
         //this.network.send('{"type":"activityUpdate", "activity":"In Battle"}');
     }
 
@@ -43,11 +44,6 @@ export class BattleScene extends Phaser.Scene {
         this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
         
         // enemies
-        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
-        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
-        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
-        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
-        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
         this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
         this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
 
@@ -494,8 +490,8 @@ export class BattleScene extends Phaser.Scene {
         // this.player.deckArray.push(bourbon);
         // this.player.deckArray.push(morphine);
     
-        this.rewards.push(minigun);
-        this.rewards.push(missile);
+        // this.rewards.push(minigun);
+        // this.rewards.push(missile);
     }
     
     
@@ -602,11 +598,10 @@ export class BattleScene extends Phaser.Scene {
     
     // // spawning in enemies and their life
     spawnEnemyOnScene() {
-        let snake1 = new Enemy(this, 0, 0, "snake", 0, 10);
-        let snake2 = new Enemy(this, 0, 0, "snake", 0, 10);
-
-        this.enemies.push(snake1);
-        this.enemies.push(snake2);
+        for (let temp_enemy of this.enemyData){
+            let enemy = new Enemy(this, 0, 0, temp_enemy.texture.key, temp_enemy.health, temp_enemy.minDamage, temp_enemy.maxDamage, temp_enemy.level);
+            this.enemies.push(enemy);
+        }
 
         let spawnEnemyDistanceX = 0;
 
@@ -639,6 +634,20 @@ export class BattleScene extends Phaser.Scene {
         pickCardsText.setOrigin(0.5, 0.5);
         let player = this.player;
         let scene = this;
+
+        for (let card of this.rewardData){
+            let newCard;
+            if (card.cardType === "damage"){
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else if (card.cardType === "healing") {
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else if (card.cardType === "reload") {
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            } else {
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
+            }
+            this.rewards.push(newCard);
+        }
 
         for (let i=0; i < this.rewards.length; i++) {
             let cards = this.rewards[i];

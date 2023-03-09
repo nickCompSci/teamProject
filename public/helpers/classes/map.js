@@ -20,10 +20,11 @@ import Room from "./room.js";
 */
 
 export default class Map {
-    constructor(encounters, positions, doors, door_positions, startEnd) {
+    constructor(scene, encounters, positions, doors, door_positions, startEnd) {
         this._encounters = encounters;
         this._positions = positions;
 
+        this._scene = scene;
         this._doors = doors;
         this._doors_temp = [];
         this._start = startEnd[0];
@@ -43,8 +44,8 @@ export default class Map {
 
         shuffle(encounters);
         this.assignLocations(encounters, positions);
-        this._rooms.push(new Room (0, this._start, true));
-        this._rooms.push(new Room(11, this._end, true));
+        this._rooms.push(new Room (this._scene, 0, this._start, this._level, true));
+        this._rooms.push(new Room(this._scene, 11, this._end, this._level, true));
         this.setAdjacent();
     }
 
@@ -108,22 +109,19 @@ export default class Map {
     // For incrementing the level and randomizing a new floor.
     levelInc() {
         this._level++;
-        this.playerLocation(new Room (0, this._start, true));
+        this.playerLocation(new Room (this._scene, 0, this._start, this._level, true));
 
         shuffle(this._encounters);
 
         this.assignLocations(this._encounters, this._positions);
-        this._rooms.push(new Room (0, this._start, true));
-        this._rooms.push(new Room(11, this._end));
+        this._rooms.push(new Room (this._scene, 0, this._start, this._level, true));
+        this._rooms.push(new Room(this._scene, 11, this._end, this._level, true));
 
         for (let i=0; i<this._doors.length; i++) {
             this._doors[i].randomizePosition();
         }
 
         this.setAdjacent();
-
-        console.log(this._current_location, this._adjacent)
-
     }
 
     // for assigning the positions (x, y) to the icons/images.
@@ -134,7 +132,7 @@ export default class Map {
             icon[i].y = locations[i].y;
             icon[i].setDepth(1);
 
-            this._rooms.push(new Room (locations[i].room, icon[i]))
+            this._rooms.push(new Room (this._scene, locations[i].room, icon[i], this._level))
         }
     }
 

@@ -1,5 +1,5 @@
 export default class Enemy extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, sprite, frame, health) {
+    constructor(scene, x, y, sprite, health, minDamage, maxDamage, level, frame) {
         super(scene, x, y, sprite, frame);
         this.x = scene.game.config.width * 0.6;
         this.y = scene.game.config.height * 0.6;
@@ -7,9 +7,13 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.health = health;
         this.maxArmour = 20;
         this.armour = 0;
+        this.minDamage = minDamage;
+        this.maxDamage = maxDamage;
+        this.level = level;
         this.damageModifiers = [1];
         this.spriteType = "enemy";
         this.setInteractive();
+        this.setVisible(false);
         this.enemyArrow = scene.add.image(this.x, this.y - this.height - 25, "enemyArrow").setScale(2).setVisible(false);
     
         scene.add.existing(this);
@@ -18,7 +22,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     // generates a random number between min and max parameters
     // min and max included
     action() {
-        return Math.floor(Math.random() * 10);
+        return (Math.floor(Math.random() * (this.maxDamage - this.minDamage + 1)) + this.minDamage) + this.level;
     }
 
     updateArrow() {
