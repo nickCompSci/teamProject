@@ -52,6 +52,8 @@ export class Network{
             } else if (json_data['type'] == 'activityUpdate'){
             } if(json_data['type'] == 'finalBattleCall'){
                 // start final battle scene
+                gameData.playerObj.maxHealth = 80;
+                gameData.playerObj.health = gameData.playerObj.maxHealth;
                 phaser.scene.start(CST.SCENES.PVPSCENE, {playerObj: gameData.playerObj, networkObj: gameData.networkObj, playerUsername: gameData.playerUsername});
             }
         });

@@ -5,6 +5,7 @@ import ComboCard from "./cards/comboCard.js";
 import ReloadCard from "./cards/reloadCard.js";
 import HealingCard from "./cards/healingCard.js";
 import Enemy from "./enemy.js";
+import Boss from "./boss.js";
 
 export default class Room {
 
@@ -58,22 +59,27 @@ export default class Room {
                 this.enemies.push(enemy1);
             }
         } else {
-            if (chance <= 20){
-                let enemy1 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
-                let enemy2 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
-                this.enemies.push(enemy1);
-                this.enemies.push(enemy2);
-            } else if (chance > 20 && chance <= 70){
-                let enemy1 = new Enemy(scene, 0, 0, "hyena", gameOptions.hyena[0], gameOptions.hyena[1], gameOptions.hyena[2], level);
-                let enemy2 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
-                this.enemies.push(enemy1);
-                this.enemies.push(enemy2);
-            } else if (chance > 70 && chance <= 90){
-                let enemy1 = new Enemy(scene, 0, 0, "vulture", gameOptions.vulture[0], gameOptions.vulture[1], gameOptions.vulture[2], level);
-                this.enemies.push(enemy1);
-            } else {
-                let enemy1 = new Enemy(scene, 0, 0, "gorilla", gameOptions.gorilla[0], gameOptions.gorilla[1], gameOptions.gorilla[2], level);
-                this.enemies.push(enemy1);
+            if (this._number === 11){
+                let boss = new Boss(scene, 0, 0, "boss", 0, 80);
+                this.enemies.push(boss);
+            } else{
+                if (chance <= 20){
+                    let enemy1 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
+                    let enemy2 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
+                    this.enemies.push(enemy1);
+                    this.enemies.push(enemy2);
+                } else if (chance > 20 && chance <= 70){
+                    let enemy1 = new Enemy(scene, 0, 0, "hyena", gameOptions.hyena[0], gameOptions.hyena[1], gameOptions.hyena[2], level);
+                    let enemy2 = new Enemy(scene, 0, 0, "scorpion", gameOptions.scorpion[0], gameOptions.scorpion[1], gameOptions.scorpion[2], level);
+                    this.enemies.push(enemy1);
+                    this.enemies.push(enemy2);
+                } else if (chance > 70 && chance <= 90){
+                    let enemy1 = new Enemy(scene, 0, 0, "vulture", gameOptions.vulture[0], gameOptions.vulture[1], gameOptions.vulture[2], level);
+                    this.enemies.push(enemy1);
+                } else {
+                    let enemy1 = new Enemy(scene, 0, 0, "gorilla", gameOptions.gorilla[0], gameOptions.gorilla[1], gameOptions.gorilla[2], level);
+                    this.enemies.push(enemy1);
+                }
             }
         }
     }
@@ -158,7 +164,14 @@ export default class Room {
             this.allCards.push(ammo_cache);
             this.allCards.push(bourbon);
 
+            if (this._number === 11){
+                this.allCards = [];
+                let minigun1 = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", scene, 0, 0, "minigun");
+                let minigun2 = new DamageCard("minigun", 6, "damage", {damage: 4, target: "random", randomAmount: 8}, "orange", scene, 0, 0, "minigun");
+                this.allCards = [minigun1, minigun2];
+            }
         }
+
     }
 
     setVisited() {

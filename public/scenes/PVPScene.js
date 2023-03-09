@@ -37,7 +37,7 @@ export class PVPScene extends Phaser.Scene{
 
         this.hud_bg = this.add.tileSprite(0, 0, gameWidth, gameHeight, "HUD");
         this.card_bg = this.add.image(0, 0, "card_holder");
-        this.bg = this.add.sprite(0, 0, "backgroundBattle");
+        this.bg = this.add.sprite(0, 0, "backgroundPVP");
         this.hud_bg.setScale(2);
 
         this.card_bg.setPosition(gameWidth/2, gameHeight);
@@ -53,13 +53,13 @@ export class PVPScene extends Phaser.Scene{
         for (let card of this.player.deckArray) {
             let newCard;
             if (card.cardType === "damage"){
-                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new DamageCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else if (card.cardType === "healing") {
-                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new HealingCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else if (card.cardType === "reload") {
-                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new ReloadCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             } else {
-                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, card.x, card.y, card.name);
+                newCard = new ComboCard(card.name, card.cost, card.cardType, card.effect, card.rarity, this, 0, 0, card.name);
             }
             let cardIndex = this.player.deckArray.indexOf(card);
             this.player.deckArray[cardIndex] = newCard;
@@ -319,7 +319,7 @@ export class PVPScene extends Phaser.Scene{
 
     lose() {
         this.sound.stopAll();
-        this.sound.play("playerDeath", {volume: 0.7});
+        this.sound.play("died", {volume: 0.7});
         this.cameras.main.shake(200, 0.05);
         this.cameras.main.fadeOut(3000);
         this.time.delayedCall(4000, this.lastScene, [], this);
@@ -500,6 +500,8 @@ export class PVPScene extends Phaser.Scene{
         let x = this.game.config.width * 0.7;
         let y = this.game.config.height * 0.6;
         this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
+        this.otherPlayer.maxHealth = 80;
+        this.otherPlayer.health = this.otherPlayer.maxHealth;
         this.enemies.push(this.otherPlayer);
         let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
         this.healthbars.push(otherPlayerHealth);
