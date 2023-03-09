@@ -186,7 +186,7 @@ export class LobbyScene extends Phaser.Scene {
                 scene.network.send("I have pressed start");
                 tempAlert2("You have started the game!",3000);
                 this.sound.play("beginGame",{volume: 1});
-                this.scene.start(CST.SCENES.MAP, { networkObj: this.network, playerUsername: this.playerUsername });
+                this.scene.start(CST.SCENES.MAP, { networkObj: this.network, playerUsername: this.playerUsername, host: "host" });
             }else if(this.joinee){
                 tempAlert2("Only host can start the game!",2000);
             }

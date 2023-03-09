@@ -25,7 +25,7 @@ export class MapScene extends Phaser.Scene{
     }
 
     preload(){
-        if (this.host = true){
+        if (this.host === true){
             this.load.image("player", "../assets/resources/sprites/player.png");
             this.load.image("player_map", "../assets/resources/sprites/player_map.png");
             this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
