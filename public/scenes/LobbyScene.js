@@ -117,12 +117,13 @@ export class LobbyScene extends Phaser.Scene {
         // this interval must keep checking for a connection 
         // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
         // with the joinee
+
+        // KEVIN AND ZHI: sprite assigning
         if (this.host) {
             const waitingForJoineeInterval = setInterval(function () {
                 // if detects an increase in connections
                 if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
                     clearInterval(waitingForJoineeInterval)
-                    console.log(`${scene.network.peer.conn.peer} lalalalalalalalalal`);
                     var data = {
                         otherUser: scene.network.peer.conn.peer
                 
@@ -311,6 +312,7 @@ export class LobbyScene extends Phaser.Scene {
             // let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, `Join Code: ${joinCode}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px', align: 'left', wordWrap: true, wordWrapWidth: 50 })
         }
 
+        // KEVIN AND ZHI: sprite management
         if (this.joinee == true) {
             this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.50, `Player 2: ${this.playerUsername}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
                 .setDepth(1)
