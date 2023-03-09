@@ -16,10 +16,24 @@ export class MapScene extends Phaser.Scene{
     init(data){
         this.network = data.networkObj;
         this.playerUsername = data.playerUsername;
+        if (data.host){
+            this.host = true;
+        } else {
+            this.host = false;
+        }
         //this.network.send('{"type":"activityUpdate", "activity":"On Map"}');
     }
 
     preload(){
+        if (this.host = true){
+            this.load.image("player", "../assets/resources/sprites/player.png");
+            this.load.image("player_map", "../assets/resources/sprites/player_map.png");
+            this.load.image("otherPlayer", "../assets/resources/sprites/otherplayer_enemy.png");
+        } else {
+            this.load.image("player", "../assets/resources/sprites/otherplayer.png");
+            this.load.image("player_map", "../assets/resources/sprites/otherplayer_map.png");
+            this.load.image("otherPlayer", "../assets/resources/sprites/player_enemy.png");
+        }
         this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
         this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
         this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
