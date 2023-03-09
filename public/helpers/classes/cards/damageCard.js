@@ -18,7 +18,11 @@ export default class DamageCard extends HandCard {
     activateCard(scene) {
         let card = this;
         if (this.effect.target === "single") {
-            for (let enemy of scene.enemies) {
+            if (scene.enemies.length === 1) {
+                scene.damage_calculation(scene.enemies[0], this.effect.damage);
+                this.resetCard();
+            } else {
+                for (let enemy of scene.enemies) {
                 // remove all interaction when playing a single target card
                 scene.player.disableDragOnCards();
                 scene.disableInteractionDuringCard();
@@ -34,6 +38,7 @@ export default class DamageCard extends HandCard {
                 enemy.clickHandler = this.damageEnemy.bind(this, enemy, scene);
                 enemy.on("pointerdown", enemy.clickHandler);
 
+                }
             }
         } else if (this.effect.target === "all") {
             this.dealDamageToAllEnemies(scene);

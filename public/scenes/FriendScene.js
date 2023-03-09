@@ -190,11 +190,9 @@ export class friendScene extends Phaser.Scene {
                             data,
                             // on success call the callback function
                             success: function (result) {
-                                console.log(result.result);
                                 if (result.result == "false") {
                                     if (confirm('Are you sure you want to join ' + target.id + '?') == true) {
                                         // cant use this keyword as were inside a function
-                                        // console.log(scene.network);
                                         // need to double check if the host is still in an empty lobby
                                         // can do this by absence of JOIN_CODE relationship
                                         var data = {
@@ -217,7 +215,6 @@ export class friendScene extends Phaser.Scene {
                                                         data,
                                                         // on success call the callback function
                                                         success: function (result) {
-                                                            console.log(result.otherUserId);
                                                             clearInterval(interval)
                                                             scene.network.connect(result.otherUserId);
                                                             // scene.network.send("hello");

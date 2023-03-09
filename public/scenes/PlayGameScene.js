@@ -75,7 +75,6 @@ export class PlayGameScene extends Phaser.Scene{
         .on("pointerup", ()=>{
             this.scene.start(CST.SCENES.JOIN, {networkObj:this.network, playerUsername: this.playerUsername});
             this.sound.play("menuButtonPress",{volume: 0.4});
-            console.log("click")
         })
 
         // Back Button for navigating back to the main menu

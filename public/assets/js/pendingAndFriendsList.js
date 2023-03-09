@@ -36,7 +36,7 @@ function showFriends() {
                     const listElement = document.createElement("li");
                     // add the friend to the dictionary
                     inLobbyList[i] = inLobbyPlayers[i];
-
+                    // console.log(inLobbyList);
 
                     listElement.innerHTML = inLobbyPlayers[i] + ' <i id="' + inLobbyPlayers[i]
                         + '" class="fa-sharp fa-solid fa-right-to-bracket green" title="Join ' + inLobbyPlayers[i] + ' if they are online"></i>\
@@ -82,7 +82,7 @@ function showFriends() {
                 const listElement = document.createElement("li");
                 // add the friend to the dictionary
                 friendsList[i] = allFriends[i];
-
+                // console.log(friendsList);
                 listElement.innerHTML = allFriends[i] + '<i id="' + allFriends[i]
                     + '" onClick="deleteFriend(' + `\'${friendsList[i]}\'` + ')" class="fa-solid fa-trash" title="Delete ' + allFriends[i] + ' from your friends list"></i>';
 
