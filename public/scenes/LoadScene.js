@@ -29,7 +29,6 @@ export class LoadScene extends Phaser.Scene{
 
     // Used to load all the assets
     preload(){
-
         // Load images
         this.load.image("background", "../assets/resources/tower2.jpg");
         this.load.image("arrow", "../assets/resources/arrow.png");
@@ -96,48 +95,57 @@ export class LoadScene extends Phaser.Scene{
             console.log(percent);
             })
 
-            let network;
-            let playerUsername;
-            var data = {
-                refreshToken: getCookie('refreshJwt')
-            };
+        let network;
+        let playerUsername;
+        let playerPeerId;
+        let scene = this;
+        let test = false
 
-            $.ajax({
-                type: 'POST',
-                url: '/obtainUserId',
-                data,
-                // on success call the callback function
-                success: function (result) {
-                    playerUsername = result.username;
-                    network = new Network(result.encrypted);
-                    var data = {
-                        refreshToken: getCookie('refreshJwt')
-                    };
-                    $.ajax({
-                        type: 'POST',
-                        url: '/cleanup',
-                        data,
-                        // on success call the callback function
-                        success: function (result) {
+        var data = {
+            refreshToken: getCookie('refreshJwt')
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/cleanup',
+            data,
+            // on success call the callback function
+            success: function (result) {
 
-                        },
-                        // on error return to game page 
-                        error: function (xhr) {
-                            window.alert(JSON.stringify(xhr));
-                            window.location.replace('/');
-                        }
-                    });   
-                },
-                // on error return to game page 
-                error: function (xhr) {
-                    window.alert(JSON.stringify(xhr));
-                    window.location.replace('/');
-                }
-            });   
-        // instantiate network object
+                var data = {
+                    refreshToken: getCookie('refreshJwt')
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/createAUserPeerId',
+                    data,
+                    // on success call the callback function
+                    success: function (result) {
+                        console.log(result.uniqueHash);
+                        playerPeerId = result.uniqueHash;
+                        playerUsername = result.username;
+                        network = new Network(playerPeerId);
+                        test = true;
+                        // scene.onLoad(network, playerUsername);
+                    },
+                    // on error return to game page 
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/');
+                    }
+                });   
+            },
+            // on error return to game page 
+            error: function (xhr) {
+                window.alert(JSON.stringify(xhr));
+                window.location.replace('/');
+            }
+        });   
+        // somehow wait 
 
+// still doesnt work after refreshing both sides, one side is kicked
 
         // Loads menu when everything is loaded
+        let myInterval;
         this.load.on("complete", ()=>{
             this.sound.add("menuMusic", {loop: true, volume: 0.05});
             this.sound.add("mapMusic", {loop: true, volume: 0.05});
@@ -145,7 +153,13 @@ export class LoadScene extends Phaser.Scene{
             this.sound.add("battleMusic", {loop: true, volume: 0.05});
             this.sound.add("bossMusic", {loop: true, volume: 0.05});
             this.sound.add("doorOpen", {loop: false, volume: 0.05});
-            this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
+            myInterval = setInterval(function () {
+                if(test == true){
+                    clearInterval(myInterval);
+                    scene.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
+                }}, 500);
+            // this.scene.start(CST.SCENES.MENU, {networkObj: network, playerUsername: playerUsername});
         })
     }
+    
 }

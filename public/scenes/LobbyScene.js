@@ -19,20 +19,13 @@ export class LobbyScene extends Phaser.Scene {
         this.readyToStart = false;
         if (data.host) {
             this.host = true
-            console.log(`${this.playerUsername} is the host`);
         } else if (data.joinee) {
             this.joinee = true;
             this.otherPlayerName = data.playerToJoin;
             this.readyToStart = true;
-            // console.log("we have set start");
-            console.log(`${this.playerUsername} is the joinee`);
         }
-        console.log(this.network);
-        console.log(this.network.peer._connections.size)
-        console.log(this.network.peer._connections);
         if (this.network.peer._connections.size > 0) {
             this.network.send("i have joined the lobby, sending you hello!");
-
         }
     }
 
@@ -44,6 +37,7 @@ export class LobbyScene extends Phaser.Scene {
         //     // seems to be for JOINEES
         //     console.log("Data received: ", data);
         // })
+        let scene = this;
 
         function tempAlert(message, duration) {
             var tmpElement = document.createElement("div");
@@ -118,7 +112,7 @@ export class LobbyScene extends Phaser.Scene {
         }
 
 
-        let scene = this;
+
 
         // this interval must keep checking for a connection 
         // once detected it creates a neo4j IN_LOBBY_TOGETHER relationship
@@ -128,12 +122,14 @@ export class LobbyScene extends Phaser.Scene {
                 // if detects an increase in connections
                 if ((scene.network.peer._connections.size > 0 && scene.host == true)) {
                     clearInterval(waitingForJoineeInterval)
+                    console.log(`${scene.network.peer.conn.peer} lalalalalalalalalal`);
                     var data = {
                         otherUser: scene.network.peer.conn.peer
+                
                     }
                     $.ajax({
                         type: 'POST',
-                        url: '/getOtherPlayersId',
+                        url: '/getOtherPlayersUsername',
                         data,
                         success: function (result) {
                             console.log(result.otherUserName);
@@ -168,6 +164,36 @@ export class LobbyScene extends Phaser.Scene {
                 }
             }, 100);
         }
+
+        let joineeDidLeave = false;
+        let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Start Game', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
+        .setDepth(1)
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true })
+        .on("pointerover", () => {
+            arrowSprite.setVisible(true);
+            arrowSprite.x = startGameButton.x - startGameButton.width + 130;
+            arrowSprite.y = startGameButton.y + startGameButton.height / 4;
+            startGameButton.setStyle({ fill: '#fd722a' });
+            this.sound.play("menuButtonHover", { volume: 0.2 });
+        })
+        .on("pointerup", () => {
+            // Moves to the game scene when the start game button is clicked
+            // clearInterval(interval);
+            // if someone presses the start button
+            if (this.readyToStart == true && this.host && joineeDidLeave == false) {
+                scene.network.send("I have pressed start");
+                tempAlert2("You have started the game!",3000);
+                this.sound.play("beginGame",{volume: 1});
+                this.scene.start(CST.SCENES.MAP, { networkObj: this.network, playerUsername: this.playerUsername });
+            }else if(this.joinee){
+                tempAlert2("Only host can start the game!",2000);
+            }
+        })
+        .on("pointerout", () => {
+            arrowSprite.setVisible(false);
+            startGameButton.setStyle({ fill: '#fff' });
+        })
         // a leaveGame detection interval
         // if the joinee leaves the game - he will peer.destroy and destroy his directional IN_LOBBY_TOGETHER
         // the host must detect this, peer.destroy himself, reallocate the peer to himself
@@ -176,6 +202,7 @@ export class LobbyScene extends Phaser.Scene {
         if (this.host) {
             detectingJoineeLeaveInterval = setInterval(function () {
                 if (scene.otherPlayerName) {
+                    console.log(scene.playerUsername,scene.otherPlayerName)
                     var data = {
                         username: scene.playerUsername,
                         otherUser: scene.otherPlayerName,
@@ -187,7 +214,8 @@ export class LobbyScene extends Phaser.Scene {
                         success: function (result) {
                             if (result.hostLeft == "true") {
                                 clearInterval(detectingJoineeLeaveInterval);
-                                tempAlert("The Joinee has left the game! Sending you back to main menu", 1500);
+                                joineeDidLeave = true;
+                                tempAlert("The Joinee has left the game! Sending you back to main menu", 3000);
                             }
                         },
                         error: function (xhr) {
@@ -205,6 +233,7 @@ export class LobbyScene extends Phaser.Scene {
         let detectingHostLeaveInterval
         if (this.joinee) {
             detectingHostLeaveInterval = setInterval(function () {
+                console.log(scene.playerUsername,scene.otherPlayerName)
                 var data = {
                     username: scene.playerUsername,
                     otherUser: scene.otherPlayerName,
@@ -216,7 +245,7 @@ export class LobbyScene extends Phaser.Scene {
                     success: function (result) {
                         if (result.hostLeft == "true") {
                             clearInterval(detectingJoineeLeaveInterval);
-                            tempAlert("The host has left the game! Sending you back to Main Menu", 1500)
+                            tempAlert("The host has left the game! Sending you back to Main Menu", 3000)
                         }
                     },
                     error: function (xhr) {
@@ -247,18 +276,39 @@ export class LobbyScene extends Phaser.Scene {
             let joinCode = this.network.peer.id;
             addJoinCodeToUserNode(joinCode, addJoinCodeToUserNodeCallback);
 
-            let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, "Join Code: " + joinCode, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px' })
-                .setDepth(1)
-                .setOrigin(0.5)
-                .setInteractive({ useHandCursor: true })
-                // Add event listener to enable copying of the text
-                .on('pointerdown', function (pointer) {
-                    if (pointer.leftButtonDown()) {
-                        var joinCode = joinCodeText.text.split(':')[1].trim(); // extract the join code
-                        navigator.clipboard.writeText(joinCode); // copy the join code to clipboard
-                        window.alert("Join code copied to clipboard!");
-                    }
-                });
+            let joinCodeText = this.make.text({
+                x: this.game.renderer.width / 2,
+                y: this.game.renderer.height * 0.30,
+                text: `Join Code: **********`,
+                origin: { x: 0.5, y: 0.5 },
+                style: {
+                    fontFamily: 'font1',
+                    fontSize: '40px',
+                    fill: 'white',
+                    wordWrap: { width: 800, useAdvancedWrap: true }
+                }
+            })    
+            .on("pointerout",() => joinCodeText.setStyle({ fill: '#FFF' }))
+            .on("pointerover", ()=>{
+                joinCodeText.setStyle({fill: '#fd722a'});
+                scene.sound.play("menuButtonHover", {volume : 0.2});
+            })     
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            // Add event listener to enable copying of the text
+            .on('pointerdown', function (pointer) {
+                if (pointer.leftButtonDown()) {
+                    scene.sound.play("menuButtonPress", {volume : 0.4});
+                    // var joinCode = joinCodeText.text.split(':')[1].trim(); // extract the join code
+                    navigator.clipboard.writeText(joinCode).then(function(x){
+                        alert("Join code copied to clipboard!")
+                    }); // copy the join code to clipboard
+                    // window.alert("Join code copied to clipboard!");
+                }
+            });
+
+            // let joinCodeText = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.30, `Join Code: ${joinCode}`, { fontFamily: 'font1', fill: '#ffffff', fontSize: '40px', align: 'left', wordWrap: true, wordWrapWidth: 50 })
         }
 
         if (this.joinee == true) {
@@ -270,34 +320,7 @@ export class LobbyScene extends Phaser.Scene {
                 .setOrigin(0.5)
         }
 
-        let startGameButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height * 0.70, 'Start Game', { fontFamily: 'font1', fill: '#ffffff', fontSize: '60px' })
-            .setDepth(1)
-            .setOrigin(0.5)
-            .setInteractive({ useHandCursor: true })
-            .on("pointerover", () => {
-                arrowSprite.setVisible(true);
-                arrowSprite.x = startGameButton.x - startGameButton.width + 130;
-                arrowSprite.y = startGameButton.y + startGameButton.height / 4;
-                startGameButton.setStyle({ fill: '#fd722a' });
-                this.sound.play("menuButtonHover", { volume: 0.2 });
-            })
-            .on("pointerup", () => {
-                // Moves to the game scene when the start game button is clicked
-                // clearInterval(interval);
-                // if someone presses the start button
-                if (this.readyToStart == true && this.host) {
-                    scene.network.send("I have pressed start");
-                    tempAlert2("You have started the game!",3000);
-                    this.sound.play("beginGame",{volume: 1});
-                    this.scene.start(CST.SCENES.MAP, { networkObj: this.network, playerUsername: this.playerUsername });
-                }else if(this.joinee){
-                    tempAlert2("Only host can start the game!",2000);
-                }
-            })
-            .on("pointerout", () => {
-                arrowSprite.setVisible(false);
-                startGameButton.setStyle({ fill: '#fff' });
-            })
+       
 
         if (this.joinee) {
             let waitForGameToStartAsJoinee = setInterval(function () {

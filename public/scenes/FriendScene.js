@@ -223,15 +223,15 @@ export class friendScene extends Phaser.Scene {
                                                     };
                                                     $.ajax({
                                                         type: 'POST',
-                                                        url: '/testerRoute',
+                                                        url: '/getOtherPlayersId',
                                                         data,
                                                         // on success call the callback function
                                                         success: function (result) {
-                                                            console.log(result.otherUser);
+                                                            console.log(result.otherUserId);
                                                             clearInterval(interval)
-                                                            scene.network.connect(result.otherUser);
+                                                            scene.network.connect(result.otherUserId);
                                                             // scene.network.send("hello");
-                                                            scene.network.send("testing again");
+                                                            // scene.network.send("testing again");
                                                             scene.loadLobby(target.id);
                                                         },
                                                         // on error return to game page

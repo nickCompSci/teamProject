@@ -10,12 +10,57 @@ const tokenList = {};
 const router = express.Router();
 const algorithm = 'aes-256-cbc';
 const password = 'my secret key';
+const secret = process.env.HASH_SECRET;
+const hashAlgorithm = "sha512";
 const key = crypto.scryptSync(password, 'salt', 32);
 const iv = Buffer.alloc(16, 0);
 // route to check if server is active and running
 router.get("/status", (request, response, next) => {
     response.status(200).json({ status: "Ok, server running" });
 });
+
+router.post("/createAUserPeerId", (request, response) => {
+    const refreshToken = request.body.refreshToken;
+    const currentUser = tokenList[refreshToken].username;
+    let currentDate = new Date();
+    // 18:43:13 format
+    let time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
+
+    const hash = crypto.createHash(hashAlgorithm, secret)
+        .update(`${currentUser} + ${time}`)
+        .digest('hex'); //encoding to use
+
+    (async () => {
+        // now connect to neo4j
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to add property to a users node but must also implement this in the cleanup to remove it
+            const writeQuery = `
+                MATCH (a:Person {username: $currentUser})
+                SET a.peerId = $hash
+                RETURN a`;
+            await session.executeWrite(tx =>
+                tx.run(writeQuery, { currentUser, hash })
+            );
+
+        } catch (error) {
+            console.error(`Something went wrong: ${error}`);
+        } finally {
+            await driver.close();
+        }
+    })();
+
+    response.setHeader('Content-Type', 'application/json');
+    // return the username to route caller
+    response.end(JSON.stringify({ username: currentUser, uniqueHash: hash }));
+    // to access in caller - result.username
+})
+
 
 router.post("/obtainUserId", (request, response) => {
     const refreshToken = request.body.refreshToken;
@@ -29,21 +74,81 @@ router.post("/obtainUserId", (request, response) => {
     response.end(JSON.stringify({ username: currentUser, encrypted: encrypted }));
     // to access in caller - result.username
 })
-router.post("/getOtherPlayersId", (request, response) => {
+router.post("/getOtherPlayersUsername", (request, response) => {
 
-    const otherUser = request.body.otherUser;
+    (async () => {
+        // connection details
+        const otherUserId = request.body.otherUser;
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+        let username;
 
-    const decipher = crypto.createDecipheriv(algorithm, key, iv);
-    let decrypted = decipher.update(otherUser, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    response.setHeader('Content-Type', 'application/json');
-    // return the username to route caller
-    response.end(JSON.stringify({ otherUserName: decrypted }));
-    // to access in caller - result.username
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to delete the JOIN_CODE relationship from the current user to all
+            // their friends
+            const readQuery = `
+                MATCH (n:Person {peerId: $otherUserId})
+                RETURN n.username as username`;
+            const readResult = await session.executeWrite(tx =>
+                tx.run(readQuery, { otherUserId })
+            );
+            readResult.records.forEach(record => {
+                username = record.get("username");
+            })
+            
+        } catch (error) {
+            console.error(`Something went wrong: ${error} @username`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            // return the username to route caller
+            response.end(JSON.stringify({ otherUserName : username  }));
+        }
+    })();
 })
 
+router.post("/getOtherPlayersId", (request, response) => {
+
+    (async () => {
+        // connection details
+        const otherUserUsername = request.body.otherUsername;
+        let peerId;
+        const uri = process.env.NEO4J_URI;
+        const user = process.env.NEO4J_USERNAME;
+        const password = process.env.NEO4J_PASSWORD;
+        
+        const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        try {
+            const session = driver.session({ database: "neo4j" });
+            // query to delete the JOIN_CODE relationship from the current user to all
+            // their friends
+
+            const readQuery = `
+                MATCH (n:Person {username: $otherUserUsername})
+                RETURN n.peerId as peerId`;
+            const readResult = await session.executeWrite(tx =>
+                tx.run(readQuery, { otherUserUsername })
+            );
+            readResult.records.forEach(record => {
+                peerId = record.get("peerId");
+            })
+            
+        } catch (error) {
+            console.error(`Something went wrong: ${error} # getting id`);
+        } finally {
+            await driver.close();
+            response.setHeader('Content-Type', 'application/json');
+            // return the username to route caller
+            response.end(JSON.stringify({ otherUserId : peerId  }));
+        }
+    })();
+})
+
+
 router.post("/updateNeo", (request, response) => {
-    console.log("were in neo route now")
     function updateNeoCallback(result) {
         // at the moment wont return anything
         response.setHeader('Content-Type', 'application/json');
@@ -62,7 +167,6 @@ router.post("/updateNeo", (request, response) => {
                 const session = driver.session({ database: "neo4j" });
                 // query to delete the JOIN_CODE relationship from the current user to all
                 // their friends
-                console.log(currentUsername)
                 const writeQuery = `
                     MATCH (n:Person {username: $currentUsername})
                     SET n.connectedInLobby = 'true'
@@ -70,7 +174,6 @@ router.post("/updateNeo", (request, response) => {
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername })
                 );
-                console.log("completed the update in neo");
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
@@ -87,10 +190,7 @@ router.post("/updateNeo", (request, response) => {
 
 
 router.post("/checkLobbyFull", (request, response) => {
-    console.log("were in lobby route")
     function checkLobbyFullCallback(result) {
-        console.log(result);
-        // at the moment wont return anything
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify({ result: result }));
     }
@@ -107,9 +207,7 @@ router.post("/checkLobbyFull", (request, response) => {
             const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
             try {
                 const session = driver.session({ database: "neo4j" });
-                // query to delete the JOIN_CODE relationship from the current user to all
-                // their friends
-                console.log(otherUser)
+                // query to check if a persons lobby is full
                 const readQuery = `
                     MATCH (n:Person {username: $otherUser}) 
                     RETURN n.connectedInLobby IS NOT NULL as exists`;
@@ -118,7 +216,6 @@ router.post("/checkLobbyFull", (request, response) => {
                 );
                 readResult.records.forEach(record => {
                     found = record.get("exists");
-                    console.log(`found : ${found}`)
                     if (found == true) {
                         result = "true";
                     }
@@ -138,8 +235,6 @@ router.post("/checkLobbyFull", (request, response) => {
 
 
 router.post("/testerRoute", (request, response) => {
-    const otherUser = request.body.otherUsername;
-    console.log(request.body.otherUsername);
     const algorithm = 'aes-256-cbc';
     const password = 'my secret key';
     const key = crypto.scryptSync(password, 'salt', 32);
@@ -650,8 +745,6 @@ router.post("/joinCodeRelationship", (request, response) => {
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, joinCode })
                 );
-                // ****************************************
-                console.log(`Successfully created JOIN_CODE from ${currentUsername} to all their friends`);
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
@@ -694,8 +787,6 @@ router.post("/deleteJoinRelationship", (request, response) => {
                 await session.executeWrite(tx =>
                     tx.run(writeQuery, { currentUsername, joinCode })
                 );
-                // ****************************************
-                console.log(`Successfully deleted JOIN_CODE from ${currentUsername} to all their friends`);
             } catch (error) {
                 console.error(`Something went wrong: ${error}`);
             } finally {
@@ -743,9 +834,7 @@ router.post("/createLobby", (request, response) => {
                 tx.run(writeQuery, { currentUsername })
             );
 
-            // ****************************************
-            console.log(`Successfully deleted JOIN_CODE from ${currentUsername} to all their friends`);
-            const lobbyWriteQuery =`
+            const lobbyWriteQuery = `
                 MATCH (a:Person {username : $currentUsername}), (b:Person {username : $otherUser})
                 CREATE (a)-[r:IN_LOBBY_TOGETHER]->(b)
                 CREATE (a)<-[:IN_LOBBY_TOGETHER]-(b)
@@ -753,9 +842,6 @@ router.post("/createLobby", (request, response) => {
             await session.executeWrite(tx =>
                 tx.run(lobbyWriteQuery, { currentUsername, otherUser })
             );
-
-        // ****************************************
-        console.log(`Successfully created IN_LOBBY_TOGETHER from ${currentUsername} to ${otherUser}`);
 
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
@@ -790,11 +876,6 @@ router.post("/deleteLobby", (request, response) => {
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { currentUsername })
             );
-
-            // ****************************************
-            console.log(`Successfully deleted IN_LOBBY_TOGETHER from ${currentUsername} to other player`);
-    
-
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
@@ -819,10 +900,10 @@ router.post("/doubleCheckEmpty", (request, response) => {
 
         const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
         try {
-            // a simple check to see if JOIN_CODE still exists
             const session = driver.session({ database: "neo4j" });
-            // query to delete the JOIN_CODE relationship from the current user to all
-            // their friends
+            // since  when 2 people are in a lobby together, the hosts JOIN_CODE will be terminated
+            // when another player joins, this read query checks for the existence of the relationship
+            // when a user is asked to confirm if they want to join a lobby.
             const readQuery = `
                 RETURN EXISTS ( (:Person {username : $currentUsername})-[:JOIN_CODE]-(:Person {username : $otherUser}) ) as exists`;
             const readResult = await session.executeRead(tx =>
@@ -830,25 +911,20 @@ router.post("/doubleCheckEmpty", (request, response) => {
             );
 
             readResult.records.forEach(record => {
-                // the users who are a friend of this user
-                if(record.get("exists") == true){
+                if (record.get("exists") == true) {
                     isLobbyStillEmpty = "true";
                 };
             })
-            // ****************************************
-            console.log(`is lobby still empty:  ${isLobbyStillEmpty}`);
-    
 
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
             await driver.close();
             response.setHeader('Content-Type', 'application/json');
-            response.end(JSON.stringify({isLobbyStillEmpty: isLobbyStillEmpty}));
+            response.end(JSON.stringify({ isLobbyStillEmpty: isLobbyStillEmpty }));
         }
 
     })();
-    // to access in caller - result.username
 })
 
 router.post("/checkIfHostLeft", (request, response) => {
@@ -874,19 +950,16 @@ router.post("/checkIfHostLeft", (request, response) => {
 
             readResult.records.forEach(record => {
                 // the users who are a friend of this user
-                if(record.get("exists") == true){
+                if (record.get("exists") == true) {
                     hostLeft = "false";
                 };
             })
-            // ****************************************
-            console.log(`has hos left the game:  ${hostLeft}`);
-    
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
             await driver.close();
             response.setHeader('Content-Type', 'application/json');
-            response.end(JSON.stringify({hostLeft: hostLeft}));
+            response.end(JSON.stringify({ hostLeft: hostLeft }));
         }
 
     })();
@@ -913,11 +986,6 @@ router.post("/joineeLeft", (request, response) => {
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { currentUsername })
             );
-
-            // ****************************************
-            console.log(`Successfully deleted IN_LOBBY_TOGETHER from joinee: ${currentUsername} to other player`);
-    
-
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
@@ -943,21 +1011,22 @@ router.post("/cleanup", (request, response) => {
         const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
         try {
             const session = driver.session({ database: "neo4j" });
-            // query to delete the JOIN_CODE relationship from the current user to all
+            // query to delete the IN_LOBBY_TOGETHER relationship from the current user to all
             // their friends
             const writeQuery = `
-                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]->(n:Person)
+                MATCH (a:Person {username: $currentUsername})-[r:IN_LOBBY_TOGETHER]-(n:Person)
+                REMOVE a.peerId
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery, { currentUsername })
             );
             const writeQuery2 = `
-                MATCH (a:Person {username: $currentUsername})-[r:JOIN_GAME]->(n:Person)
+                MATCH (a:Person {username: $currentUsername})-[r:JOIN_CODE]->(n:Person)
                 DELETE r`;
             await session.executeWrite(tx =>
                 tx.run(writeQuery2, { currentUsername })
             );
-            console.log(`Finished cleanup for player: ${currentUsername}`);
+            
         } catch (error) {
             console.error(`Something went wrong: ${error}`);
         } finally {
@@ -967,9 +1036,6 @@ router.post("/cleanup", (request, response) => {
         }
 
     })();
-    // to access in caller - result.username
 })
-
-
 
 module.exports = router;
