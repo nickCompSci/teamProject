@@ -176,6 +176,67 @@ export class LobbyScene extends Phaser.Scene {
             });
         });
 
+        // a leaveGame detection interval
+        // if the joinee leaves the game - he will peer.destroy and destroy his directional IN_LOBBY_TOGETHER
+        // the host must detect this, peer.destroy himself, reallocate the peer to himself
+        // and rebuild the JOIN_GAME relationship
+        let detectingJoineeLeaveInterval;
+        if (this.host) {
+            detectingJoineeLeaveInterval = setInterval(function () {
+                if (scene.otherPlayerName) {
+                    console.log(scene.playerUsername,scene.otherPlayerName)
+                    var data = {
+                        username: scene.playerUsername,
+                        otherUser: scene.otherPlayerName,
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/checkIfHostLeft',
+                        data,
+                        success: function (result) {
+                            if (result.hostLeft == "true") {
+                                clearInterval(detectingJoineeLeaveInterval);
+                                joineeDidLeave = true;
+                                tempAlert("The Joinee has left the game! Sending you back to main menu", 3000);
+                            }
+                        },
+                        error: function (xhr) {
+                            window.alert(JSON.stringify(xhr));
+                            window.location.replace('/game.html');
+                        }
+                    });
+                }
+            }, 1000);
+        }
+
+        // a leaveGame detection interval
+        // if the host leaves the game - he will peer.destroy and leave
+        // the joinee must detect this
+        let detectingHostLeaveInterval
+        if (this.joinee) {
+            detectingHostLeaveInterval = setInterval(function () {
+                console.log(scene.playerUsername,scene.otherPlayerName)
+                var data = {
+                    username: scene.playerUsername,
+                    otherUser: scene.otherPlayerName,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/checkIfHostLeft',
+                    data,
+                    success: function (result) {
+                        if (result.hostLeft == "true") {
+                            clearInterval(detectingJoineeLeaveInterval);
+                            tempAlert("The host has left the game! Sending you back to Main Menu", 3000)
+                        }
+                    },
+                    error: function (xhr) {
+                        window.alert(JSON.stringify(xhr));
+                        window.location.replace('/game.html');
+                    }
+                });
+            }, 1000);
+        }
 
         // Adds background image to the scene - (x, y, image)
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, 'background')
