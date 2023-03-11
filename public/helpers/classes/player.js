@@ -7,7 +7,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y, sprite, frame) {
         super(scene, x, y, sprite, frame);
-        this.maxHealth = 50;
+        this.maxHealth = 80;
         this.health = this.maxHealth;
         this.maxActionPoints = 6;
         this.actionPoints = this.maxActionPoints;
