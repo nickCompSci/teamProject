@@ -34,12 +34,6 @@ export class MapScene extends Phaser.Scene{
             this.load.image("player_map", "../assets/resources/sprites/otherplayer_map.png");
             this.load.image("otherPlayer", "../assets/resources/sprites/player_enemy.png");
         }
-        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
-        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
-        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
-        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
-        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
-        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
     }
 
     // Creates any images, text, etc.
@@ -216,15 +210,21 @@ export class MapScene extends Phaser.Scene{
         this.next_floor = this.add.image(205, 435, "up").setDepth(2).setInteractive()
         this.next_floor.on("pointerup", ()=>{
             if (this.map.currentLocation == 11) {
-                this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
-                for (let i=0; i<this.map.adjacent.length; i++) {
-                    this.map.adjacent[i].getEncounter().disableInteractive();
+                this.player.maxHealth = this.player.maxHealth + 10;
+                this.player.health = this.player.maxHealth;
+                if (this.map.level < 3){
+                    this.network.send('{"type":"levelUpdate", "level":"'+(this.map._level+1).toString()+'"}')
+                    for (let i=0; i<this.map.adjacent.length; i++) {
+                        this.map.adjacent[i].getEncounter().disableInteractive();
+                    }
+                    this.map.levelInc();
+                    level.text = this.map._level.toString();
+                    this.player.x = this.map._current_room.x;
+                    this.player.y = this.map._current_room.y;
+                    this.resume_map();
+                } else{
+                    this.scene.pause().launch(CST.SCENES.INITIATEPVPSCENE, {networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player});
                 }
-                this.map.levelInc();
-                level.text = this.map._level.toString();
-                this.resume_map();
-                this.player.x = this.map._current_room.x;
-                this.player.y = this.map._current_room.y;
             }
         })
 
@@ -244,9 +244,9 @@ export class MapScene extends Phaser.Scene{
             this.map._level--;
             this.map.levelInc();
             level.text = this.map._level.toString();
-            this.resume_map();
             this.player.x = this.map._current_room.x;
             this.player.y = this.map._current_room.y;
+            this.resume_map();
         }, this)
 
         // player icon on the this.map
@@ -278,7 +278,11 @@ export class MapScene extends Phaser.Scene{
                 this.player.y = this.map._current_room.y;
 
                 if (adjacent[i].getVisited() == true) {
-                    this.resume_map();
+                    if (this.map.level === 3 && this.map.currentLocation === 11){
+                        this.scene.pause().launch(CST.SCENES.BATTLE, { networkObj: this.network, playerUsername: this.playerUsername, playerObj: this.player, enemies: adjacent[i].enemies, rewards: adjacent[i].rewards});
+                    } else{
+                        this.resume_map();
+                    }
                 } else if (adjacent[i].getEncounter().texture.key == "cards") {
                     this.sound.stopAll();
                     this.sound.sounds[5].play();

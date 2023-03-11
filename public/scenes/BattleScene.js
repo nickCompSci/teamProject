@@ -76,7 +76,6 @@ export class BattleScene extends Phaser.Scene {
         // loads all the different types of cards
         let cardsInDeck = this.player.deckArray.length // set discardPile amount of repeats
 
-        console.log("HERE");
         // shuffles the deck and sets up the visual for the deck cards
         this.player.shuffle();
         this.player.drawCard(gameOptions.startCards, this);
@@ -104,14 +103,13 @@ export class BattleScene extends Phaser.Scene {
         let dropZone = this.add.zone(500, 250, 665, 665).setRectangleDropZone(665, 665);
 
         // soundtracks
-        if (this.level === 3) {
+        if (this.enemyData[0].texture.key === "boss") {
             this.spawnBossOnScene();
             this.sound.sounds[4].play();
         } else {
             this.spawnEnemyOnScene();
             this.sound.sounds[3].play();
         }
-
         // trying to fix the clicking on cards issue where the card goes out of bounds
         // this.input.on("pointerdown", (pointer, gameObject) => {
         //     if (scene.player.handArray.includes(gameObject)) {
@@ -500,28 +498,21 @@ export class BattleScene extends Phaser.Scene {
         this.showRewards();
     }
 
-    spawnOtherPlayerOnScene() {
-        // equal to otherPlayer passed in
-        let x = this.game.config.width * 0.7;
-        let y = this.game.config.height * 0.6;
-        this.otherPlayer = new Player(this, x, y, "otherPlayer", 0);
-        this.enemies.push(this.otherPlayer);
-        let otherPlayerHealth = new HealthBar(this, this.otherPlayer.x - 40, this.otherPlayer.y + 100, this.otherPlayer.health, this.otherPlayer.maxHealth, this.otherPlayer.armour, this.otherPlayer.maxArmour)
-        this.healthbars.push(otherPlayerHealth);
-    }
-
     spawnBossOnScene() {
         this.boss = new Boss(this, 0, 0, "boss", 0 , 50);
         this.enemies.push(this.boss);
         let bosshealth = new HealthBar(this, this.boss.x , this.boss.y + 120, this.boss.health, this.boss.maxHealth, this.boss.armour, this.boss.maxArmour);
         this.healthbars.push(bosshealth);
-        this.boss.setDepth(1);
+        this.boss.setVisible(true);
     }
     
     // // spawning in enemies and their life
     spawnEnemyOnScene() {
         for (let temp_enemy of this.enemyData){
             let enemy = new Enemy(this, 0, 0, temp_enemy.texture.key, temp_enemy.health, temp_enemy.minDamage, temp_enemy.maxDamage, temp_enemy.level);
+            if (enemy.texture.key === "gorilla" || enemy.texture.key === "vulture"){
+                enemy.y = enemy.y - 20;
+            }
             this.enemies.push(enemy);
         }
 
@@ -646,6 +637,8 @@ export class BattleScene extends Phaser.Scene {
         scene.player.handArray = [];
         scene.player.graveYardArray = [];
         scene.playerData.setEqual(scene.player);
+        scene.playerData.maxHealth = 80;
+        scene.playerData.health = scene.playerData.maxHealth;
     }
 
 }

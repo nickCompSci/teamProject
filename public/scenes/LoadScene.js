@@ -22,12 +22,20 @@ export class LoadScene extends Phaser.Scene{
         //battle scene
         this.load.image("HUD", "../assets/resources/hud_bg.png");
         this.load.image("backgroundBattle", "../assets/resources/background.png");
+        this.load.image("backgroundPVP", "../assets/resources/background4.png");
         this.load.image("card_holder", "../assets/resources/card_holder.jpg");
         this.load.image("cardBack", "../assets/resources/sprites/cardBack.png");
         this.load.image("discardPile", "../assets/resources/sprites/discardPile.png");
         this.load.image("deck", "../assets/resources/sprites/deck.png");
         this.load.spritesheet("ap", '../assets/resources/sprites/actionPointsSprites.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image("enemyArrow", "../assets/resources/sprites/enemy/enemyArrow.png");
+
+        this.load.image("vulture", "../assets/resources/sprites/enemy/vulture.png");
+        this.load.image("snake", "../assets/resources/sprites/enemy/snake.png");
+        this.load.image("hyena", "../assets/resources/sprites/enemy/hyena.png");
+        this.load.image("scorpion", "../assets/resources/sprites/enemy/scorpion.png");
+        this.load.image("gorilla", "../assets/resources/sprites/enemy/gorilla.png");
+        this.load.image("boss", "../assets/resources/sprites/enemy/boss.png");
 
         //damage
         this.load.image("cannonball", "../assets/resources/cards/Cannonball.png");
