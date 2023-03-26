@@ -26,22 +26,22 @@ The ? or random encounter leads to either a chest or battle screen randomly. Bot
 
 The battle encounter, denoted by the two cards icon, takes players to the battle screen as pictured below in figure 1.2 where the goal is to defeat the Non-Player Character (NPC) enemies by depleting their health to 0 using the cards in their deck. Winning a battle will reward the player with a choice of two cards which become more powerful as the tower is ascended. Enemies also become more powerful as the tower is ascended so the better rewards are matched with a greater level of challenge! If instead a *player's* health is to reach 0, the player loses randomising the map floor they are on again and starting them at the beginning of the floor.
 
-![](images/battle_screen.png)
+![Battle Screen](images/battle_screen.png)
 Figure 2.2 - The battle screen of the game
 
 The chest screen pictured in figure 1.3 below is denoted by a chest icon on the map and upon entering it, the player is rewarded with 1-3 random cards of any rarity. Each floor only has 1 chest encounter and these encounters serve as a valuable way for the player to increase their deck's power for not much time.
 
-!(images/chest_screen.png)
+![Chest Screen](images/chest_screen.png)
 Figure 2.3 - The chest screen of the game
 
 The shop screen pictured below in figure 1.4 allows the player to trade 2 cards of a lower rarity in their current deck for 1 card of a higher rarity. To purchase a blue rarity card, the player must sacrifice 2 white rarity cards, while to purchase a purple rarity card, the player must sacrifice 2 blue rarity cards. Each floor also only has 1 shop encounter with these serving as a risk-reward way to increase the power of the player's deck while sacrificing the over-all amount of cards in their deck.
 
-!(images/shop_screen.png)
+![Shop Screen](images/shop_screen.png)
 Figure 2.4 - The shop screen of the game
 
 Upon defeating the boss in the last room of floor 3 and obtaining the most powerful card in the game, the player ascends to the top of the tower and pulls the other player up to them to initiate a battle between both players pictured below in figure 1.5. The flow of this final battle is much the same as a regular battle encounter, with each player taking turns to play cards to whittle the opponent's health to 0. Upon completion of this ultimate goal, when 1 player's health reaches 0, the game concludes with the final player standing as the victor and claiming the throne of the tower!
 
-!(images/finalbattle_screen.png)
+![Final Battle Scene](images/finalbattle_screen.png)
 Figure 2.5 - The final battle screen of the game
 
 ## 3. Game Mechanics & Technical Game Information
@@ -78,12 +78,12 @@ The Map Class has another function that re-randomises all door and encounter/roo
 The Map Scene uses and implements all of this functionality.
 
 #### 3.1.2 Encounters
-The Map Scene generates 4 type of encounters: the battle encounter, the chest encounter, the random encounter and the vendor encounter pictured below isolated in figure 2.1 and embedded in the map scene in figure 2.2.
+The Map Scene generates 4 type of encounters: the battle encounter, the chest encounter, the random encounter and the vendor encounter pictured below isolated in figure 3.1 and embedded in the map scene in figure 3.2.
 
-!(images/encounters.png)
+![Encounters in Map](images/encounters.png)
 Figure 3.1 - the encounter icons when not embedded in the map
 
-!(images/map_screen.png)
+![Map Screen](images/map_screen.png)
 Figure 3.2 - The map scene with encounters on it
 
 The random encounter, denoted by the ? icon, has a 50% chance of either leading to a battle or to a chest.
@@ -135,18 +135,18 @@ Before going into the options that the cards bring, we need to go into further d
 	- Shell (White)
 - **Category** - Denoted by the color of the strip in the middle
 
-!(images/card_components.png)
+![Components of Cards](images/card_components.png)
 Figure 3.3 - The main components of every card
 
 To delve further into the category matter, there are currently 4 categories that each card can belong to. The category of a card is simply an umbrella term for a collection of cards with a similar effect. The names of them can explain the card's effect intuitively and they can fall into 4 categories, seen in Figure 3.4:
-- **Damage
-- **Healing 
+- **Damage**
+- **Healing** 
 - **Reload**
 - **Combo**
 
 Damage cards's effects can target a single enemy, all enemies or can hit x times against a randomly chosen enemy each time. The reload category serves as the only way for players to recover their action points, enabling them to play other cards. The combo cards are activated specifically to boost other card's effect such as doubling a card's amount of damage. Lastly, healing cards recover the player's health or make them gain armour which serves as an additional health pool for the player while also providing damage reduction. 
 
-!(images/categories.png)
+![Category of cards](images/categories.png)
 Figure 3.4 - All card categories
 
 Furthermore, the majority of the cards have additional effects that can greatly help the player such as drawing additional card(s) or hinder the player by sacrificing their health or discarding random card(s). These extra effects add to the potential complexity of the game, allowing players to synergise their cards together while not sacrificing the simplistic nature of the mechanics. 
@@ -170,39 +170,39 @@ Each player and enemy holds numerous bits of information that pertain to them. T
 Max health is a number ascribed to the player object and describes the maximum a player's health can be. If a player's health would be pushed over this value, it is instead set to this value thus limiting player health. It is also used in the creation of the healthbar pictured in figure 3.3 as the calculation to show the health accurately uses max health to calculate the percentage of pixels to show on the healthbar.
 
 ##### Health
-Health is the player's vitality and must be kept above 0 or else the player dies. The player's health is displayed in battle as a red healthbar pictured below in figure 3.3. The healthbar shows the value of the player's health along with the visual indication from the healthbar as to their percentage of health. 
+Health is the player's vitality and must be kept above 0 or else the player dies. The player's health is displayed in battle as a red healthbar pictured below in figure 3.5. The healthbar shows the value of the player's health along with the visual indication from the healthbar as to their percentage of health. 
 
-!(images/healthbar.png)
+![Healthbar of enemies](images/healthbar.png)
 Figure 3.5 - Health as displayed in battle
 
 ##### Max Armour
-Max armour much like max health, is a number ascribed to the player object and describes the maximum a player's armour can be. If a player's armour would be pushed over this value, it is instead set to this value thus limiting player armour. It is also used in the creation of the armourbar which overlays the healthbar pictured in figure 3.4 as the calculation to show the armour accurately uses max armour to calculate the percentage of pixels to show on the healthbar.
+Max armour much like max health, is a number ascribed to the player object and describes the maximum a player's armour can be. If a player's armour would be pushed over this value, it is instead set to this value thus limiting player armour. It is also used in the creation of the armourbar which overlays the healthbar pictured in figure 3.6 as the calculation to show the armour accurately uses max armour to calculate the percentage of pixels to show on the healthbar.
 
 ##### Armour
-The armour value of a player is an extra health value the player can have above their max health. Armour is not persisted between like battles like health is and comes with a damage reducing effect, lowering the damage a player takes when attacked. Armour is displayed on the armourbar which is overlayed on top of the health bar. pictured in figure 3.4 The armourbar shows the value of the player's armour along with the visual indication from the armourbar as to their percentage of armour.
+The armour value of a player is an extra health value the player can have above their max health. Armour is not persisted between like battles like health is and comes with a damage reducing effect, lowering the damage a player takes when attacked. Armour is displayed on the armourbar which is overlayed on top of the health bar. pictured in figure 3.6 The armourbar shows the value of the player's armour along with the visual indication from the armourbar as to their percentage of armour.
 
-!(images/healthbar_with_armour.png)
+![Armour Healthbar](images/healthbar_with_armour.png)
 Figure 3.6 - Health with armour as displayed in battle
 
 ##### Max Action Points (AP)
 Max AP is the value which limits the amount of AP a player can have at any one time. This value is set in the player object and is never increased except for certain card effects. The value of this is a constant 6 AP and whenever a battle begins, the player's starting AP will be set to this value, starting them with full AP for each battle.
 
 ##### Action Points (AP)
-AP is the running value of AP a player has at the moment. This value is affected by the cost of cards and is displayed as a different sprite for each amount of AP as pictured below in figure 3.6. From left to right in figure 3.6, shows all AP values with the first image denoting any value above 6 and the next 7 sprites showing 6 AP - 0 AP from left to right. AP is one of the most important resources for a player in a battle as it limits the cards they can play each turn. AP is regained through the use of reload cards.
+AP is the running value of AP a player has at the moment. This value is affected by the cost of cards and is displayed as a different sprite for each amount of AP as pictured below in figure 3.6. From left to right in figure 3.7, shows all AP values with the first image denoting any value above 6 and the next 7 sprites showing 6 AP - 0 AP from left to right. AP is one of the most important resources for a player in a battle as it limits the cards they can play each turn. AP is regained through the use of reload cards.
 
-!(images/actionPointsSprites.png)
+![Action point sprites](images/actionPointsSprites.png)
 Figure 3.7 - Player Action Points (AP) Sprites 
 
 ##### Card Deck
 The card deck i holds a list of all cards in the player's deck. In battle, cards are removed from this and put into the discard pile and hand when necessary but in the map, the deck always holds all cards. When a battle starts, all cards are in the card deck until the initial 5 card are drawn. The card deck is located at the bottom left of figure 3.7 below and a number displays the amount of cards in the card deck at current.
 
 ##### Card Discard Pile
-The card discard pile holds a working list of all cards that the player has discarded and thus are not in the player's deck. The discard pile is located at the bottom left of figure 3.7 below and a number displays the amount of cards in the discard pile at current. The discard pile can also be viewed as a separate scene as described later in section 3.2.4 Quality of Life.
+The card discard pile holds a working list of all cards that the player has discarded and thus are not in the player's deck. The discard pile is located at the bottom left of figure 3.8 below and a number displays the amount of cards in the discard pile at current. The discard pile can also be viewed as a separate scene as described later in section 3.2.4 Quality of Life.
 
 ##### Card Hand
 The card hand is displayed as the cards in the card tray (which uses this [public domain image](https://opengameart.org/content/2048-stylized-tileable-metal-panel) created by user "txturs" on opengameart.org) pictured in figure 3.7 and holds a list of all cards currently in the player's hand and thus the cards that are usable by the player on their turn. The card hand always has 5 cards at the start of every turn and any unused/unkept cards at the end of the turn are discarded from the card hand and are redrawn up to a maximum of 5 cards at the end of the turn. The card hand can have more cards than 5 through the use of card effects but a number of cards above 7 is very unlikely. Cards are also discarded from the hand when used after the card's effect has been carried out. As a result of holding the cards, the card hand stat is directly responsible for what actions a player is able to perform on their given turn.
 
-!(images/battle_screen.png)
+![Battle screen statistics](images/battle_screen.png)
 Figure 3.8 - Player and Enemy statistics shown in the battle scene.
 
 The enemy NPCs also share max armour, max health, armour and health statistics but do not utilise cards or AP. Enemies as a result have statistics that correspond to the damage ranges that they use to calculate the amount of damage they will do on their turn. As a result, every enemy has a minimum damage and a maximum damage that they can achieve on any one turn. The enemy also holds information about the level it currently on as the enemy's damage also adds 2x(current map level) in the damage calculation.
@@ -232,25 +232,25 @@ The battle scene's flow has been designed in such a manner that several quality 
 
 Firstly, the keeping of cards functionality for the player allows the player to retain a single card in their hand for the next turn. The player after clicking the button can click a card in their hand to keep, tinting it to indicate to the player that they've made their selection, as you can see below. If the player makes a mistake, they can re-click it to choose another card.  Furthermore to confirm their choice, the user has to click the end turn button. This allows the player to remember that this option of retention is available to them every time they want to end their turn due to having to trigger this functionality first. This prevents the player from forgetting or accidental mistakes.
 
-!(images/keep_cards.png)
+![Keeping cards](images/keep_cards.png)
 Figure 3.9 - A player keeping a card
 
 Secondly, the discarding and drawing of cards is completely automatic. The cards in the hand that are not kept by the player at the end of turn are automatically moved into the discard pile. Additionally the player will then continue to draw cards until they have reached 5 in the their hand when their turn begins. This keeps the battle flow smooth where the player only has to worry about their next move rather than non-gameplay related features such as drawing and discarding. This autonomous nature also extends to cards that force the player to discard or draw cards too.
 
 When cards are in the discard pile, they are viewable through clicking the discard pile sprite (right picture). This gives an insight to the player to the cards that they've currently played and what is left in their deck. Tying in with drawing and discarding, the deck also resets itself automatically; all the cards from the  discard pile are moved back into the deck, shuffled and the player resumes drawing seamlessly. This adds to the seamless nature of functionality running automatically for the players.
 
-!(images/deck_and_discard.png)
+![Deck and discard pile icon](images/deck_and_discard.png)
 Figure 3.10 - Deck and discard pile icons
 
-!(images/discard_pile.png)
+![Discard pile scene](images/discard_pile.png)
 Figure 3.11 - The discard pile scene
 
 Lastly, tints have been added as visual indicators to tell the player of certain effects. For example, cards in hand automatically tint themselves **red** in Figure 3.13 when the player doesn't have sufficient action points to play them. As well as that, a **green** tint is visible in the drop zone for the card, blue tint in Figure 3.12 for cards that have been used with combo cards and gray tint for keeping.
 
-!(images/combo.png)
+![Combo cards tint](images/combo.png)
 Figure 3.12 - Blue combo card tint
 
-!(images/unplayable_cards.png)
+![Unplayable card tint](images/unplayable_cards.png)
 Figure 3.13 - Prevention of card activation shown as a red tint
 
 #### 3.2.5 Winning and Losing
@@ -258,12 +258,12 @@ The player's objective in a battle is to deplete all enemy health values to 0, i
 
 Victory in battle is achieved when all enemy health values are depleted completely. After this occurs, the rewards for the battle will appear on the screen with the player getting an option of one of the two cards. These rewards as described in section 3.1.1 Map Randomisation are randomly generated with each encounter and scale to be more powerful as the player ascends the tower. An example of a choice between two rewards is captured in figure 3.8 below
 
-!(images/rewards.png)
+![Rewards](images/rewards.png)
 Figure 3.14 - The choice of rewards a player gets after a battle
 
 Dying in battle when the player's health is depleted completely leads to a death screen as shown in figure 3.9 below. The punishment for death is to reset the player back to the start of the current floor they are on with a new randomisation. This slows the player down and is an apt punishment for dying while trying to race to the top of the tower.
 
-!(images/player_death.png)
+![Player death](images/player_death.png)
 Figure 3.15 - The death message a player receives upon losing a battle
 
 ### 3.3 Player Versus Player Duel
@@ -279,7 +279,7 @@ This battle is unique due to the delay in player's ending turns. The final battl
 
 In terms of transmitting the card's effect, only the bare minimum of data is transferred over to the other player in order to recreate the effect. For example, damage cards transfer over the amount of damage as well as the image,damage calculations are applied on the other's player own player,  **running locally** on the other player's system. The same is for healing cards where the health and armour are applied for the enemy locally as well. For the rest of the cards, only the image is transferred.
 
-!(images/finalbattle_screen.png)
+![Final battle scene](images/finalbattle_screen.png)
 Figure 3.16 - The final battle scene between two players
 
 ## 4. Networking and Non-Gameplay Features
@@ -293,7 +293,7 @@ One of the main aspects that the design team focused on during the development p
 
 The below image shows the current implementation of the main menu:
 
-!(images/MainMenu.png)
+![Main menu](images/MainMenu.png)
 Figure 4.1 - Main menu of the game
 
 #### 4.1.1 Play Game
@@ -329,13 +329,13 @@ const writeQuery = `
 
 Thus setting up the ability to connect to the players lobby. 
 
-!(images/CreateGame.png)
+![Create game scene](images/CreateGame.png)
 Figure 4.2 - Create game page where a player can create a game
 
 #### 4.1.3 Join Game
 The join game feature is a key component that allows users the alternative to enter a join code and join an existing game session. When a user chooses to join a game, they will be prompted to enter the join code provided by the host of the game session.
 
-!(images/JoinGame.png)
+![Join game scene](images/JoinGame.png)
 Figure 4.3 - Join game page where a player can enter a code to join a game
 
 When the user clicks join game, a function is called which sends an AJAX POST request to the server with the join code entered by the user. The server does several checks to see if the code is valid and that the lobby is still not full. If the code is valid and all previous checks are complete, the user is connected to the hosts lobby:
@@ -348,7 +348,7 @@ thisScene.scene.start(CST.SCENES.LOBBY, { networkObj: thisScene.network, playerU
 #### 4.1.4 Lobby Scene
 Once two players have connected to the lobby scene, the host can then go ahead and start the game when they are ready. Once the start game button is clicked, the game session in initiated and the map scene is launched. The game session is held between both players throughout the game. 
 
-!(images/Lobby.png)
+![Lobby game scene](images/Lobby.png)
 Figure 4.4 - Lobby page where both players wait before starting the game
 
 In the event of the host leaving the game, a detectingJoineeLeaveInterval variable is set to setInterval to repeatedly check if the other player has left. Inside the interval, an AJAX POST request is sent to the '/checkIfHostLeft' endpoint with the host's and other player's usernames as data. If the result of the request indicates that the host has left
@@ -362,7 +362,7 @@ the interval is cleared, and a temporary alert is displayed to inform the player
 #### 4.1.5 Profile 
 The profile page provides the user to view information about themselves in the game. Users can see their avatar and username on the page, as well as pre-generated facts about their character. They can also access their friends page from here.
 
-!(images/Profile.png)
+![Profile Scene](images/Profile.png)
 Figure 4.5 - Profile page used for displaying information about the player
 
 If there was more time to develop this feature, a section could be added to show the number of enemies defeated or the number of games won. This would provide more detailed statistics about the user's performance in the game.
@@ -444,27 +444,27 @@ The  assets used in the battle scene was designed by members of the design team.
 
 You can see the initial process of the card design from inception to finalisation in Figure 5.1 (left to right).  It was a process of the entire design team agreeing on a suitable card design that would visually pleasing while being intuitive to understand. The initial concept had a lot of text for the card to explain but due to the resolution of the game and constraints of the card's size, it was found that the card was hard to understand for new players. However, we kept some concepts of it such as the rarity colour and cost of the card and moved onto the next design; Less words and using the font of the game to tie everything in. This once again proved difficult to read and the aesthetics of the cards was in a debatable situation. To utilise the best of both worlds, we decided that a clear font was best while also using clear indicators such as colors to relay information to the player (category colour strip, rarity diamond colour etc) and ended up with the finalised version. It provides clear information to the player at a small size while being aesthetically pleasing. Using this design, there are now 30 distinct cards available in game, as seen in Figure 5.2.
 
-!(images/cards.png)
+![Card creation progress](images/cards.png)
 Figure 5.1 - Progression of card creation
 
-!(images/all_cards.png)
+![All cards](images/all_cards.png)
 Figure 5.2 - All cards in game
 
 In Figure 5.3, for the player sprites themselves, the narrative of the players ascending up the tower being mirror images of each other was the main driving theme behind the visuals besides the main gun theme. The player sprites themselves are simply mirror images of each other with their colours being reversed. As well as that, the deck and discard pile sprite are also mirrors of each other to indicate the opposite functionality of them. The action points indicator for the player is a bullet that hollows out as the player consumes them to play cards.
 
 For the enemies, due to the time crunch, it was essential that the enemies weren't too complicated to extend, hence the idea of animals bearing weapons. To further the narrative of a gun themed ascension, you can see some animal sprites being fused with their weaponry such as the snake and scorpion; perhaps a cruel misfortune of being inside the tower. 
 
-!(images/all_sprites.png)
+![All sprites](images/all_sprites.png)
 Figure 5.3 - All sprites used in battle scene
 
 With the boss, we made use of the mirror images of the player to design the boss for the penultimate fight. The minigun card was already made so it was a simple matter of the boss being the amalgamation of the two players fused with the minigun, similar to how the animals in the tower were affected.
 
-!(images/Boss.png)
+![Boss Sprite](images/Boss.png)
 Figure 5.4 - The boss enemy sprite
 
 Lastly, the ending screen in Figure 5.5 after the final fight between the players was the knot to try and tie everything together, inspiring the creation of the Fuse card, the throne after the boss fight and the throne afterwards - a result of the fuse card activating to merge everything into one and resetting the tower for the next ascendants.
 
-!(images/ending.png)
+![Ending assets](images/ending.png)
 Figure 5.5 - The ending assets
 
 #### 5.2 Music Creation
@@ -517,7 +517,7 @@ To divide the work of making this game between team members in a more even and s
 ### 6.1 Project Management with Trello
 As mentioned above, Trello was our team's project management software of choice and served as our main resource for sharing information and keeping track of tasks asynchronously. Pictured below in figure 6.1 is a snapshot of our trello board towards the end of the project and shows the columns of cards we used to track everything for the project. Each card corresponds to a task with each task allowing different bits of information such as checklists, attatchments, comments and member assignment.
 
-!(images/trello.png)
+![Trello board of Project](images/trello.png)
 Figure 6.1 - The trello board towards the end of the project
 
 ### 6.2 Reflections
