@@ -26,7 +26,7 @@ The ? or random encounter leads to either a chest or battle screen randomly. Bot
 
 The battle encounter, denoted by the two cards icon, takes players to the battle screen as pictured below in figure 1.2 where the goal is to defeat the Non-Player Character (NPC) enemies by depleting their health to 0 using the cards in their deck. Winning a battle will reward the player with a choice of two cards which become more powerful as the tower is ascended. Enemies also become more powerful as the tower is ascended so the better rewards are matched with a greater level of challenge! If instead a *player's* health is to reach 0, the player loses randomising the map floor they are on again and starting them at the beginning of the floor.
 
-!(images/battle_screen.png)
+![](images/battle_screen.png)
 Figure 2.2 - The battle screen of the game
 
 The chest screen pictured in figure 1.3 below is denoted by a chest icon on the map and upon entering it, the player is rewarded with 1-3 random cards of any rarity. Each floor only has 1 chest encounter and these encounters serve as a valuable way for the player to increase their deck's power for not much time.
