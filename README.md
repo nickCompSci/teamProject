@@ -18,6 +18,7 @@ Dual Ascent: Tower of Cards is a multiplayer, turn-based card game where two pla
 Upon connecting to another player and initiating a game, both players are transported to the map screen shown below in figure 1.1:
 
 ![Screen of Map](images/map_screen.png)
+
 Figure 2.1 - The map screen of the game
 
 On the map screen, the player's goal is to reach the left-most room with the arrow to ascend to the next floor of the tower. Each player starts on floor 1 with the goal being to defeat the boss enemy at the end of floor 3 which rewards them with the most powerful card and ascend to floor 4 which triggers the final player vs. player battle. On each floor, there are 12 rooms, each of which (excluding the start and end rooms) holds an encounter for the player to engage with and earn cards from to build their deck of cards. Cards received as rewards become more powerful as the player ascends the tower, thus the player needs to balance racing the other player to reach the top first and claim the most powerful card with building their deck along the way to have more cards at their disposal.
